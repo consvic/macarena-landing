@@ -81,17 +81,17 @@ export default function MacarenaGelateria() {
             className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight animate-slide-up"
             style={{ color: "#EDDBC3" }}
           >
-            A new gelato experience
+            Macarena - La nueva experiencia de gelato
             <br />
-            <span className="animate-slide-up-delay">in Mexico</span>
+            <span className="animate-slide-up-delay">en México</span>
           </h1>
 
           <p
             className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-sans font-light leading-relaxed animate-fade-in-delay"
             style={{ color: "#EDDBC3" }}
           >
-            Premium ingredients, Italian tradition, and a unique flavor with a
-            Mexican essence.
+            Ingredientes premium, tradición italiana, y un sabor único con una
+            esencia mexicana.
           </p>
 
           <Button
@@ -103,7 +103,7 @@ export default function MacarenaGelateria() {
               backgroundColor: "transparent",
             }}
           >
-            Discover more
+            Descubre más
           </Button>
         </div>
       </section>
@@ -118,23 +118,23 @@ export default function MacarenaGelateria() {
             {[
               {
                 icon: "#C98D50",
-                title: "High-quality ingredients",
+                title: "Ingredientes de alta calidad",
                 description:
-                  "Carefully selected premium ingredients sourced from the finest Italian and Mexican suppliers.",
+                  "Ingredientes premium cuidadosamente seleccionados de los mejores proveedores italianos y mexicanos.",
                 delay: "0s",
               },
               {
                 icon: "#BF602B",
-                title: "Sugar-free, lactose-free & vegan options",
+                title: "Opciones sin azúcar, sin lactosa y veganas",
                 description:
-                  "Inclusive gelato crafted for every lifestyle, without compromising on taste or quality.",
+                  "Gelato inclusivo creado para cada estilo de vida, sin comprometer el sabor o la calidad.",
                 delay: "0.2s",
               },
               {
                 icon: "#640A1A",
-                title: "Inspired by Italy, with a Mexican touch",
+                title: "Inspirado en Italia, con un toque mexicano",
                 description:
-                  "Traditional Italian gelato techniques enhanced with authentic Mexican flavors and ingredients.",
+                  "Técnicas tradicionales italianas de gelato realzadas con sabores e ingredientes mexicanos auténticos.",
                 delay: "0.4s",
               },
             ].map((item, index) => (
@@ -227,7 +227,7 @@ export default function MacarenaGelateria() {
               }`}
               style={{ color: "#151F49" }}
             >
-              Born from passion, crafted with love
+              Nacido de la pasión, creado con amor
             </h2>
 
             <p
@@ -238,10 +238,11 @@ export default function MacarenaGelateria() {
               }`}
               style={{ color: "#640A1A" }}
             >
-              Macarena is a digital gelateria born from the love of Italian
-              culinary art and gelato tradition. Our mission is to stand out in
-              Mexico for quality and unique flavor, with elegance as the core
-              value across service and digital platforms.
+              Macarena es una gelatería digital nacida del amor por el arte
+              culinario italiano y la tradición del gelato. Nuestra misión es
+              destacar en México por la calidad y el sabor único, con la
+              elegancia como valor central en el servicio y las plataformas
+              digitales.
             </p>
 
             <div
@@ -256,21 +257,21 @@ export default function MacarenaGelateria() {
                 className="px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
                 style={{ borderColor: "#C98D50", color: "#C98D50" }}
               >
-                Quality over quantity
+                Calidad sobre cantidad
               </Badge>
               <Badge
                 variant="outline"
                 className="px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
                 style={{ borderColor: "#BF602B", color: "#BF602B" }}
               >
-                Italian tradition
+                Tradición italiana
               </Badge>
               <Badge
                 variant="outline"
                 className="px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
                 style={{ borderColor: "#640A1A", color: "#640A1A" }}
               >
-                Mexican essence
+                Esencia mexicana
               </Badge>
             </div>
           </div>
@@ -311,28 +312,29 @@ export default function MacarenaGelateria() {
                 className="text-4xl md:text-5xl font-serif font-bold mb-8"
                 style={{ color: "#EDDBC3" }}
               >
-                For the sophisticated palate
+                Para el paladar sofisticado
               </h2>
 
               <p
                 className="text-xl font-sans leading-relaxed mb-8"
                 style={{ color: "#EDDBC3" }}
               >
-                Crafted for discerning adults who appreciate the finer things in
-                life. Our gelato represents more than a dessert—it's a premium
-                lifestyle choice that reflects sophistication and quality.
+                Creado para adultos exigentes que aprecian las cosas finas de la
+                vida. Nuestro gelato representa más que un postre—es una
+                elección de estilo de vida premium que refleja sofisticación y
+                calidad.
               </p>
 
               <div className="space-y-4">
                 {[
                   {
                     color: "#C98D50",
-                    text: "Premium experience for adults",
+                    text: "Experiencia premium para adultos",
                   },
-                  { color: "#eddbc3", text: "Sophisticated flavor profiles" },
+                  { color: "#eddbc3", text: "Perfiles de sabor sofisticados" },
                   {
                     color: "#640A1A",
-                    text: "Elegant presentation and service",
+                    text: "Presentación y servicio elegantes",
                   },
                 ].map((item, index) => (
                   <div
@@ -408,14 +410,14 @@ export default function MacarenaGelateria() {
           </div>
 
           <h2
-            className={`text-6xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 delay-200 ${
+            className={`text-5xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 delay-200 ${
               isVisible.cta
                 ? "animate-scale-up opacity-100"
                 : "opacity-0 scale-95"
             }`}
             style={{ color: "#151F49" }}
           >
-            Coming Soon
+            Próximamente
           </h2>
 
           <p
@@ -424,8 +426,8 @@ export default function MacarenaGelateria() {
             }`}
             style={{ color: "#640A1A" }}
           >
-            Follow us on social media to be the first to experience Macarena
-            Gelateria.
+            Síguenos en redes sociales para ser el primero en experimentar
+            Macarena Gelateria.
           </p>
 
           <div
@@ -444,7 +446,7 @@ export default function MacarenaGelateria() {
                 backgroundColor: "transparent",
               }}
             >
-              Follow on Instagram
+              Siguenos en Instagram
             </Button>
 
             <Button
@@ -456,7 +458,7 @@ export default function MacarenaGelateria() {
                 backgroundColor: "transparent",
               }}
             >
-              Follow on Facebook
+              Siguenos en TikTok
             </Button>
           </div>
         </div>
