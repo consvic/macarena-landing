@@ -1,18 +1,39 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
+const eymenPro = localFont({
+  src: "../fonts/EymenPro-Light.otf",
   display: "swap",
-  variable: "--font-playfair",
+  variable: "--font-eymen",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const cocoGothic = localFont({
+  src: [
+    {
+      path: "../fonts/CocoGothic-Light_trial.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../fonts/CocoGothic_trial.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/CocoGothic-Bold_trial.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/CocoGothic-Heavy_trial.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-coco",
 });
 
 export const metadata: Metadata = {
@@ -31,7 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} antialiased`}
+      className={`${eymenPro.variable} ${cocoGothic.variable} antialiased`}
     >
       <body>{children}</body>
     </html>

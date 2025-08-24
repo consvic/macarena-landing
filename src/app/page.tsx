@@ -50,85 +50,19 @@ export default function MacarenaGelateria() {
         style={{ backgroundColor: "#151F49" }}
       >
         <div className="absolute inset-0 overflow-hidden">
-          {/* Animated floating gelato scoops */}
+          {/* Giant falling gelato scoop */}
           <Image
             src="/scoop-vanilla.png"
-            alt="Vanilla gelato scoop"
-            width={128}
-            height={128}
-            className="absolute animate-bounce"
+            alt="Giant vanilla gelato scoop"
+            width={600}
+            height={600}
+            className="absolute transition-transform duration-300 ease-out"
             style={{
-              top: "10%",
-              left: "10%",
-              animationDelay: "0s",
-              animationDuration: "3s",
-            }}
-          />
-          <Image
-            src="/scoop-vanilla.png"
-            alt="Vanilla gelato scoop"
-            width={96}
-            height={96}
-            className="absolute animate-bounce"
-            style={{
-              top: "20%",
-              right: "15%",
-              animationDelay: "1s",
-              animationDuration: "4s",
-            }}
-          />
-          <Image
-            src="/scoop-vanilla.png"
-            alt="Vanilla gelato scoop"
-            width={80}
-            height={80}
-            className="absolute animate-bounce"
-            style={{
-              bottom: "30%",
-              left: "20%",
-              animationDelay: "2s",
-              animationDuration: "3.5s",
-            }}
-          />
-
-          {/* Main falling ice cream scoop */}
-          <Image
-            src="/scoop-vanilla.png"
-            alt="Vanilla gelato scoop"
-            width={160}
-            height={160}
-            className="absolute transition-transform duration-1000 ease-out"
-            style={{
-              top: `${Math.max(-100, -scrollY * 0.5)}px`,
-              right: "10%",
-              transform: `rotate(${scrollY * 0.1}deg)`,
-              filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.2))",
-            }}
-          />
-
-          {/* Secondary falling scoops */}
-          <Image
-            src="/scoop-vanilla.png"
-            alt="Vanilla gelato scoop"
-            width={112}
-            height={112}
-            className="absolute transition-transform duration-1000 ease-out"
-            style={{
-              top: `${Math.max(-80, -scrollY * 0.3)}px`,
-              left: "30%",
-              transform: `translateX(-50%) rotate(${-scrollY * 0.08}deg)`,
-            }}
-          />
-          <Image
-            src="/scoop-vanilla.png"
-            alt="Vanilla gelato scoop"
-            width={96}
-            height={96}
-            className="absolute transition-transform duration-1000 ease-out"
-            style={{
-              top: `${Math.max(-60, -scrollY * 0.4)}px`,
-              right: "25%",
-              transform: `translateX(50%) rotate(${scrollY * 0.12}deg)`,
+              bottom: `${Math.max(-600, scrollY * 0.8 - 400)}px`,
+              right: "-12%",
+              transform: `rotate(${-scrollY * 0.05}deg)`,
+              filter: "drop-shadow(0 30px 60px hsla(0, 0%, 0%, 0.3))",
+              opacity: Math.max(0.1, 1 - scrollY / 800),
             }}
           />
         </div>
@@ -153,7 +87,7 @@ export default function MacarenaGelateria() {
           </h1>
 
           <p
-            className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-light leading-relaxed animate-fade-in-delay"
+            className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-sans font-light leading-relaxed animate-fade-in-delay"
             style={{ color: "#EDDBC3" }}
           >
             Premium ingredients, Italian tradition, and a unique flavor with a
@@ -230,7 +164,7 @@ export default function MacarenaGelateria() {
                     {item.title}
                   </h3>
                   <p
-                    className="text-lg leading-relaxed"
+                    className="text-lg font-sans leading-relaxed"
                     style={{ color: "#640A1A" }}
                   >
                     {item.description}
@@ -297,7 +231,7 @@ export default function MacarenaGelateria() {
             </h2>
 
             <p
-              className={`text-xl leading-relaxed mb-8 transition-all duration-1000 delay-200 ${
+              className={`text-xl font-sans leading-relaxed mb-8 transition-all duration-1000 delay-200 ${
                 isVisible.philosophy
                   ? "animate-fade-in opacity-100"
                   : "opacity-0"
@@ -381,7 +315,7 @@ export default function MacarenaGelateria() {
               </h2>
 
               <p
-                className="text-xl leading-relaxed mb-8"
+                className="text-xl font-sans leading-relaxed mb-8"
                 style={{ color: "#EDDBC3" }}
               >
                 Crafted for discerning adults who appreciate the finer things in
@@ -393,7 +327,7 @@ export default function MacarenaGelateria() {
                 {[
                   {
                     color: "#C98D50",
-                    text: "Premium experience for adults 27-38",
+                    text: "Premium experience for adults",
                   },
                   { color: "#eddbc3", text: "Sophisticated flavor profiles" },
                   {
@@ -414,7 +348,10 @@ export default function MacarenaGelateria() {
                       className="w-3 h-3 rounded-full animate-pulse"
                       style={{ backgroundColor: item.color }}
                     ></div>
-                    <span className="text-lg" style={{ color: "#EDDBC3" }}>
+                    <span
+                      className="text-lg font-sans"
+                      style={{ color: "#EDDBC3" }}
+                    >
                       {item.text}
                     </span>
                   </div>
@@ -435,22 +372,22 @@ export default function MacarenaGelateria() {
           <Image
             src="/scoop-pistache.png"
             alt="Pistachio gelato scoop"
-            width={80}
-            height={80}
+            width={120}
+            height={120}
             className="absolute top-10 left-10 animate-float"
           />
           <Image
             src="/scoop-pistache.png"
             alt="Pistachio gelato scoop"
-            width={64}
-            height={64}
+            width={100}
+            height={100}
             className="absolute bottom-20 right-20 animate-float-delay"
           />
           <Image
             src="/scoop-pistache.png"
             alt="Pistachio gelato scoop"
-            width={48}
-            height={48}
+            width={80}
+            height={80}
             className="absolute top-1/2 right-10 animate-float-delay-2"
           />
         </div>
@@ -482,7 +419,7 @@ export default function MacarenaGelateria() {
           </h2>
 
           <p
-            className={`text-2xl md:text-3xl mb-12 max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-300 ${
+            className={`text-2xl md:text-3xl mb-12 max-w-3xl mx-auto font-sans leading-relaxed transition-all duration-1000 delay-300 ${
               isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
             }`}
             style={{ color: "#640A1A" }}
