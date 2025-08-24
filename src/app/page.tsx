@@ -51,77 +51,95 @@ export default function MacarenaGelateria() {
       >
         <div className="absolute inset-0 overflow-hidden">
           {/* Animated floating gelato scoops */}
-          <div
-            className="absolute w-32 h-32 rounded-full opacity-20 animate-bounce"
+          <Image
+            src="/scoop-vanilla.png"
+            alt="Vanilla gelato scoop"
+            width={128}
+            height={128}
+            className="absolute animate-bounce"
             style={{
-              backgroundColor: "#EDDBC3",
               top: "10%",
               left: "10%",
               animationDelay: "0s",
               animationDuration: "3s",
             }}
-          ></div>
-          <div
-            className="absolute w-24 h-24 rounded-full opacity-15 animate-bounce"
+          />
+          <Image
+            src="/scoop-vanilla.png"
+            alt="Vanilla gelato scoop"
+            width={96}
+            height={96}
+            className="absolute animate-bounce"
             style={{
-              backgroundColor: "#C98D50",
               top: "20%",
               right: "15%",
               animationDelay: "1s",
               animationDuration: "4s",
             }}
-          ></div>
-          <div
-            className="absolute w-20 h-20 rounded-full opacity-25 animate-bounce"
+          />
+          <Image
+            src="/scoop-vanilla.png"
+            alt="Vanilla gelato scoop"
+            width={80}
+            height={80}
+            className="absolute animate-bounce"
             style={{
-              backgroundColor: "#BF602B",
               bottom: "30%",
               left: "20%",
               animationDelay: "2s",
               animationDuration: "3.5s",
             }}
-          ></div>
+          />
 
           {/* Main falling ice cream scoop */}
-          <div
-            className="absolute w-40 h-40 rounded-full opacity-30 transition-transform duration-1000 ease-out"
+          <Image
+            src="/scoop-vanilla.png"
+            alt="Vanilla gelato scoop"
+            width={160}
+            height={160}
+            className="absolute transition-transform duration-1000 ease-out"
             style={{
-              backgroundColor: "#EDDBC3",
               top: `${Math.max(-100, -scrollY * 0.5)}px`,
-              left: "50%",
-              transform: `translateX(-50%) rotate(${scrollY * 0.1}deg)`,
-              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+              right: "10%",
+              transform: `rotate(${scrollY * 0.1}deg)`,
+              filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.2))",
             }}
-          ></div>
+          />
 
           {/* Secondary falling scoops */}
-          <div
-            className="absolute w-28 h-28 rounded-full opacity-20 transition-transform duration-1000 ease-out"
+          <Image
+            src="/scoop-vanilla.png"
+            alt="Vanilla gelato scoop"
+            width={112}
+            height={112}
+            className="absolute transition-transform duration-1000 ease-out"
             style={{
-              backgroundColor: "#C98D50",
               top: `${Math.max(-80, -scrollY * 0.3)}px`,
               left: "30%",
               transform: `translateX(-50%) rotate(${-scrollY * 0.08}deg)`,
             }}
-          ></div>
-          <div
-            className="absolute w-24 h-24 rounded-full opacity-25 transition-transform duration-1000 ease-out"
+          />
+          <Image
+            src="/scoop-vanilla.png"
+            alt="Vanilla gelato scoop"
+            width={96}
+            height={96}
+            className="absolute transition-transform duration-1000 ease-out"
             style={{
-              backgroundColor: "#640A1A",
               top: `${Math.max(-60, -scrollY * 0.4)}px`,
               right: "25%",
               transform: `translateX(50%) rotate(${scrollY * 0.12}deg)`,
             }}
-          ></div>
+          />
         </div>
 
         <div className="container mx-auto px-6 text-center relative z-10">
-          <div className="mb-12 animate-fade-in flex justify-center">
+          <div className="mb-10 animate-fade-in flex justify-center">
             <Image
               src="/MacaBeige2.png"
               alt="Macarena Gelateria"
-              width={120}
-              height={120}
+              width={180}
+              height={180}
             />
           </div>
 
@@ -144,13 +162,12 @@ export default function MacarenaGelateria() {
 
           <Button
             size="lg"
-            className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent hover:bg-opacity-10 transition-all duration-500 hover:scale-105 animate-fade-in-delay-2"
+            className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-xl hover:shadow-white/20 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 animate-fade-in-delay-2 hover:border-opacity-80 active:border-opacity-100"
             style={{
               borderColor: "#EDDBC3",
               color: "#EDDBC3",
               backgroundColor: "transparent",
             }}
-            disabled
           >
             Discover more
           </Button>
@@ -225,8 +242,32 @@ export default function MacarenaGelateria() {
         </div>
       </section>
 
-      <section className="py-24 bg-white" data-section="philosophy">
-        <div className="container mx-auto px-6">
+      <section
+        className="py-24 relative overflow-hidden"
+        data-section="philosophy"
+        style={{
+          backgroundColor: "#f8f6f3",
+          backgroundImage: `url('/MacaRojo3.png')`,
+          backgroundSize: "120px 120px",
+          backgroundRepeat: "repeat",
+          backgroundPosition: "0 0",
+          backgroundAttachment: "fixed",
+        }}
+      >
+        {/* Overlay to soften the pattern */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backgroundImage: `
+              linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.1) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.1) 75%),
+              linear-gradient(-45deg, transparent 25%, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.1) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.1) 75%)
+            `,
+            backgroundSize: "40px 40px",
+          }}
+        ></div>
+
+        <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <div
               className={`mb-12 transition-all duration-1000 ${
@@ -235,10 +276,12 @@ export default function MacarenaGelateria() {
                   : "opacity-0"
               }`}
             >
-              <img
+              <Image
+                width={200}
+                height={200}
                 src="/image-1.png"
                 alt="Artisanal gelato making process"
-                className="w-full max-w-2xl mx-auto rounded-lg shadow-2xl hover:shadow-3xl transition-shadow duration-500"
+                className="w-full max-w-lg mx-auto rounded-lg shadow-2xl hover:shadow-3xl transition-shadow duration-500"
               />
             </div>
 
@@ -302,7 +345,7 @@ export default function MacarenaGelateria() {
 
       <section
         className="py-24 relative overflow-hidden"
-        style={{ backgroundColor: "#151F49" }}
+        style={{ backgroundColor: "#bf602b" }}
         data-section="lifestyle"
       >
         <div className="container mx-auto px-6">
@@ -314,10 +357,12 @@ export default function MacarenaGelateria() {
                   : "opacity-0 -translate-x-10"
               }`}
             >
-              <img
+              <Image
+                width={400}
+                height={400}
                 src="/image-2.png"
                 alt="Elegant gelato tasting experience"
-                className="w-full rounded-lg shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105"
+                className="w-full max-w-lg mx-auto rounded-lg shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105"
               />
             </div>
 
@@ -350,7 +395,7 @@ export default function MacarenaGelateria() {
                     color: "#C98D50",
                     text: "Premium experience for adults 27-38",
                   },
-                  { color: "#BF602B", text: "Sophisticated flavor profiles" },
+                  { color: "#eddbc3", text: "Sophisticated flavor profiles" },
                   {
                     color: "#640A1A",
                     text: "Elegant presentation and service",
@@ -387,23 +432,46 @@ export default function MacarenaGelateria() {
       >
         {/* Floating background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div
-            className="absolute top-10 left-10 w-20 h-20 rounded-full opacity-10 animate-float"
-            style={{ backgroundColor: "#151F49" }}
-          ></div>
-          <div
-            className="absolute bottom-20 right-20 w-16 h-16 rounded-full opacity-15 animate-float-delay"
-            style={{ backgroundColor: "#640A1A" }}
-          ></div>
-          <div
-            className="absolute top-1/2 right-10 w-12 h-12 rounded-full opacity-20 animate-float-delay-2"
-            style={{ backgroundColor: "#C98D50" }}
-          ></div>
+          <Image
+            src="/scoop-pistache.png"
+            alt="Pistachio gelato scoop"
+            width={80}
+            height={80}
+            className="absolute top-10 left-10 animate-float"
+          />
+          <Image
+            src="/scoop-pistache.png"
+            alt="Pistachio gelato scoop"
+            width={64}
+            height={64}
+            className="absolute bottom-20 right-20 animate-float-delay"
+          />
+          <Image
+            src="/scoop-pistache.png"
+            alt="Pistachio gelato scoop"
+            width={48}
+            height={48}
+            className="absolute top-1/2 right-10 animate-float-delay-2"
+          />
         </div>
 
         <div className="container mx-auto px-6 text-center relative z-10">
+          <div
+            className={`mb-2 transition-all duration-1000 ${
+              isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src="/MacaAzul1.png"
+              alt="Macarena Gelateria"
+              width={300}
+              height={300}
+              className="mx-auto"
+            />
+          </div>
+
           <h2
-            className={`text-6xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 ${
+            className={`text-6xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 delay-200 ${
               isVisible.cta
                 ? "animate-scale-up opacity-100"
                 : "opacity-0 scale-95"
@@ -432,7 +500,7 @@ export default function MacarenaGelateria() {
           >
             <Button
               size="lg"
-              className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent hover:bg-opacity-10 transition-all duration-500 hover:scale-110 hover:shadow-lg"
+              className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-110 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110"
               style={{
                 borderColor: "#151F49",
                 color: "#151F49",
@@ -444,7 +512,7 @@ export default function MacarenaGelateria() {
 
             <Button
               size="lg"
-              className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent hover:bg-opacity-10 transition-all duration-500 hover:scale-110 hover:shadow-lg"
+              className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-red-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-110 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110"
               style={{
                 borderColor: "#640A1A",
                 color: "#640A1A",
