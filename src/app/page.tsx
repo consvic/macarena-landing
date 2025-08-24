@@ -81,9 +81,11 @@ export default function MacarenaGelateria() {
             className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight animate-slide-up"
             style={{ color: "#EDDBC3" }}
           >
-            Macarena - La nueva experiencia de gelato
+            Macarena
             <br />
-            <span className="animate-slide-up-delay">en México</span>
+            <span className="text-3xl md:text-5xl animate-slide-up-delay">
+              La nueva experiencia de gelato en México
+            </span>
           </h1>
 
           <p

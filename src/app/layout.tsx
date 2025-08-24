@@ -37,10 +37,9 @@ const cocoGothic = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Macarena Gelateria - Premium Italian Gelato in Mexico",
+  title: "Macarena Gelateria - Gelato Italiano Premium en México",
   description:
-    "Experience the finest Italian gelato tradition with a Mexican touch. Premium ingredients, elegant flavors, and sophisticated taste.",
-  generator: "v0.app",
+    "Experimenta la mejor tradición italiana de gelato con un toque mexicano. Ingredientes premium, sabores elegantes y gusto sofisticado.",
 };
 
 export default function RootLayout({
