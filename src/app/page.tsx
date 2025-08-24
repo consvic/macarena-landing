@@ -114,7 +114,7 @@ export default function MacarenaGelateria() {
         data-section="differentiators"
       >
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12 max-w-6xl mx-auto">
             {[
               {
                 icon: "#C98D50",
@@ -147,7 +147,7 @@ export default function MacarenaGelateria() {
                 }`}
                 style={{ animationDelay: item.delay }}
               >
-                <CardContent className="pt-8">
+                <CardContent className="pt-8 px-4 sm:px-6">
                   <div
                     className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 hover:rotate-12"
                     style={{ backgroundColor: "#151F49" }}
