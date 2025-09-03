@@ -1,10 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function MacarenaGelateria() {
   const [scrollY, setScrollY] = useState(0);
@@ -33,11 +32,13 @@ export default function MacarenaGelateria() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     const sections = document.querySelectorAll("[data-section]");
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
 
     return () => observer.disconnect();
   }, []);
@@ -45,10 +46,7 @@ export default function MacarenaGelateria() {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       {/* Hero Section with Falling Ice Cream Animation */}
-      <section
-        className="relative min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: "#151F49" }}
-      >
+      <section className="relative min-h-screen flex items-center justify-center bg-royal-blue">
         <div className="absolute inset-0 overflow-hidden">
           {/* Giant falling gelato scoop */}
           <Image
@@ -68,7 +66,7 @@ export default function MacarenaGelateria() {
         </div>
 
         <div className="container mx-auto px-6 text-center relative z-10">
-          <div className="mb-10 animate-fade-in flex justify-center">
+          <div className="mb-6 animate-fade-in flex justify-center">
             <Image
               src="/MacaBeige2.png"
               alt="Macarena Gelateria"
@@ -77,10 +75,7 @@ export default function MacarenaGelateria() {
             />
           </div>
 
-          <h1
-            className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight animate-slide-up"
-            style={{ color: "#EDDBC3" }}
-          >
+          <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-[100%] animate-slide-up text-light-beige">
             Macarena
             <br />
             <span className="text-3xl md:text-5xl animate-slide-up-delay">
@@ -88,22 +83,14 @@ export default function MacarenaGelateria() {
             </span>
           </h1>
 
-          <p
-            className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-sans font-light leading-relaxed animate-fade-in-delay"
-            style={{ color: "#EDDBC3" }}
-          >
+          <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-sans font-light leading-[100%] animate-fade-in-delay text-light-beige">
             Ingredientes premium, tradición italiana, y un sabor único con una
             esencia mexicana.
           </p>
 
           <Button
             size="lg"
-            className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-xl hover:shadow-white/20 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 animate-fade-in-delay-2 hover:border-opacity-80 active:border-opacity-100"
-            style={{
-              borderColor: "#EDDBC3",
-              color: "#EDDBC3",
-              backgroundColor: "transparent",
-            }}
+            className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-xl hover:shadow-white/20 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 animate-fade-in-delay-2 hover:border-opacity-80 active:border-opacity-100 border-light-beige text-light-beige"
           >
             Descubre más
           </Button>
@@ -111,78 +98,9 @@ export default function MacarenaGelateria() {
       </section>
 
       <section
-        className="py-24 transition-all duration-1000"
-        style={{ backgroundColor: "#EDDBC3" }}
-        data-section="differentiators"
-      >
-        <div className="container mx-auto px-6">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-12 max-w-6xl mx-auto">
-            {[
-              {
-                icon: "#C98D50",
-                title: "Ingredientes de alta calidad",
-                description:
-                  "Ingredientes premium cuidadosamente seleccionados de los mejores proveedores italianos y mexicanos.",
-                delay: "0s",
-              },
-              {
-                icon: "#BF602B",
-                title: "Opciones sin azúcar, sin lactosa y veganas",
-                description:
-                  "Gelato inclusivo creado para cada estilo de vida, sin comprometer el sabor o la calidad.",
-                delay: "0.2s",
-              },
-              {
-                icon: "#640A1A",
-                title: "Inspirado en Italia, con un toque mexicano",
-                description:
-                  "Técnicas tradicionales italianas de gelato realzadas con sabores e ingredientes mexicanos auténticos.",
-                delay: "0.4s",
-              },
-            ].map((item, index) => (
-              <Card
-                key={index}
-                className={`border-0 shadow-none bg-transparent text-center transition-all duration-1000 hover:transform hover:scale-105 ${
-                  isVisible.differentiators
-                    ? "animate-slide-up opacity-100"
-                    : "opacity-0 translate-y-10"
-                }`}
-                style={{ animationDelay: item.delay }}
-              >
-                <CardContent className="pt-8 px-4 sm:px-6">
-                  <div
-                    className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center transition-transform duration-300 hover:rotate-12"
-                    style={{ backgroundColor: "#151F49" }}
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full animate-pulse"
-                      style={{ backgroundColor: item.icon }}
-                    ></div>
-                  </div>
-                  <h3
-                    className="text-2xl font-serif font-bold mb-4"
-                    style={{ color: "#151F49" }}
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    className="text-lg font-sans leading-relaxed"
-                    style={{ color: "#640A1A" }}
-                  >
-                    {item.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="py-24 relative overflow-hidden"
+        className="py-24 relative overflow-hidden bg-cream-white"
         data-section="philosophy"
         style={{
-          backgroundColor: "#f8f6f3",
           backgroundImage: `url('/MacaRojo3.png')`,
           backgroundSize: "120px 120px",
           backgroundRepeat: "repeat",
@@ -194,7 +112,7 @@ export default function MacarenaGelateria() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            backgroundColor: "rgba(255, 255, 255, 0.75)",
             backgroundImage: `
               linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.1) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.1) 75%),
               linear-gradient(-45deg, transparent 25%, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.1) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.1) 75%)
@@ -222,30 +140,28 @@ export default function MacarenaGelateria() {
             </div>
 
             <h2
-              className={`text-4xl md:text-5xl font-serif font-bold mb-8 transition-all duration-1000 ${
+              className={`text-4xl md:text-5xl font-serif font-bold mb-8 transition-all duration-1000 text-royal-blue ${
                 isVisible.philosophy
                   ? "animate-slide-up opacity-100"
                   : "opacity-0 translate-y-10"
               }`}
-              style={{ color: "#151F49" }}
             >
               Nacido de la pasión, creado con amor
             </h2>
 
-            <p
-              className={`text-xl font-sans leading-relaxed mb-8 transition-all duration-1000 delay-200 ${
+            {/* <p
+              className={`text-xl font-sans leading-relaxed mb-8 transition-all duration-1000 delay-200 text-wine-red ${
                 isVisible.philosophy
                   ? "animate-fade-in opacity-100"
                   : "opacity-0"
               }`}
-              style={{ color: "#640A1A" }}
             >
               Macarena es una gelatería digital nacida del amor por el arte
               culinario italiano y la tradición del gelato. Nuestra misión es
               destacar en México por la calidad y el sabor único, con la
               elegancia como valor central en el servicio y las plataformas
               digitales.
-            </p>
+            </p> */}
 
             <div
               className={`flex flex-wrap justify-center gap-4 transition-all duration-1000 delay-400 ${
@@ -256,21 +172,19 @@ export default function MacarenaGelateria() {
             >
               <Badge
                 variant="outline"
-                className="px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
-                style={{ borderColor: "#C98D50", color: "#C98D50" }}
+                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300 border-ochre text-ochre"
               >
                 Calidad sobre cantidad
               </Badge>
               <Badge
                 variant="outline"
-                className="px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
-                style={{ borderColor: "#BF602B", color: "#BF602B" }}
+                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300 border-terracotta text-terracotta"
               >
                 Tradición italiana
               </Badge>
               <Badge
                 variant="outline"
-                className="px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
+                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
                 style={{ borderColor: "#640A1A", color: "#640A1A" }}
               >
                 Esencia mexicana
@@ -321,26 +235,28 @@ export default function MacarenaGelateria() {
                 className="text-xl font-sans leading-relaxed mb-8"
                 style={{ color: "#EDDBC3" }}
               >
-                Creado para adultos exigentes que aprecian las cosas finas de la
-                vida. Nuestro gelato representa más que un postre—es una
-                elección de estilo de vida premium que refleja sofisticación y
-                calidad.
+                Hecho para quienes saben disfrutar lo bueno de la vida. Nuestro
+                gelato no es solo un postre: es un antojo que combina calidad,
+                autenticidad y ese toque especial que te hace volver por más.
               </p>
 
               <div className="space-y-4">
                 {[
                   {
-                    color: "#C98D50",
-                    text: "Experiencia premium para adultos",
+                    color: "bg-ochre",
+                    text: "Sabores pensados para paladares curiosos",
                   },
-                  { color: "#eddbc3", text: "Perfiles de sabor sofisticados" },
                   {
-                    color: "#640A1A",
-                    text: "Presentación y servicio elegantes",
+                    color: "bg-light-beige",
+                    text: "Ingredientes de primera y combinaciones únicas",
+                  },
+                  {
+                    color: "bg-wine-red",
+                    text: "Una experiencia que se siente tan bien como sabe",
                   },
                 ].map((item, index) => (
                   <div
-                    key={index}
+                    key={item.text}
                     className={`flex items-center gap-4 transition-all duration-500 hover:translate-x-2 ${
                       isVisible.lifestyle
                         ? "animate-fade-in opacity-100"
@@ -349,13 +265,9 @@ export default function MacarenaGelateria() {
                     style={{ animationDelay: `${0.5 + index * 0.1}s` }}
                   >
                     <div
-                      className="w-3 h-3 rounded-full animate-pulse"
-                      style={{ backgroundColor: item.color }}
+                      className={`w-3 h-3 rounded-full animate-pulse ${item.color}`}
                     ></div>
-                    <span
-                      className="text-lg font-sans"
-                      style={{ color: "#EDDBC3" }}
-                    >
+                    <span className="text-lg font-sans text-light-beige">
                       {item.text}
                     </span>
                   </div>
@@ -367,8 +279,7 @@ export default function MacarenaGelateria() {
       </section>
 
       <section
-        className="py-32 relative overflow-hidden"
-        style={{ backgroundColor: "#EDDBC3" }}
+        className="py-32 relative overflow-hidden bg-light-beige"
         data-section="cta"
       >
         {/* Floating background elements */}
@@ -412,21 +323,19 @@ export default function MacarenaGelateria() {
           </div>
 
           <h2
-            className={`text-5xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 delay-200 ${
+            className={`text-5xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
               isVisible.cta
                 ? "animate-scale-up opacity-100"
                 : "opacity-0 scale-95"
             }`}
-            style={{ color: "#151F49" }}
           >
             Próximamente
           </h2>
 
           <p
-            className={`text-2xl md:text-3xl mb-12 max-w-3xl mx-auto font-sans leading-relaxed transition-all duration-1000 delay-300 ${
+            className={`text-2xl md:text-3xl mb-12 max-w-3xl mx-auto font-sans leading-[100%] transition-all duration-1000 delay-300 text-wine-red ${
               isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
             }`}
-            style={{ color: "#640A1A" }}
           >
             Síguenos en redes sociales para ser el primero en experimentar
             Macarena Gelateria.
@@ -439,29 +348,14 @@ export default function MacarenaGelateria() {
                 : "opacity-0 translate-y-10"
             }`}
           >
-            <Button
-              size="lg"
-              className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-110 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110"
-              style={{
-                borderColor: "#151F49",
-                color: "#151F49",
-                backgroundColor: "transparent",
-              }}
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-royal-blue text-center"
             >
               Siguenos en Instagram
-            </Button>
-
-            <Button
-              size="lg"
-              className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-red-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-110 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110"
-              style={{
-                borderColor: "#640A1A",
-                color: "#640A1A",
-                backgroundColor: "transparent",
-              }}
-            >
-              Siguenos en TikTok
-            </Button>
+            </a>
           </div>
         </div>
       </section>
