@@ -5,6 +5,21 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+const lifestyleCopy = [
+  {
+    color: "bg-ochre",
+    text: "Sabores pensados para paladares curiosos",
+  },
+  {
+    color: "bg-light-beige",
+    text: "Ingredientes de primera y combinaciones únicas",
+  },
+  {
+    color: "bg-wine-red",
+    text: "Una experiencia que se siente tan bien como sabe",
+  },
+];
+
 export default function MacarenaGelateria() {
   const [scrollY, setScrollY] = useState(0);
   const [isVisible, setIsVisible] = useState({
@@ -184,8 +199,7 @@ export default function MacarenaGelateria() {
               </Badge>
               <Badge
                 variant="outline"
-                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300"
-                style={{ borderColor: "#640A1A", color: "#640A1A" }}
+                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300 text-wine-red border-wine-red"
               >
                 Esencia mexicana
               </Badge>
@@ -195,8 +209,7 @@ export default function MacarenaGelateria() {
       </section>
 
       <section
-        className="py-24 relative overflow-hidden"
-        style={{ backgroundColor: "#bf602b" }}
+        className="py-24 relative overflow-hidden bg-terracotta"
         data-section="lifestyle"
       >
         <div className="container mx-auto px-6">
@@ -224,37 +237,18 @@ export default function MacarenaGelateria() {
                   : "opacity-0 translate-x-10"
               }`}
             >
-              <h2
-                className="text-4xl md:text-5xl font-serif font-bold mb-8"
-                style={{ color: "#EDDBC3" }}
-              >
+              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8 text-light-beige">
                 Para el paladar sofisticado
               </h2>
 
-              <p
-                className="text-xl font-sans leading-relaxed mb-8"
-                style={{ color: "#EDDBC3" }}
-              >
+              <p className="text-xl font-sans leading-relaxed mb-8 text-light-beige">
                 Hecho para quienes saben disfrutar lo bueno de la vida. Nuestro
                 gelato no es solo un postre: es un antojo que combina calidad,
                 autenticidad y ese toque especial que te hace volver por más.
               </p>
 
               <div className="space-y-4">
-                {[
-                  {
-                    color: "bg-ochre",
-                    text: "Sabores pensados para paladares curiosos",
-                  },
-                  {
-                    color: "bg-light-beige",
-                    text: "Ingredientes de primera y combinaciones únicas",
-                  },
-                  {
-                    color: "bg-wine-red",
-                    text: "Una experiencia que se siente tan bien como sabe",
-                  },
-                ].map((item, index) => (
+                {lifestyleCopy.map((item, index) => (
                   <div
                     key={item.text}
                     className={`flex items-center gap-4 transition-all duration-500 hover:translate-x-2 ${
@@ -323,7 +317,7 @@ export default function MacarenaGelateria() {
           </div>
 
           <h2
-            className={`text-5xl md:text-8xl font-serif font-bold mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
+            className={`text-5xl md:text-8xl font-serif font-bold tracking-[2.5px] mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
               isVisible.cta
                 ? "animate-scale-up opacity-100"
                 : "opacity-0 scale-95"
