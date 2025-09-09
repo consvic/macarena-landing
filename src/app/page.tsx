@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const lifestyleCopy = [
@@ -185,24 +184,21 @@ export default function MacarenaGelateria() {
                   : "opacity-0 translate-y-10"
               }`}
             >
-              <Badge
-                variant="outline"
-                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300 border-ochre text-ochre"
-              >
-                Calidad sobre cantidad
-              </Badge>
-              <Badge
-                variant="outline"
-                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300 border-terracotta text-terracotta"
-              >
-                Tradición italiana
-              </Badge>
-              <Badge
-                variant="outline"
-                className="bg-white/64 px-6 py-2 text-lg border-2 hover:scale-105 transition-transform duration-300 text-wine-red border-wine-red"
-              >
-                Esencia mexicana
-              </Badge>
+              <div className="relative bg-gradient-to-r from-ochre/20 to-ochre/10 px-6 py-3 rounded-lg border-l-4 border-ochre shadow-sm">
+                <span className="text-lg font-medium text-ochre">
+                  Calidad sobre cantidad
+                </span>
+              </div>
+              <div className="relative bg-gradient-to-r from-terracotta/20 to-terracotta/10 px-6 py-3 rounded-lg border-l-4 border-terracotta shadow-sm">
+                <span className="text-lg font-medium text-terracotta">
+                  Tradición italiana
+                </span>
+              </div>
+              <div className="relative bg-gradient-to-r from-wine-red/20 to-wine-red/10 px-6 py-3 rounded-lg border-l-4 border-wine-red shadow-sm">
+                <span className="text-lg font-medium text-wine-red">
+                  Esencia mexicana
+                </span>
+              </div>
             </div>
           </div>
         </div>
