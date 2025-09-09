@@ -327,7 +327,7 @@ export default function MacarenaGelateria() {
               isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
             }`}
           >
-            Síguenos en redes sociales para ser el primero en experimentar
+            Síguenos en redes sociales para ser la primera persona en experimentar
             Macarena Gelateria.
           </p>
 
