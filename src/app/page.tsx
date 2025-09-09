@@ -327,7 +327,7 @@ export default function MacarenaGelateria() {
               isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
             }`}
           >
-            Síguenos en redes sociales para ser el primero en experimentar
+            Síguenos en redes sociales para ser la primera persona en experimentar
             Macarena Gelateria.
           </p>
 
@@ -345,7 +345,7 @@ export default function MacarenaGelateria() {
               rel="noopener noreferrer"
               className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-royal-blue text-center"
             >
-              Siguenos en Instagram
+              Síguenos en Instagram
             </a>
           </div>
         </div>
