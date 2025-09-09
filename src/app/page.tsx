@@ -102,16 +102,17 @@ export default function MacarenaGelateria() {
             esencia mexicana.
           </p>
 
-          <Button
-            size="lg"
-            className="px-12 py-6 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-xl hover:shadow-white/20 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 animate-fade-in-delay-2 hover:border-opacity-80 active:border-opacity-100 border-light-beige text-light-beige"
+          <a
+            href="#philosophy"
+            className="inline-block px-10 py-2 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-xl hover:shadow-white/20 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 animate-fade-in-delay-2 hover:border-opacity-80 active:border-opacity-100 border-light-beige text-light-beige text-center"
           >
             Descubre más
-          </Button>
+          </a>
         </div>
       </section>
 
       <section
+        id="philosophy"
         className="py-24 relative overflow-hidden bg-cream-white"
         data-section="philosophy"
         style={{
@@ -339,6 +340,7 @@ export default function MacarenaGelateria() {
             }`}
           >
             <a
+              id="instagram-link"
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
