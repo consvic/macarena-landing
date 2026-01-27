@@ -313,13 +313,13 @@ export default function MacarenaGelateria() {
           </div>
 
           <h2
-            className={`text-5xl md:text-8xl font-serif font-bold tracking-[2.5px] mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
+            className={`text-4xl md:text-7xl font-serif font-bold tracking-[2.5px] mb-4 md:mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
               isVisible.cta
                 ? "animate-scale-up opacity-100"
                 : "opacity-0 scale-95"
             }`}
           >
-            Ya está aquí
+            La espera ha terminado
           </h2>
 
           <p
@@ -327,7 +327,8 @@ export default function MacarenaGelateria() {
               isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
             }`}
           >
-            Síguenos en redes sociales para enterarte de nuestras novedades.
+            Síguenos en redes sociales para enterarte de nuestras novedades y
+            sabores.
           </p>
 
           <div
