@@ -60,7 +60,7 @@ export default function GelatoMenuPage() {
         </div>
       </header>
 
-      <section className="relative overflow-hidden bg-royal-blue pt-24 text-light-beige">
+      <section className="relative overflow-hidden bg-royal-blue pt-24 mt-[81px] text-light-beige">
         <div className="absolute -left-24 top-8 h-56 w-56 rounded-full bg-terracotta/40 blur-3xl" />
         <div className="absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-ochre/40 blur-3xl" />
         <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between">
