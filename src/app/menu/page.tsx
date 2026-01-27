@@ -31,7 +31,7 @@ export default function GelatoMenuPage() {
 
   return (
     <div className="min-h-screen bg-cream-white text-oxford-black">
-      <header className="border-b border-ochre/20 bg-white/80 backdrop-blur">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-ochre/20 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-royal-blue font-serif text-lg text-light-beige">
@@ -60,7 +60,7 @@ export default function GelatoMenuPage() {
         </div>
       </header>
 
-      <section className="relative overflow-hidden bg-royal-blue text-light-beige">
+      <section className="relative overflow-hidden bg-royal-blue pt-24 text-light-beige">
         <div className="absolute -left-24 top-8 h-56 w-56 rounded-full bg-terracotta/40 blur-3xl" />
         <div className="absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-ochre/40 blur-3xl" />
         <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between">
@@ -136,7 +136,7 @@ export default function GelatoMenuPage() {
               onChange={(event) => setSearchQuery(event.target.value)}
               className="w-full rounded-full border border-ochre/30 bg-white px-4 py-3 text-sm text-oxford-black shadow-sm outline-none transition focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20"
             />
-            <div className="rounded-full border border-royal-blue/30 px-4 py-2 text-sm text-royal-blue">
+            <div className="min-w-[118px] text-center rounded-full border border-royal-blue/30 px-4 py-2 text-sm text-royal-blue">
               <span className="font-numeric">{filteredFlavors.length}</span>{" "}
               sabores
             </div>
@@ -212,8 +212,9 @@ export default function GelatoMenuPage() {
                   <span>{flavor.allergens}</span>
                   <button
                     type="button"
-                    className="rounded-full border border-royal-blue/30 px-4 py-2 text-royal-blue"
+                    className="rounded-full border border-royal-blue/20 px-4 py-2 text-royal-blue/40 cursor-not-allowed opacity-70"
                     aria-disabled="true"
+                    disabled
                   >
                     Agregar
                   </button>
