@@ -319,7 +319,7 @@ export default function MacarenaGelateria() {
                 : "opacity-0 scale-95"
             }`}
           >
-            Próximamente
+            Ya está aquí
           </h2>
 
           <p
@@ -327,8 +327,7 @@ export default function MacarenaGelateria() {
               isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
             }`}
           >
-            Síguenos en redes sociales para ser la primera persona en experimentar
-            Macarena Gelateria.
+            Síguenos en redes sociales para enterarte de nuestras novedades.
           </p>
 
           <div
