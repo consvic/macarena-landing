@@ -1,6 +1,7 @@
-import type React from "react";
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import type React from "react";
 import "./globals.css";
 
 const eymenPro = localFont({
@@ -36,6 +37,12 @@ const cocoGothic = localFont({
   variable: "--font-coco",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
 export const metadata: Metadata = {
   title: "Macarena Gelateria - Gelato Italiano Premium en México",
   description:
@@ -50,7 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${eymenPro.variable} ${cocoGothic.variable} antialiased`}
+      className={`${eymenPro.variable} ${cocoGothic.variable} ${inter.variable} antialiased`}
     >
       <body>{children}</body>
     </html>
