@@ -155,8 +155,6 @@ export default function GelatoMenuPage() {
                 <div className="absolute right-5 top-5 rounded-full bg-white/70 px-3 py-1 text-xs text-royal-blue">
                   {flavor.base}
                 </div>
-                <div className="absolute -bottom-10 left-6 h-24 w-24 rounded-full bg-white/70 shadow-lg" />
-                <div className="absolute -bottom-6 left-10 h-16 w-16 rounded-full bg-white shadow" />
               </div>
 
               <div className="space-y-4 p-6">
