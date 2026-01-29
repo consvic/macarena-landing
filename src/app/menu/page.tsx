@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { NumericNoteText } from "@/components/NumericNoteText";
 import flavors from "@/lib/flavors.json";
 
 export default function GelatoMenuPage() {
@@ -72,18 +73,20 @@ export default function GelatoMenuPage() {
               Gelato artesanal con alma mexicana
             </h1>
             <p className="mt-4 text-base font-sans leading-relaxed text-light-beige/80">
-              Una seleccion curada de sabores clasicos, firmados y sorbetes
+              Una selección curada de sabores clásicos, modernos y sorbetes
               frescos. Por ahora el menu es solo visual.
             </p>
           </div>
           <div className="w-full max-w-sm rounded-3xl border border-light-beige/20 bg-white/10 p-6 backdrop-blur">
             <p className="text-sm uppercase tracking-[0.3em] text-light-beige/60">
-              Informacion
+              Información
             </p>
             <div className="mt-4 space-y-3 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-light-beige/70">Porcion</span>
-                <span className="font-medium font-numeric">120 ml</span>
+                <span className="text-light-beige/70">Porción</span>
+                <span className="font-medium font-numeric">
+                  500 ml / 1 litro
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-light-beige/70">Tiempo ideal</span>
@@ -91,12 +94,12 @@ export default function GelatoMenuPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-light-beige/70">Disponibilidad</span>
-                <span className="font-medium">Diaria</span>
+                <span className="font-medium">Semanal</span>
               </div>
             </div>
             <div className="mt-6 rounded-2xl border border-light-beige/30 px-4 py-3 text-xs text-light-beige/70">
-              Todos los sabores se preparan en lotes pequenos para mantener la
-              textura cremosa y el perfil aromatico.
+              Todos los sabores se preparan en lotes pequeños para mantener la
+              textura cremosa y el perfil aromático.
             </div>
           </div>
         </div>
@@ -109,8 +112,7 @@ export default function GelatoMenuPage() {
               Sabores disponibles
             </h2>
             <p className="mt-2 max-w-xl text-sm text-oxford-black/70">
-              Usa el buscador para encontrar sabores rapidamente. El menu es
-              solo de lectura por ahora.
+              Usa el buscador para encontrar sabores rápidamente.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
@@ -198,11 +200,9 @@ export default function GelatoMenuPage() {
                     {flavor.notes.map((note) => (
                       <span
                         key={note}
-                        className={`rounded-full border border-ochre/30 px-2 py-1 ${
-                          /\\d/.test(note) ? "font-numeric" : ""
-                        }`}
+                        className="rounded-full border border-ochre/30 px-2 py-1"
                       >
-                        {note}
+                        <NumericNoteText text={note} />
                       </span>
                     ))}
                   </div>
