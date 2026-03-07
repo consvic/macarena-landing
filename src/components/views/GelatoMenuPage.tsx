@@ -104,7 +104,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
               <p className="text-sm uppercase tracking-[0.3em] text-light-beige/85">
                 Informacion
               </p>
-              <div className="mt-4 space-y-3 text-sm">
+              <div className="mt-4 flex flex-col gap-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-light-beige/85">Presentaciones</span>
                   <span className="font-medium font-numeric">
@@ -178,10 +178,10 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
               return (
                 <article
                   key={flavor.name}
-                  className="group relative overflow-hidden rounded-3xl border border-ochre/20 bg-white"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ochre/20 bg-white"
                 >
                   <div
-                    className={`relative h-44 bg-gradient-to-br ${flavor.gradient}`}
+                    className={`relative min-h-52 h-52 md:min-h-56 md:h-56 bg-gradient-to-br ${flavor.gradient}`}
                   >
                     <div
                       className="absolute inset-0 bg-cover bg-center opacity-35"
@@ -192,7 +192,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                     </div>
                   </div>
 
-                  <div className="space-y-4 p-6">
+                  <div className="flex flex-col gap-4 p-6 h-full">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-xs uppercase tracking-[0.25em] text-ochre">
@@ -238,7 +238,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                       ))}
                     </div>
 
-                    <div className="space-y-3 pt-2 text-xs text-oxford-black/60">
+                    <div className="mt-auto flex flex-col gap-3 pt-2 text-xs text-oxford-black/60">
                       <div className="grid grid-cols-[1fr_auto] gap-3">
                         <Select
                           value={selectedPresentation}
