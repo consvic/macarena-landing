@@ -26,25 +26,27 @@ Each flavor must include:
 - `notes` (string array)
 - `allergens`
 - `gradient`
+- `coverImage` (string path, for example `/flavor-images/mango-maracuya.PNG`)
 
 Example:
 
 ```json
 [
   {
-    "name": "Pistacho de Bronte",
-    "description": "Pistacho siciliano tostado, crema ligera y un final salino elegante.",
-    "category": "Firmas",
-    "base": "Crema",
+    "name": "Mango Maracuya",
+    "description": "Sorbet tropical de mango maduro y maracuya, con acidez vibrante y final jugoso.",
+    "category": "Temporada Primavera",
+    "base": "Agua",
     "intensity": "Alta",
-    "tags": ["Nutty", "Heritage"],
+    "tags": ["Tropical", "Frutal", "Primavera"],
     "price": {
-      "halfLiter": 95,
-      "liter": 190
+      "halfLiter": 150,
+      "liter": 280
     },
-    "notes": ["Pistacho DOP", "Sal de mar"],
-    "allergens": "Lacteos, frutos secos",
-    "gradient": "from-ochre/20 via-light-beige/70 to-cream-white"
+    "notes": ["Mango ataulfo", "Pulpa de maracuya", "Refrescante"],
+    "allergens": "Sin lacteos. Puede contener trazas.",
+    "gradient": "from-ochre/45 via-terracotta/30 to-light-beige/80",
+    "coverImage": "/flavor-images/mango-maracuya.PNG"
   }
 ]
 ```

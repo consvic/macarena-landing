@@ -15,6 +15,7 @@ const flavorSchema = new Schema(
     notes: [{ type: String, required: true, trim: true }],
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },
+    coverImage: { type: String, required: true, trim: true },
   },
   {
     timestamps: true,

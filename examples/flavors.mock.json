@@ -1,38 +1,130 @@
 [
   {
-    "_id": "67cb2a6d6f8f7b2c34a6e901",
-    "name": "Pistacho de Bronte",
-    "description": "Pistacho siciliano tostado, crema ligera y un final salino elegante.",
-    "category": "Firmas",
-    "base": "Crema",
+    "name": "Mango Maracuya",
+    "description": "Sorbet tropical de mango maduro y maracuya, con acidez vibrante y final jugoso.",
+    "category": "Temporada Primavera",
+    "base": "Agua",
     "intensity": "Alta",
-    "tags": ["Nutty", "Heritage"],
+    "tags": ["Tropical", "Frutal", "Primavera"],
     "price": {
-      "halfLiter": 95,
-      "liter": 190
+      "halfLiter": 150,
+      "liter": 280
     },
-    "notes": ["Pistacho DOP", "Sal de mar"],
-    "allergens": "Lacteos, frutos secos",
-    "gradient": "from-ochre/20 via-light-beige/70 to-cream-white",
-    "createdAt": "2026-03-07T10:00:00.000Z",
-    "updatedAt": "2026-03-07T10:00:00.000Z"
+    "notes": ["Mango ataulfo", "Pulpa de maracuya", "Refrescante"],
+    "allergens": "Sin lacteos. Puede contener trazas.",
+    "gradient": "from-ochre/45 via-terracotta/30 to-light-beige/80",
+    "coverImage": "/flavor-images/mango-maracuya.PNG"
   },
   {
-    "_id": "67cb2a6d6f8f7b2c34a6e902",
-    "name": "Limon & Albahaca",
-    "description": "Sorbet de limon con albahaca fresca y final herbal.",
-    "category": "Sorbetes",
+    "name": "Frutos Rojos",
+    "description": "Mezcla de fresa, frambuesa y mora con perfil aromatico intenso y textura ligera.",
+    "category": "Temporada Primavera",
     "base": "Agua",
-    "intensity": "Ligera",
-    "tags": ["Citrus", "Herbal"],
+    "intensity": "Media",
+    "tags": ["Berry", "Frutal", "Primavera"],
     "price": {
-      "halfLiter": 76,
-      "liter": 152
+      "halfLiter": 150,
+      "liter": 280
     },
-    "notes": ["Sin lacteos", "Refrescante"],
-    "allergens": "Puede contener trazas",
-    "gradient": "from-cream-white via-light-beige/80 to-cream-white",
-    "createdAt": "2026-03-07T10:00:00.000Z",
-    "updatedAt": "2026-03-07T10:00:00.000Z"
+    "notes": ["Fresa", "Frambuesa", "Mora"],
+    "allergens": "Sin lacteos. Puede contener trazas.",
+    "gradient": "from-wine-red/45 via-terracotta/20 to-light-beige/85",
+    "coverImage": "/flavor-images/frutos-rojos.PNG"
+  },
+  {
+    "name": "Coco",
+    "description": "Gelato cremoso de coco natural con perfil suave, dulce balanceado y final limpio.",
+    "category": "Temporada Primavera",
+    "base": "Crema",
+    "intensity": "Media",
+    "tags": ["Cremoso", "Tropical", "Primavera"],
+    "price": {
+      "halfLiter": 150,
+      "liter": 280
+    },
+    "notes": ["Leche de coco", "Coco rallado", "Textura sedosa"],
+    "allergens": "Lacteos.",
+    "gradient": "from-cream-white via-light-beige/85 to-ochre/20",
+    "coverImage": "/flavor-images/coco.PNG"
+  },
+  {
+    "name": "Limon Menta",
+    "description": "Sorbet citrico de limon con menta fresca, muy aromatico y de final herbal.",
+    "category": "Temporada Primavera",
+    "base": "Agua",
+    "intensity": "Alta",
+    "tags": ["Citrico", "Herbal", "Primavera"],
+    "price": {
+      "halfLiter": 150,
+      "liter": 280
+    },
+    "notes": ["Limon amarillo", "Hojas de menta", "Refrescante"],
+    "allergens": "Sin lacteos. Puede contener trazas.",
+    "gradient": "from-royal-blue/15 via-light-beige/70 to-ochre/35",
+    "coverImage": "/flavor-images/limon-menta.PNG"
+  },
+  {
+    "name": "Galleta Lotus",
+    "description": "Gelato de crema con notas especiadas de galleta caramelizada y final tostado.",
+    "category": "Irresistibles",
+    "base": "Crema",
+    "intensity": "Media",
+    "tags": ["Caramelo", "Galleta", "Especial"],
+    "price": {
+      "halfLiter": 150,
+      "liter": 280
+    },
+    "notes": ["Galleta Lotus", "Canela suave", "Toffee"],
+    "allergens": "Lacteos, gluten.",
+    "gradient": "from-terracotta/35 via-ochre/35 to-light-beige/80",
+    "coverImage": "/flavor-images/vainilla.jpg"
+  },
+  {
+    "name": "Nutella",
+    "description": "Gelato cremoso de cacao y avellana, intenso, untuoso y profundamente chocolatoso.",
+    "category": "Irresistibles",
+    "base": "Crema",
+    "intensity": "Alta",
+    "tags": ["Chocolate", "Avellana", "Signature"],
+    "price": {
+      "halfLiter": 150,
+      "liter": 280
+    },
+    "notes": ["Cacao", "Avellana tostada", "Textura densa"],
+    "allergens": "Lacteos, frutos secos.",
+    "gradient": "from-oxford-black/30 via-terracotta/35 to-ochre/25",
+    "coverImage": "/flavor-images/nutella.PNG"
+  },
+  {
+    "name": "Yogurt con Frutos Secos",
+    "description": "Gelato de yogurt natural con mezcla crocante de frutos secos y acidez delicada.",
+    "category": "Irresistibles",
+    "base": "Crema",
+    "intensity": "Media",
+    "tags": ["Yogurt", "Crocante", "Balanceado"],
+    "price": {
+      "halfLiter": 150,
+      "liter": 280
+    },
+    "notes": ["Yogurt natural", "Nuez", "Almendra"],
+    "allergens": "Lacteos, frutos secos.",
+    "gradient": "from-light-beige/90 via-cream-white to-ochre/20",
+    "coverImage": "/flavor-images/yogurt-frutos.PNG"
+  },
+  {
+    "name": "Vainilla",
+    "description": "Gelato clasico de vainilla con perfume natural, cremosidad alta y final elegante.",
+    "category": "Irresistibles",
+    "base": "Crema",
+    "intensity": "Ligera",
+    "tags": ["Clasico", "Aromatico", "Suave"],
+    "price": {
+      "halfLiter": 150,
+      "liter": 280
+    },
+    "notes": ["Vainilla natural", "Leche entera", "Acabado limpio"],
+    "allergens": "Lacteos.",
+    "gradient": "from-cream-white via-light-beige/90 to-royal-blue/10",
+    "coverImage": "/flavor-images/vainilla.jpg"
   }
 ]

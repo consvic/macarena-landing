@@ -22,5 +22,6 @@ export async function getFlavors(): Promise<Flavor[]> {
     notes: flavor.notes,
     allergens: flavor.allergens,
     gradient: flavor.gradient,
+    coverImage: flavor.coverImage,
   }));
 }

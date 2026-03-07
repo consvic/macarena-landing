@@ -43,6 +43,7 @@ const flavorSchema = new mongoose.Schema(
     notes: [{ type: String, required: true, trim: true }],
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },
+    coverImage: { type: String, required: true, trim: true },
   },
   {
     timestamps: true,
@@ -103,6 +104,10 @@ function normalizeFlavor(rawFlavor, index) {
     );
   }
 
+  if (!flavor.coverImage || typeof flavor.coverImage !== "string") {
+    throw new Error(`Flavor "${flavor.name}" must include coverImage`);
+  }
+
   return {
     name: flavor.name,
     description: String(flavor.description ?? ""),
@@ -118,6 +123,7 @@ function normalizeFlavor(rawFlavor, index) {
       : [],
     allergens: String(flavor.allergens ?? ""),
     gradient: String(flavor.gradient ?? ""),
+    coverImage: flavor.coverImage,
   };
 }
 
