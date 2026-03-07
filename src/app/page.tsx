@@ -23,6 +23,7 @@ const MENU_ENABLED = process.env.NEXT_PUBLIC_MENU_ENABLED === "true";
 
 export default function MacarenaGelateria() {
   const [scrollY, setScrollY] = useState(0);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isVisible, setIsVisible] = useState({
     differentiators: false,
     philosophy: false,
@@ -31,10 +32,39 @@ export default function MacarenaGelateria() {
   });
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+    return () => mediaQuery.removeEventListener("change", updatePreference);
   }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    let frameId = 0;
+    const handleScroll = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+        frameId = 0;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,7 +90,7 @@ export default function MacarenaGelateria() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-white">
       {/* Hero Section with Falling Ice Cream Animation */}
       <section className="relative min-h-screen flex items-center justify-center bg-royal-blue">
         <div className="absolute inset-0 overflow-hidden">
@@ -72,11 +102,14 @@ export default function MacarenaGelateria() {
             height={600}
             className="absolute transition-transform duration-300 ease-out"
             style={{
-              bottom: `${Math.max(-600, scrollY * 0.8 - 400)}px`,
+              bottom: `${Math.max(-600, (prefersReducedMotion ? 0 : scrollY) * 0.8 - 400)}px`,
               right: "-12%",
-              transform: `rotate(${-scrollY * 0.05}deg)`,
+              transform: `rotate(${prefersReducedMotion ? 0 : -scrollY * 0.05}deg)`,
               filter: "drop-shadow(0 30px 60px hsla(0, 0%, 0%, 0.3))",
-              opacity: Math.max(0.1, 1 - scrollY / 800),
+              opacity: prefersReducedMotion
+                ? 1
+                : Math.max(0.1, 1 - scrollY / 800),
+              willChange: prefersReducedMotion ? "auto" : "transform, opacity",
             }}
           />
         </div>
@@ -122,7 +155,7 @@ export default function MacarenaGelateria() {
           backgroundSize: "120px 120px",
           backgroundRepeat: "repeat",
           backgroundPosition: "0 0",
-          backgroundAttachment: "fixed",
+          backgroundAttachment: "scroll",
         }}
       >
         {/* Overlay to soften the pattern */}
@@ -361,6 +394,6 @@ export default function MacarenaGelateria() {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

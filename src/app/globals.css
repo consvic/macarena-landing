@@ -7,8 +7,8 @@
   --font-serif: var(--font-eymen);
   --font-sans: var(--font-coco);
   --font-mono:
-    ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+    ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -263,7 +263,28 @@
   html {
     scroll-behavior: smooth;
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-in,
+  .animate-fade-in-delay,
+  .animate-fade-in-delay-2,
+  .animate-slide-up,
+  .animate-slide-up-delay,
+  .animate-slide-left,
+  .animate-slide-right,
+  .animate-scale-up,
+  .animate-float,
+  .animate-float-delay,
+  .animate-float-delay-2 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .font-numeric {

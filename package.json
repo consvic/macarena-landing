@@ -10,13 +10,18 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
+    "@react-email/components": "^1.0.8",
+    "@react-email/render": "^2.0.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.541.0",
+    "mongoose": "^9.2.4",
     "next": "15.5.7",
     "react": "19.1.2",
     "react-dom": "19.1.2",
+    "resend": "^6.9.3",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
