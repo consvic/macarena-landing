@@ -1,5 +1,6 @@
 "use client";
 
+import { Leaf } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { CartNavButton } from "@/components/cart/CartNavButton";
@@ -11,7 +12,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { formatMXN, resolveFlavorPrice } from "@/lib/pricing";
 import {
@@ -43,7 +43,6 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
         flavor.category,
         flavor.base,
         ...flavor.tags,
-        ...flavor.notes,
       ]
         .join(" ")
         .toLowerCase();
@@ -172,6 +171,9 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                 flavor.price,
                 selectedPresentation,
               );
+              const isVeganFlavor = flavor.allergens
+                .toLowerCase()
+                .includes("sin lacteos");
 
               return (
                 <article
@@ -179,7 +181,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                   className="group relative overflow-hidden rounded-3xl border border-ochre/20 bg-white"
                 >
                   <div
-                    className={`relative h-36 bg-gradient-to-br ${flavor.gradient}`}
+                    className={`relative h-44 bg-gradient-to-br ${flavor.gradient}`}
                   >
                     <div
                       className="absolute inset-0 bg-cover bg-center opacity-35"
@@ -196,9 +198,25 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                         <p className="text-xs uppercase tracking-[0.25em] text-ochre">
                           {flavor.category}
                         </p>
-                        <h3 className="mt-2 text-xl font-serif text-royal-blue">
-                          {flavor.name}
-                        </h3>
+                        <div className="mt-2 flex items-center gap-1.5">
+                          <h3 className="text-2xl font-serif text-royal-blue">
+                            {flavor.name}
+                          </h3>
+                          {isVeganFlavor ? (
+                            <div className="relative inline-flex items-center">
+                              <button
+                                type="button"
+                                aria-label={`Sabor vegano: ${flavor.name}`}
+                                className="group/vegan inline-flex text-royal-blue"
+                              >
+                                <Leaf className="size-3.5" />
+                                <span className="pointer-events-none absolute top-full left-1/2 z-10 mt-2 w-52 -translate-x-1/2 rounded-md border border-ochre/20 bg-white/40 px-2 py-1 text-left text-[11px] text-oxford-black opacity-0 shadow-sm backdrop-blur-[6px] transition-opacity group-hover/vegan:opacity-100 group-focus-visible/vegan:opacity-100">
+                                  {flavor.allergens}
+                                </span>
+                              </button>
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
                       <span className="rounded-full border border-royal-blue/20 px-3 py-1 text-sm text-royal-blue font-numeric">
                         {formatMXN(itemPrice)}
@@ -220,27 +238,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                       ))}
                     </div>
 
-                    <div className="rounded-2xl border border-ochre/10 bg-cream-white/70 p-4 text-xs text-oxford-black/70">
-                      <div className="flex items-center justify-between">
-                        <span>Intensidad</span>
-                        <span className="font-medium text-royal-blue">
-                          {flavor.intensity}
-                        </span>
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {flavor.notes.map((note) => (
-                          <span
-                            key={note}
-                            className="rounded-full border border-ochre/30 px-2 py-1"
-                          >
-                            <NumericNoteText text={note} />
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 text-xs text-oxford-black/60">
-                      <span>{flavor.allergens}</span>
+                    <div className="space-y-3 pt-2 text-xs text-oxford-black/60">
                       <div className="grid grid-cols-[1fr_auto] gap-3">
                         <Select
                           value={selectedPresentation}
@@ -255,12 +253,14 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                             aria-label={`Seleccionar presentacion para ${flavor.name}`}
                             className="h-11 rounded-full border-royal-blue/20 text-sm text-royal-blue"
                           >
-                            <SelectValue placeholder="Selecciona" />
+                            <span className="truncate">
+                              <NumericNoteText text={selectedPresentation} />
+                            </span>
                           </SelectTrigger>
                           <SelectContent>
                             {PRESENTATION_OPTIONS.map((option) => (
                               <SelectItem key={option} value={option}>
-                                {option}
+                                <NumericNoteText text={option} />
                               </SelectItem>
                             ))}
                           </SelectContent>

@@ -19,11 +19,9 @@ Each flavor must include:
 - `description`
 - `category`
 - `base`
-- `intensity`
 - `tags` (string array)
 - `price.halfLiter` (number)
 - `price.liter` (number)
-- `notes` (string array)
 - `allergens`
 - `gradient`
 - `coverImage` (string path, for example `/flavor-images/mango-maracuya.PNG`)
@@ -37,13 +35,11 @@ Example:
     "description": "Sorbet tropical de mango maduro y maracuya, con acidez vibrante y final jugoso.",
     "category": "Temporada Primavera",
     "base": "Agua",
-    "intensity": "Alta",
     "tags": ["Tropical", "Frutal", "Primavera"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Mango ataulfo", "Pulpa de maracuya", "Refrescante"],
     "allergens": "Sin lacteos. Puede contener trazas.",
     "gradient": "from-ochre/45 via-terracotta/30 to-light-beige/80",
     "coverImage": "/flavor-images/mango-maracuya.PNG"

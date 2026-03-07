@@ -4,13 +4,11 @@
     "description": "Sorbet tropical de mango maduro y maracuya, con acidez vibrante y final jugoso.",
     "category": "Temporada Primavera",
     "base": "Agua",
-    "intensity": "Alta",
     "tags": ["Tropical", "Frutal", "Primavera"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Mango ataulfo", "Pulpa de maracuya", "Refrescante"],
     "allergens": "Sin lacteos. Puede contener trazas.",
     "gradient": "from-ochre/45 via-terracotta/30 to-light-beige/80",
     "coverImage": "/flavor-images/mango-maracuya.PNG"
@@ -20,13 +18,11 @@
     "description": "Mezcla de fresa, frambuesa y mora con perfil aromatico intenso y textura ligera.",
     "category": "Temporada Primavera",
     "base": "Agua",
-    "intensity": "Media",
     "tags": ["Berry", "Frutal", "Primavera"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Fresa", "Frambuesa", "Mora"],
     "allergens": "Sin lacteos. Puede contener trazas.",
     "gradient": "from-wine-red/45 via-terracotta/20 to-light-beige/85",
     "coverImage": "/flavor-images/frutos-rojos.PNG"
@@ -36,13 +32,11 @@
     "description": "Gelato cremoso de coco natural con perfil suave, dulce balanceado y final limpio.",
     "category": "Temporada Primavera",
     "base": "Crema",
-    "intensity": "Media",
     "tags": ["Cremoso", "Tropical", "Primavera"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Leche de coco", "Coco rallado", "Textura sedosa"],
     "allergens": "Lacteos.",
     "gradient": "from-cream-white via-light-beige/85 to-ochre/20",
     "coverImage": "/flavor-images/coco.PNG"
@@ -52,13 +46,11 @@
     "description": "Sorbet citrico de limon con menta fresca, muy aromatico y de final herbal.",
     "category": "Temporada Primavera",
     "base": "Agua",
-    "intensity": "Alta",
     "tags": ["Citrico", "Herbal", "Primavera"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Limon amarillo", "Hojas de menta", "Refrescante"],
     "allergens": "Sin lacteos. Puede contener trazas.",
     "gradient": "from-royal-blue/15 via-light-beige/70 to-ochre/35",
     "coverImage": "/flavor-images/limon-menta.PNG"
@@ -68,13 +60,11 @@
     "description": "Gelato de crema con notas especiadas de galleta caramelizada y final tostado.",
     "category": "Irresistibles",
     "base": "Crema",
-    "intensity": "Media",
     "tags": ["Caramelo", "Galleta", "Especial"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Galleta Lotus", "Canela suave", "Toffee"],
     "allergens": "Lacteos, gluten.",
     "gradient": "from-terracotta/35 via-ochre/35 to-light-beige/80",
     "coverImage": "/flavor-images/vainilla.jpg"
@@ -84,13 +74,11 @@
     "description": "Gelato cremoso de cacao y avellana, intenso, untuoso y profundamente chocolatoso.",
     "category": "Irresistibles",
     "base": "Crema",
-    "intensity": "Alta",
     "tags": ["Chocolate", "Avellana", "Signature"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Cacao", "Avellana tostada", "Textura densa"],
     "allergens": "Lacteos, frutos secos.",
     "gradient": "from-oxford-black/30 via-terracotta/35 to-ochre/25",
     "coverImage": "/flavor-images/nutella.PNG"
@@ -100,13 +88,11 @@
     "description": "Gelato de yogurt natural con mezcla crocante de frutos secos y acidez delicada.",
     "category": "Irresistibles",
     "base": "Crema",
-    "intensity": "Media",
     "tags": ["Yogurt", "Crocante", "Balanceado"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Yogurt natural", "Nuez", "Almendra"],
     "allergens": "Lacteos, frutos secos.",
     "gradient": "from-light-beige/90 via-cream-white to-ochre/20",
     "coverImage": "/flavor-images/yogurt-frutos.PNG"
@@ -116,13 +102,11 @@
     "description": "Gelato clasico de vainilla con perfume natural, cremosidad alta y final elegante.",
     "category": "Irresistibles",
     "base": "Crema",
-    "intensity": "Ligera",
     "tags": ["Clasico", "Aromatico", "Suave"],
     "price": {
       "halfLiter": 150,
       "liter": 280
     },
-    "notes": ["Vainilla natural", "Leche entera", "Acabado limpio"],
     "allergens": "Lacteos.",
     "gradient": "from-cream-white via-light-beige/90 to-royal-blue/10",
     "coverImage": "/flavor-images/vainilla.jpg"

@@ -9,10 +9,8 @@ export type Flavor = {
   description: string;
   category: string;
   base: string;
-  intensity: string;
   tags: string[];
   price: PriceByPresentation;
-  notes: string[];
   allergens: string;
   gradient: string;
   coverImage: string;

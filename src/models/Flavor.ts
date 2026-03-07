@@ -6,13 +6,11 @@ const flavorSchema = new Schema(
     description: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
     base: { type: String, required: true, trim: true },
-    intensity: { type: String, required: true, trim: true },
     tags: [{ type: String, required: true, trim: true }],
     price: {
       halfLiter: { type: Number, required: true, min: 0 },
       liter: { type: Number, required: true, min: 0 },
     },
-    notes: [{ type: String, required: true, trim: true }],
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },
     coverImage: { type: String, required: true, trim: true },
