@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
+import { getFlavors } from "@/lib/flavors/getFlavors";
 import { FlavorModel } from "@/models/Flavor";
 
 export async function GET() {
-  await connectToDatabase();
-
-  const flavors = await FlavorModel.find().sort({ createdAt: -1 }).lean();
+  const flavors = await getFlavors();
   return NextResponse.json(flavors);
 }
 

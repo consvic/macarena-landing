@@ -1,6 +1,10 @@
 import type { PresentationOption } from "@/lib/types";
 
-export function parsePrice(price: string) {
+export function parsePrice(price: string | number) {
+  if (typeof price === "number") {
+    return price;
+  }
+
   const normalized = Number.parseFloat(price.replace(/[^\d.]/g, ""));
   return Number.isNaN(normalized) ? 0 : normalized;
 }

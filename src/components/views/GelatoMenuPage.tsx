@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CartNavButton } from "@/components/cart/CartNavButton";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
@@ -13,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import flavorsRaw from "@/lib/flavors.json";
 import { formatMXN, parsePrice, presentationMultiplier } from "@/lib/pricing";
 import {
   type Flavor,
@@ -21,15 +20,17 @@ import {
   type PresentationOption,
 } from "@/lib/types";
 
-const flavors = flavorsRaw as Flavor[];
+type GelatoMenuPageProps = {
+  flavors: Flavor[];
+};
 
-export default function GelatoMenuPage() {
+export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPresentationByFlavor, setSelectedPresentationByFlavor] =
     useState<Record<string, PresentationOption>>({});
   const { addItem } = useCart();
 
-  const filteredFlavors = useMemo(() => {
+  const filteredFlavors = (() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) {
       return flavors;
@@ -49,7 +50,7 @@ export default function GelatoMenuPage() {
 
       return haystack.includes(query);
     });
-  }, [searchQuery]);
+  })();
 
   const resolvePresentation = (flavorName: string): PresentationOption => {
     return selectedPresentationByFlavor[flavorName] ?? "1/2 litro";

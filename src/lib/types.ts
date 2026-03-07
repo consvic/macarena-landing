@@ -6,7 +6,7 @@ export type Flavor = {
   base: string;
   intensity: string;
   tags: string[];
-  price: string;
+  price: number | string;
   notes: string[];
   allergens: string;
   gradient: string;
