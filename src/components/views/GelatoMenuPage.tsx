@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatMXN, parsePrice, presentationMultiplier } from "@/lib/pricing";
+import { formatMXN, resolveFlavorPrice } from "@/lib/pricing";
 import {
   type Flavor,
   PRESENTATION_OPTIONS,
@@ -168,9 +168,10 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredFlavors.map((flavor) => {
               const selectedPresentation = resolvePresentation(flavor.name);
-              const itemPrice =
-                parsePrice(flavor.price) *
-                presentationMultiplier(selectedPresentation);
+              const itemPrice = resolveFlavorPrice(
+                flavor.price,
+                selectedPresentation,
+              );
 
               return (
                 <article

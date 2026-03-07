@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "67cb2a6d6f8f7b2c34a6e901",
+    "name": "Pistacho de Bronte",
+    "description": "Pistacho siciliano tostado, crema ligera y un final salino elegante.",
+    "category": "Firmas",
+    "base": "Crema",
+    "intensity": "Alta",
+    "tags": ["Nutty", "Heritage"],
+    "price": {
+      "halfLiter": 95,
+      "liter": 190
+    },
+    "notes": ["Pistacho DOP", "Sal de mar"],
+    "allergens": "Lacteos, frutos secos",
+    "gradient": "from-ochre/20 via-light-beige/70 to-cream-white",
+    "createdAt": "2026-03-07T10:00:00.000Z",
+    "updatedAt": "2026-03-07T10:00:00.000Z"
+  },
+  {
+    "_id": "67cb2a6d6f8f7b2c34a6e902",
+    "name": "Limon & Albahaca",
+    "description": "Sorbet de limon con albahaca fresca y final herbal.",
+    "category": "Sorbetes",
+    "base": "Agua",
+    "intensity": "Ligera",
+    "tags": ["Citrus", "Herbal"],
+    "price": {
+      "halfLiter": 76,
+      "liter": 152
+    },
+    "notes": ["Sin lacteos", "Refrescante"],
+    "allergens": "Puede contener trazas",
+    "gradient": "from-cream-white via-light-beige/80 to-cream-white",
+    "createdAt": "2026-03-07T10:00:00.000Z",
+    "updatedAt": "2026-03-07T10:00:00.000Z"
+  }
+]

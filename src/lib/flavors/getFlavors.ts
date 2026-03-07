@@ -15,7 +15,10 @@ export async function getFlavors(): Promise<Flavor[]> {
     base: flavor.base,
     intensity: flavor.intensity,
     tags: flavor.tags,
-    price: flavor.price,
+    price: {
+      halfLiter: flavor.price.halfLiter,
+      liter: flavor.price.liter,
+    },
     notes: flavor.notes,
     allergens: flavor.allergens,
     gradient: flavor.gradient,

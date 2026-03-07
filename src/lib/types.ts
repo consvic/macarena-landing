@@ -1,3 +1,8 @@
+export type PriceByPresentation = {
+  halfLiter: number;
+  liter: number;
+};
+
 export type Flavor = {
   _id?: string;
   name: string;
@@ -6,7 +11,7 @@ export type Flavor = {
   base: string;
   intensity: string;
   tags: string[];
-  price: number | string;
+  price: PriceByPresentation;
   notes: string[];
   allergens: string;
   gradient: string;

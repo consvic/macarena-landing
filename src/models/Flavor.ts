@@ -8,7 +8,10 @@ const flavorSchema = new Schema(
     base: { type: String, required: true, trim: true },
     intensity: { type: String, required: true, trim: true },
     tags: [{ type: String, required: true, trim: true }],
-    price: { type: Number, required: true, min: 0 },
+    price: {
+      halfLiter: { type: Number, required: true, min: 0 },
+      liter: { type: Number, required: true, min: 0 },
+    },
     notes: [{ type: String, required: true, trim: true }],
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },

@@ -1,16 +1,10 @@
-import type { PresentationOption } from "@/lib/types";
+import type { PresentationOption, PriceByPresentation } from "@/lib/types";
 
-export function parsePrice(price: string | number) {
-  if (typeof price === "number") {
-    return price;
-  }
-
-  const normalized = Number.parseFloat(price.replace(/[^\d.]/g, ""));
-  return Number.isNaN(normalized) ? 0 : normalized;
-}
-
-export function presentationMultiplier(option: PresentationOption) {
-  return option === "1 litro" ? 2 : 1;
+export function resolveFlavorPrice(
+  price: PriceByPresentation,
+  presentation: PresentationOption,
+) {
+  return presentation === "1 litro" ? price.liter : price.halfLiter;
 }
 
 export function formatMXN(amount: number) {

@@ -36,7 +36,10 @@ const flavorSchema = new mongoose.Schema(
     base: { type: String, required: true, trim: true },
     intensity: { type: String, required: true, trim: true },
     tags: [{ type: String, required: true, trim: true }],
-    price: { type: Number, required: true, min: 0 },
+    price: {
+      halfLiter: { type: Number, required: true, min: 0 },
+      liter: { type: Number, required: true, min: 0 },
+    },
     notes: [{ type: String, required: true, trim: true }],
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },
@@ -49,7 +52,7 @@ const flavorSchema = new mongoose.Schema(
 
 const Flavor = mongoose.models.Flavor || mongoose.model("Flavor", flavorSchema);
 
-function parsePrice(value) {
+function parseMoney(value) {
   if (typeof value === "number") {
     return value;
   }
@@ -62,20 +65,42 @@ function parsePrice(value) {
   return null;
 }
 
+function parsePriceByPresentation(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const candidate = value;
+  const halfLiterRaw = candidate.halfLiter;
+  const literRaw = candidate.liter;
+
+  const halfLiter = parseMoney(halfLiterRaw);
+  const liter = parseMoney(literRaw);
+
+  if (halfLiter === null || liter === null) {
+    return null;
+  }
+
+  return { halfLiter, liter };
+}
+
 function normalizeFlavor(rawFlavor, index) {
   if (!rawFlavor || typeof rawFlavor !== "object") {
     throw new Error(`Flavor at index ${index} is not an object`);
   }
 
   const flavor = rawFlavor;
-  const price = parsePrice(flavor.price);
 
   if (!flavor.name || typeof flavor.name !== "string") {
     throw new Error(`Flavor at index ${index} is missing a valid name`);
   }
 
-  if (price === null) {
-    throw new Error(`Flavor "${flavor.name}" has an invalid price`);
+  const price = parsePriceByPresentation(flavor.price);
+
+  if (!price) {
+    throw new Error(
+      `Flavor "${flavor.name}" must include price.halfLiter and price.liter`,
+    );
   }
 
   return {

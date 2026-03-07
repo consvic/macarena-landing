@@ -6,7 +6,10 @@
     "base": "Crema",
     "intensity": "Alta",
     "tags": ["Nutty", "Heritage"],
-    "price": "$95",
+    "price": {
+      "halfLiter": 95,
+      "liter": 190
+    },
     "notes": ["Pistacho DOP", "Sal de mar"],
     "allergens": "Lacteos, frutos secos",
     "gradient": "from-ochre/20 via-light-beige/70 to-cream-white"
@@ -18,7 +21,10 @@
     "base": "Crema",
     "intensity": "Media",
     "tags": ["Chocolate", "Comfort"],
-    "price": "$85",
+    "price": {
+      "halfLiter": 85,
+      "liter": 170
+    },
     "notes": ["Cacao 70%", "Avellana tostada"],
     "allergens": "Lacteos, frutos secos",
     "gradient": "from-terracotta/30 via-ochre/40 to-cream-white"
@@ -30,7 +36,10 @@
     "base": "Agua",
     "intensity": "Ligera",
     "tags": ["Fruit", "Fresh"],
-    "price": "$78",
+    "price": {
+      "halfLiter": 78,
+      "liter": 156
+    },
     "notes": ["Sin lacteos", "Bajo en grasa"],
     "allergens": "Puede contener trazas",
     "gradient": "from-wine-red/20 via-light-beige/70 to-cream-white"
@@ -42,7 +51,10 @@
     "base": "Crema",
     "intensity": "Media",
     "tags": ["Classic", "Aromatic"],
-    "price": "$80",
+    "price": {
+      "halfLiter": 80,
+      "liter": 160
+    },
     "notes": ["Vainilla organica", "Leche entera"],
     "allergens": "Lacteos",
     "gradient": "from-light-beige/80 via-cream-white to-cream-white"
@@ -54,7 +66,10 @@
     "base": "Agua",
     "intensity": "Alta",
     "tags": ["Spicy", "Tropical"],
-    "price": "$85",
+    "price": {
+      "halfLiter": 85,
+      "liter": 170
+    },
     "notes": ["Sin lacteos", "Picante suave"],
     "allergens": "Puede contener trazas",
     "gradient": "from-ochre/30 via-terracotta/20 to-cream-white"
@@ -66,7 +81,10 @@
     "base": "Crema",
     "intensity": "Alta",
     "tags": ["Coffee", "Floral"],
-    "price": "$92",
+    "price": {
+      "halfLiter": 92,
+      "liter": 184
+    },
     "notes": ["Cafe de altura", "Especias"],
     "allergens": "Lacteos",
     "gradient": "from-oxford-black/10 via-light-beige/70 to-cream-white"
@@ -78,7 +96,10 @@
     "base": "Crema",
     "intensity": "Alta",
     "tags": ["Bold", "Smoky"],
-    "price": "$98",
+    "price": {
+      "halfLiter": 98,
+      "liter": 196
+    },
     "notes": ["Mezcal reposado", "Cacao oscuro"],
     "allergens": "Lacteos",
     "gradient": "from-oxford-black/20 via-terracotta/30 to-cream-white"
@@ -90,7 +111,10 @@
     "base": "Agua",
     "intensity": "Ligera",
     "tags": ["Citrus", "Herbal"],
-    "price": "$76",
+    "price": {
+      "halfLiter": 76,
+      "liter": 152
+    },
     "notes": ["Sin lacteos", "Refrescante"],
     "allergens": "Puede contener trazas",
     "gradient": "from-cream-white via-light-beige/80 to-cream-white"
@@ -102,7 +126,10 @@
     "base": "Crema",
     "intensity": "Media",
     "tags": ["Caramel", "Crunch"],
-    "price": "$88",
+    "price": {
+      "halfLiter": 88,
+      "liter": 176
+    },
     "notes": ["Nuez tostada", "Caramelo"],
     "allergens": "Lacteos, frutos secos",
     "gradient": "from-ochre/30 via-light-beige/80 to-cream-white"
@@ -114,7 +141,10 @@
     "base": "Crema",
     "intensity": "Media",
     "tags": ["Tropical", "Bright"],
-    "price": "$90",
+    "price": {
+      "halfLiter": 90,
+      "liter": 180
+    },
     "notes": ["Coco natural", "Fruta fresca"],
     "allergens": "Lacteos",
     "gradient": "from-light-beige/70 via-cream-white to-cream-white"
@@ -126,7 +156,10 @@
     "base": "Crema",
     "intensity": "Media",
     "tags": ["Salted", "Smooth"],
-    "price": "$86",
+    "price": {
+      "halfLiter": 86,
+      "liter": 172
+    },
     "notes": ["Sal de mar", "Caramelo lento"],
     "allergens": "Lacteos",
     "gradient": "from-terracotta/20 via-light-beige/70 to-cream-white"
@@ -138,7 +171,10 @@
     "base": "Agua",
     "intensity": "Ligera",
     "tags": ["Floral", "Bright"],
-    "price": "$76",
+    "price": {
+      "halfLiter": 76,
+      "liter": 152
+    },
     "notes": ["Sin lacteos", "Fruta local"],
     "allergens": "Puede contener trazas",
     "gradient": "from-wine-red/10 via-light-beige/80 to-cream-white"
