@@ -112,12 +112,14 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-light-beige/85">Tiempo ideal</span>
+                  <span className="text-light-beige/85">
+                    Tiempo ideal de consumo
+                  </span>
                   <span className="font-medium font-numeric">6-8 minutos</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-light-beige/85">Disponibilidad</span>
-                  <span className="font-medium">Semanal</span>
+                  <span className="font-medium">Mensual</span>
                 </div>
               </div>
               <div className="mt-6 rounded-2xl border border-light-beige/30 px-4 py-3 text-xs text-light-beige/85">
