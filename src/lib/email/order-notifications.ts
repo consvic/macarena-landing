@@ -1,8 +1,8 @@
 import { render } from "@react-email/render";
 import { Resend } from "resend";
-import { OrderConfirmedEmail } from "@/components/emails/OrderConfirmedEmail";
-import { OrderPendingEmail } from "@/components/emails/OrderPendingEmail";
 import type { OrderEmailPayload } from "@/lib/email/types";
+import OrderConfirmedEmail from "../../../emails/OrderConfirmedEmail";
+import OrderPendingEmail from "../../../emails/OrderPendingEmail";
 
 type OrderWithItems = {
   _id: unknown;
