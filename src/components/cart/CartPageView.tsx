@@ -18,9 +18,11 @@ export function CartPageView() {
     () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()),
     [email],
   );
+  const hasCartItems = itemsCount > 0;
+  const canSubmitOrder = hasCartItems && emailIsValid && !isSubmitting;
 
   async function handleCreateOrder() {
-    if (items.length === 0 || !emailIsValid) {
+    if (!canSubmitOrder) {
       return;
     }
 
@@ -147,12 +149,12 @@ export function CartPageView() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="tu@email.com"
+              placeholder="Ingresa tu email"
               className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 text-sm outline-none transition focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20"
             />
             <Button
               type="button"
-              disabled={!emailIsValid || items.length === 0 || isSubmitting}
+              disabled={!canSubmitOrder}
               className="h-11 w-full rounded-full bg-royal-blue text-light-beige hover:bg-royal-blue/90"
               onClick={handleCreateOrder}
             >
