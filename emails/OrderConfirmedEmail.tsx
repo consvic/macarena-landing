@@ -81,10 +81,23 @@ export default function OrderConfirmedEmail({
 
           <Section>
             {safeOrder.items.map((item) => (
-              <Text key={`${item.flavorName}-${item.presentation}`}>
-                {item.quantity} x {item.flavorName} ({item.presentation}) -{" "}
-                {formatMXN(item.subtotal)}
-              </Text>
+              <Section
+                key={`${item.flavorName}-${item.presentation}`}
+                style={{
+                  border: "1px solid #e6d8c5",
+                  borderRadius: "12px",
+                  padding: "10px 12px",
+                  marginBottom: "8px",
+                  backgroundColor: "#fffdf9",
+                }}
+              >
+                <Text style={{ margin: 0 }}>
+                  {item.quantity} x {item.flavorName} ({item.presentation})
+                </Text>
+                <Text style={{ margin: "4px 0 0", color: "#151f49" }}>
+                  {formatMXN(item.subtotal)}
+                </Text>
+              </Section>
             ))}
           </Section>
 
