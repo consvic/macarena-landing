@@ -19,8 +19,6 @@ const lifestyleCopy = [
   },
 ];
 
-const MENU_ENABLED = process.env.NEXT_PUBLIC_MENU_ENABLED === "true";
-
 export default function MacarenaGelateria() {
   const [scrollY, setScrollY] = useState(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -383,14 +381,12 @@ export default function MacarenaGelateria() {
             >
               Síguenos en Instagram
             </a>
-            {MENU_ENABLED && (
-              <Link
-                href="/menu"
-                className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-royal-blue text-light-beige cursor-pointer hover:bg-royal-blue/90 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-center"
-              >
-                Ver menu
-              </Link>
-            )}
+            <Link
+              href="/menu"
+              className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-royal-blue text-light-beige cursor-pointer hover:bg-royal-blue/90 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-center"
+            >
+              Ver menu
+            </Link>
           </div>
         </div>
       </section>
