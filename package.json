@@ -9,6 +9,7 @@
     "lint": "biome check",
     "format": "biome format --write",
     "seed:flavors": "node --env-file=.env scripts/seed-flavors.mjs",
+    "backfill:flavor-existence": "node --env-file=.env scripts/backfill-flavor-existence.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

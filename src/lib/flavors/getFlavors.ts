@@ -5,7 +5,9 @@ import { FlavorModel } from "@/models/Flavor";
 export async function getFlavors(): Promise<Flavor[]> {
   await connectToDatabase();
 
-  const flavors = await FlavorModel.find().sort({ createdAt: -1 }).lean();
+  const flavors = await FlavorModel.find({ exists: true })
+    .sort({ createdAt: -1 })
+    .lean();
 
   return flavors.map((flavor) => ({
     _id: String(flavor._id),
@@ -21,5 +23,6 @@ export async function getFlavors(): Promise<Flavor[]> {
     allergens: flavor.allergens,
     gradient: flavor.gradient,
     coverImage: flavor.coverImage,
+    exists: flavor.exists ?? true,
   }));
 }

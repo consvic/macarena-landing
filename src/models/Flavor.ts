@@ -14,6 +14,7 @@ const flavorSchema = new Schema(
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },
     coverImage: { type: String, required: true, trim: true },
+    exists: { type: Boolean, required: true, default: true },
   },
   {
     timestamps: true,

@@ -1,6 +1,6 @@
-# Seed Flavors Script
+# Flavor Scripts
 
-This project includes a flavor seeding script that upserts flavor records into MongoDB.
+This project includes scripts to seed flavors into MongoDB and update the `exists` flag on current flavor records.
 
 ## Prerequisites
 
@@ -67,9 +67,22 @@ Seed and remove DB flavors that are not present in the file:
 npm run seed:flavors -- src/lib/flavors.json --replace
 ```
 
+Set `exists` on all current flavor records:
+
+```bash
+npm run backfill:flavor-existence -- true
+```
+
+Set all current flavor records to `exists: false`:
+
+```bash
+npm run backfill:flavor-existence -- false
+```
+
 ## Behavior
 
 - Uses **upsert by `name`**.
 - Existing matching names are updated.
 - New names are inserted.
 - `--replace` additionally deletes flavors not present in the seed file.
+- `backfill:flavor-existence -- <true|false>` updates every existing flavor document to the provided `exists` value.

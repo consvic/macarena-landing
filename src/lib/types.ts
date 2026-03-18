@@ -14,6 +14,7 @@ export type Flavor = {
   allergens: string;
   gradient: string;
   coverImage: string;
+  exists: boolean;
 };
 
 export const PRESENTATION_OPTIONS = ["1/2 litro", "1 litro"] as const;
