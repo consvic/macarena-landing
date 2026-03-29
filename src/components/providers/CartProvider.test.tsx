@@ -1,5 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
-import type { ReactNode } from "react";
+import { renderHook } from "@testing-library/react";
+import { act, type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CartProvider, useCart } from "@/components/providers/CartProvider";
 
