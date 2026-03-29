@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   resolve: {
+    conditions: ["browser"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
