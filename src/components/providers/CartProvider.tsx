@@ -50,7 +50,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(raw) as CartItem[];
         if (Array.isArray(parsed)) {
-          setItems(parsed);
+          const valid = parsed.filter(
+            (item): item is CartItem =>
+              typeof item === "object" &&
+              item !== null &&
+              typeof item.id === "string" &&
+              typeof item.flavorName === "string" &&
+              typeof item.presentation === "string" &&
+              typeof item.price === "number",
+          );
+          setItems(valid);
         }
       } catch {
         console.warn("[CartProvider] Failed to restore cart from localStorage, clearing.");

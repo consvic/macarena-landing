@@ -3,12 +3,15 @@ export type PriceByPresentation = {
   liter: number;
 };
 
+export const FLAVOR_BASES = ["Agua", "Crema"] as const;
+export type FlavorBase = (typeof FLAVOR_BASES)[number];
+
 export type Flavor = {
   _id?: string;
   name: string;
   description: string;
   category: string;
-  base: string;
+  base: FlavorBase;
   tags: string[];
   price: PriceByPresentation;
   allergens: string;
@@ -27,4 +30,17 @@ export type CartItem = {
   price: number;
 };
 
-export type OrderStatus = "pending_confirmation" | "confirmed" | "cancelled";
+export const ORDER_STATUSES = [
+  "pending_confirmation",
+  "confirmed",
+  "cancelled",
+] as const;
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
+
+export type IncomingOrderItem = {
+  flavorId?: string;
+  flavorName: string;
+  presentation: string;
+  quantity: number;
+  unitPrice: number;
+};

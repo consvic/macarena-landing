@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { sendOrderPendingEmail } from "@/lib/email/order-notifications";
+import type { IncomingOrderItem } from "@/lib/types";
 import { OrderModel } from "@/models/Order";
 import { OrderItemModel } from "@/models/OrderItem";
-
-type IncomingOrderItem = {
-  flavorId?: string;
-  flavorName: string;
-  presentation: string;
-  quantity: number;
-  unitPrice: number;
-};
 
 export async function POST(request: Request) {
   try {
@@ -40,8 +33,18 @@ export async function POST(request: Request) {
     }
 
     const orderItemsPayload = items.map((item) => {
-      const quantity = Number(item.quantity || 1);
-      const unitPrice = Number(item.unitPrice || 0);
+      const quantity = Number(item.quantity) || 1;
+      const unitPrice = Number(item.unitPrice);
+      if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+        throw new InvalidInputError(
+          `Invalid unitPrice for "${item.flavorName}"`,
+        );
+      }
+      if (!Number.isFinite(quantity) || quantity < 1) {
+        throw new InvalidInputError(
+          `Invalid quantity for "${item.flavorName}"`,
+        );
+      }
       return {
         flavorId: item.flavorId,
         flavorName: item.flavorName,
@@ -72,12 +75,18 @@ export async function POST(request: Request) {
       itemCount,
     });
 
-    const savedItems = await OrderItemModel.insertMany(
-      orderItemsPayload.map((item) => ({
-        ...item,
-        orderId: order._id,
-      })),
-    );
+    let savedItems;
+    try {
+      savedItems = await OrderItemModel.insertMany(
+        orderItemsPayload.map((item) => ({
+          ...item,
+          orderId: order._id,
+        })),
+      );
+    } catch (itemsError) {
+      await OrderModel.findByIdAndDelete(order._id);
+      throw itemsError;
+    }
 
     const orderWithItems = {
       ...order.toObject(),
@@ -96,10 +105,20 @@ export async function POST(request: Request) {
 
     return NextResponse.json(orderWithItems, { status: 201 });
   } catch (error) {
+    if (error instanceof InvalidInputError) {
+      return NextResponse.json({ message: error.message }, { status: 400 });
+    }
     console.error("[orders:POST]", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
     );
+  }
+}
+
+class InvalidInputError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidInputError";
   }
 }

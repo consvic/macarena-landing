@@ -1,7 +1,7 @@
 ## plan to implement new features
 
 - A page for the cart, the user should be able to see the items in the cart and the total price, the user should be able to remove items from the cart and the total price should be updated and displayed.
-- The button "Agregar" should be enabled and you should add a dropdown right before the button to select the quantity of the item, this select dropdown should be styled as a select, use shadcn/ui components for the select. Options are always going to be "1/2 litro" and "1 litro".
+- The button "Agregar" should be enabled and you should add a dropdown right before the button to select the presentation (size) of the item, this select dropdown should be styled as a select, use shadcn/ui components for the select. Options are always going to be "1/2 litro" and "1 litro".
 - Remove "Pedido proximamente" button
 - The user should see on the navigation navbar a cart icon button with the number of items in small formatted text in the cart, this button should be styled as a button, use shadcn/ui components for the button.
 
@@ -21,7 +21,7 @@ You have to build a CRUD API for the orders, you should use the following endpoi
 - DELETE /orders/:id: to delete an order by id
 
 ### Database
-You should use a MongoDB database, you should use the following table:
+You should use a MongoDB database, you should use the following collections:
 - flavors: to store the flavors
 - orders: to store the orders
 - order_items: to store the items in the order

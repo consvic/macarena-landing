@@ -5,6 +5,7 @@ import {
   Schema,
   type Types,
 } from "mongoose";
+import { ORDER_STATUSES } from "@/lib/types";
 
 const orderSchema = new Schema(
   {
@@ -18,7 +19,7 @@ const orderSchema = new Schema(
     customerPhone: { type: String, trim: true },
     status: {
       type: String,
-      enum: ["pending_confirmation", "confirmed", "cancelled"],
+      enum: ORDER_STATUSES,
       default: "pending_confirmation",
       required: true,
     },

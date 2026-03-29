@@ -33,7 +33,7 @@ const flavorSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
-    base: { type: String, required: true, trim: true },
+    base: { type: String, required: true, trim: true, enum: ["Agua", "Crema"] },
     tags: [{ type: String, required: true, trim: true }],
     price: {
       halfLiter: { type: Number, required: true, min: 0 },

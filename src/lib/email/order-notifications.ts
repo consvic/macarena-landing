@@ -4,11 +4,13 @@ import type { OrderEmailPayload } from "@/lib/email/types";
 import OrderConfirmedEmail from "../../../emails/OrderConfirmedEmail";
 import OrderPendingEmail from "../../../emails/OrderPendingEmail";
 
+import type { OrderStatus } from "@/lib/types";
+
 type OrderWithItems = {
   _id: unknown;
   customerName: string;
   customerEmail: string;
-  status: string;
+  status: OrderStatus;
   totalPrice: number;
   currency: string;
   items: Array<{

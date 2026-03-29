@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const connectToDatabaseMock = vi.fn();
 const createMock = vi.fn();
+const findByIdAndDeleteMock = vi.fn();
 const insertManyMock = vi.fn();
 const sendOrderPendingEmailMock = vi.fn();
 
@@ -12,6 +13,7 @@ vi.mock("@/lib/db/mongoose", () => ({
 vi.mock("@/models/Order", () => ({
   OrderModel: {
     create: (...args: unknown[]) => createMock(...args),
+    findByIdAndDelete: (...args: unknown[]) => findByIdAndDeleteMock(...args),
   },
 }));
 
@@ -60,6 +62,7 @@ describe("POST /api/orders", () => {
   beforeEach(() => {
     connectToDatabaseMock.mockReset();
     createMock.mockReset();
+    findByIdAndDeleteMock.mockReset();
     insertManyMock.mockReset();
     sendOrderPendingEmailMock.mockReset();
 
@@ -173,6 +176,57 @@ describe("POST /api/orders", () => {
     await expect(response.json()).resolves.toEqual({
       message: "Internal server error",
     });
+  });
+
+  it("returns 400 when unitPrice is not a valid number", async () => {
+    const { POST } = await import("@/app/api/orders/route");
+    const response = await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [
+          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: "abc" },
+        ],
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.message).toContain("Invalid unitPrice");
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when unitPrice is negative", async () => {
+    const { POST } = await import("@/app/api/orders/route");
+    const response = await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [
+          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: -50 },
+        ],
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.message).toContain("Invalid unitPrice");
+  });
+
+  it("cleans up order when item insertion fails", async () => {
+    insertManyMock.mockRejectedValue(new Error("Insert failed"));
+    findByIdAndDeleteMock.mockResolvedValue(FAKE_ORDER);
+
+    const { POST } = await import("@/app/api/orders/route");
+    const response = await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [
+          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: 150 },
+        ],
+      }),
+    );
+
+    expect(response.status).toBe(500);
+    expect(findByIdAndDeleteMock).toHaveBeenCalledWith("order-1");
   });
 
   it("falls back to email prefix for customerName", async () => {

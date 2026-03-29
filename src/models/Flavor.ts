@@ -1,11 +1,12 @@
 import { type InferSchemaType, model, models, Schema } from "mongoose";
+import { FLAVOR_BASES } from "@/lib/types";
 
 const flavorSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
-    base: { type: String, required: true, trim: true },
+    base: { type: String, required: true, trim: true, enum: FLAVOR_BASES },
     tags: [{ type: String, required: true, trim: true }],
     price: {
       halfLiter: { type: Number, required: true, min: 0 },

@@ -19,7 +19,12 @@ const orderItemSchema = new Schema(
       ref: "Flavor",
     },
     flavorName: { type: String, required: true, trim: true },
-    presentation: { type: String, required: true, trim: true },
+    presentation: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ["1/2 litro", "1 litro"],
+    },
     quantity: { type: Number, required: true, min: 1, default: 1 },
     unitPrice: { type: Number, required: true, min: 0 },
     subtotal: { type: Number, required: true, min: 0 },

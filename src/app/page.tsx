@@ -197,20 +197,6 @@ export default function MacarenaGelateria() {
               Nacido de la pasión, creado con amor
             </h2>
 
-            {/* <p
-              className={`text-xl font-sans leading-relaxed mb-8 transition-all duration-1000 delay-200 text-wine-red ${
-                isVisible.philosophy
-                  ? "animate-fade-in opacity-100"
-                  : "opacity-0"
-              }`}
-            >
-              Macarena es una gelatería digital nacida del amor por el arte
-              culinario italiano y la tradición del gelato. Nuestra misión es
-              destacar en México por la calidad y el sabor único, con la
-              elegancia como valor central en el servicio y las plataformas
-              digitales.
-            </p> */}
-
             <div
               className={`flex flex-wrap justify-center gap-4 transition-all duration-1000 delay-400 ${
                 isVisible.philosophy
