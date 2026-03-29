@@ -19,10 +19,9 @@ const lifestyleCopy = [
   },
 ];
 
-const MENU_ENABLED = process.env.NEXT_PUBLIC_MENU_ENABLED === "true";
-
 export default function MacarenaGelateria() {
   const [scrollY, setScrollY] = useState(0);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isVisible, setIsVisible] = useState({
     differentiators: false,
     philosophy: false,
@@ -31,10 +30,39 @@ export default function MacarenaGelateria() {
   });
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+    return () => mediaQuery.removeEventListener("change", updatePreference);
   }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    let frameId = 0;
+    const handleScroll = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+        frameId = 0;
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -60,7 +88,7 @@ export default function MacarenaGelateria() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <main className="min-h-screen overflow-hidden bg-white">
       {/* Hero Section with Falling Ice Cream Animation */}
       <section className="relative min-h-screen flex items-center justify-center bg-royal-blue">
         <div className="absolute inset-0 overflow-hidden">
@@ -72,11 +100,14 @@ export default function MacarenaGelateria() {
             height={600}
             className="absolute transition-transform duration-300 ease-out"
             style={{
-              bottom: `${Math.max(-600, scrollY * 0.8 - 400)}px`,
+              bottom: `${Math.max(-600, (prefersReducedMotion ? 0 : scrollY) * 0.8 - 400)}px`,
               right: "-12%",
-              transform: `rotate(${-scrollY * 0.05}deg)`,
+              transform: `rotate(${prefersReducedMotion ? 0 : -scrollY * 0.05}deg)`,
               filter: "drop-shadow(0 30px 60px hsla(0, 0%, 0%, 0.3))",
-              opacity: Math.max(0.1, 1 - scrollY / 800),
+              opacity: prefersReducedMotion
+                ? 1
+                : Math.max(0.1, 1 - scrollY / 800),
+              willChange: prefersReducedMotion ? "auto" : "transform, opacity",
             }}
           />
         </div>
@@ -122,7 +153,7 @@ export default function MacarenaGelateria() {
           backgroundSize: "120px 120px",
           backgroundRepeat: "repeat",
           backgroundPosition: "0 0",
-          backgroundAttachment: "fixed",
+          backgroundAttachment: "scroll",
         }}
       >
         {/* Overlay to soften the pattern */}
@@ -165,20 +196,6 @@ export default function MacarenaGelateria() {
             >
               Nacido de la pasión, creado con amor
             </h2>
-
-            {/* <p
-              className={`text-xl font-sans leading-relaxed mb-8 transition-all duration-1000 delay-200 text-wine-red ${
-                isVisible.philosophy
-                  ? "animate-fade-in opacity-100"
-                  : "opacity-0"
-              }`}
-            >
-              Macarena es una gelatería digital nacida del amor por el arte
-              culinario italiano y la tradición del gelato. Nuestra misión es
-              destacar en México por la calidad y el sabor único, con la
-              elegancia como valor central en el servicio y las plataformas
-              digitales.
-            </p> */}
 
             <div
               className={`flex flex-wrap justify-center gap-4 transition-all duration-1000 delay-400 ${
@@ -350,17 +367,15 @@ export default function MacarenaGelateria() {
             >
               Síguenos en Instagram
             </a>
-            {MENU_ENABLED && (
-              <Link
-                href="/menu"
-                className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-royal-blue text-light-beige cursor-pointer hover:bg-royal-blue/90 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-center"
-              >
-                Ver menu
-              </Link>
-            )}
+            <Link
+              href="/menu"
+              className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-royal-blue text-light-beige cursor-pointer hover:bg-royal-blue/90 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-center"
+            >
+              Ver menu
+            </Link>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

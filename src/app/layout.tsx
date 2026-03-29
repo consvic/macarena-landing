@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import type React from "react";
+import { CartProvider } from "@/components/providers/CartProvider";
 import "./globals.css";
 
 const eymenPro = localFont({
@@ -56,10 +57,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${eymenPro.variable} ${cocoGothic.variable} ${inter.variable} antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }
