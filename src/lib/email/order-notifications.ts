@@ -46,6 +46,10 @@ async function sendEmail({
   html: string;
 }) {
   if (!RESEND_API_KEY || !RESEND_FROM_EMAIL) {
+    console.warn(
+      "[email] Skipping email send: RESEND_API_KEY or RESEND_FROM_EMAIL is not configured.",
+      { to, subject },
+    );
     return;
   }
 

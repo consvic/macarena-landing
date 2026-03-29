@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { formatMXN } from "@/lib/pricing";
@@ -41,25 +42,31 @@ function createId() {
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const hasHydrated = useRef(false);
 
   useEffect(() => {
     const raw = window.localStorage.getItem(CART_STORAGE_KEY);
-    if (!raw) {
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(raw) as CartItem[];
-      if (Array.isArray(parsed)) {
-        setItems(parsed);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as CartItem[];
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+        }
+      } catch {
+        console.warn("[CartProvider] Failed to restore cart from localStorage, clearing.");
+        window.localStorage.removeItem(CART_STORAGE_KEY);
       }
-    } catch {
-      window.localStorage.removeItem(CART_STORAGE_KEY);
     }
+    hasHydrated.current = true;
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    if (!hasHydrated.current) return;
+    try {
+      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch (error) {
+      console.warn("[CartProvider] Failed to persist cart to localStorage", error);
+    }
   }, [items]);
 
   const addItem = useCallback((item: NewCartItem) => {
