@@ -10,19 +10,8 @@ export async function getFlavors(): Promise<Flavor[]> {
     .lean();
 
   return flavors.map((flavor) => ({
+    ...flavor,
     _id: String(flavor._id),
-    name: flavor.name,
-    description: flavor.description,
-    category: flavor.category,
-    base: flavor.base,
-    tags: flavor.tags,
-    price: {
-      halfLiter: flavor.price.halfLiter,
-      liter: flavor.price.liter,
-    },
-    allergens: flavor.allergens,
-    gradient: flavor.gradient,
-    coverImage: flavor.coverImage,
     exists: flavor.exists ?? true,
-  }));
+  })) as Flavor[];
 }

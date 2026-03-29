@@ -5,6 +5,7 @@ import {
   Schema,
   type Types,
 } from "mongoose";
+import { PRESENTATION_OPTIONS } from "@/lib/types";
 
 const orderItemSchema = new Schema(
   {
@@ -23,7 +24,7 @@ const orderItemSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      enum: ["1/2 litro", "1 litro"],
+      enum: PRESENTATION_OPTIONS,
     },
     quantity: { type: Number, required: true, min: 1, default: 1 },
     unitPrice: { type: Number, required: true, min: 0 },

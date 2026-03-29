@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     const orderItemsPayload = items.map((item) => {
-      const quantity = Number(item.quantity) || 1;
+      const quantity = item.quantity != null ? Number(item.quantity) : 1;
       const unitPrice = Number(item.unitPrice);
       if (!Number.isFinite(unitPrice) || unitPrice < 0) {
         throw new InvalidInputError(

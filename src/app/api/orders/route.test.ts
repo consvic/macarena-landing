@@ -211,6 +211,41 @@ describe("POST /api/orders", () => {
     expect(body.message).toContain("Invalid unitPrice");
   });
 
+  it("returns 400 when quantity is zero", async () => {
+    const { POST } = await import("@/app/api/orders/route");
+    const response = await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [
+          { flavorName: "Mango", presentation: "1/2 litro", quantity: 0, unitPrice: 150 },
+        ],
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.message).toContain("Invalid quantity");
+  });
+
+  it("defaults quantity to 1 when not provided", async () => {
+    const { POST } = await import("@/app/api/orders/route");
+    await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [
+          { flavorName: "Mango", presentation: "1/2 litro", unitPrice: 150 },
+        ],
+      }),
+    );
+
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        totalPrice: 150,
+        itemCount: 1,
+      }),
+    );
+  });
+
   it("cleans up order when item insertion fails", async () => {
     insertManyMock.mockRejectedValue(new Error("Insert failed"));
     findByIdAndDeleteMock.mockResolvedValue(FAKE_ORDER);

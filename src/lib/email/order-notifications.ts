@@ -4,7 +4,7 @@ import type { OrderEmailPayload } from "@/lib/email/types";
 import OrderConfirmedEmail from "../../../emails/OrderConfirmedEmail";
 import OrderPendingEmail from "../../../emails/OrderPendingEmail";
 
-import type { OrderStatus } from "@/lib/types";
+import type { OrderStatus, PresentationOption } from "@/lib/types";
 
 type OrderWithItems = {
   _id: unknown;
@@ -15,7 +15,7 @@ type OrderWithItems = {
   currency: string;
   items: Array<{
     flavorName: string;
-    presentation: string;
+    presentation: PresentationOption;
     quantity: number;
     subtotal: number;
   }>;
