@@ -18,6 +18,9 @@ export type Flavor = {
   gradient: string;
   coverImage: string;
   exists: boolean;
+  isVisibleOnSite?: boolean;
+  isArchived?: boolean;
+  updatedBy?: string;
 };
 
 export const PRESENTATION_OPTIONS = ["1/2 litro", "1 litro"] as const;

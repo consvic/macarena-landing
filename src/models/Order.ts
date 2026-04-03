@@ -17,6 +17,7 @@ const orderSchema = new Schema(
       lowercase: true,
     },
     customerPhone: { type: String, trim: true },
+    externalOrderId: { type: String, trim: true, index: true },
     status: {
       type: String,
       enum: ORDER_STATUSES,
@@ -28,6 +29,7 @@ const orderSchema = new Schema(
     itemCount: { type: Number, required: true, min: 0 },
     notes: { type: String, trim: true },
     confirmedAt: { type: Date },
+    updatedBy: { type: String, trim: true },
   },
   {
     timestamps: true,

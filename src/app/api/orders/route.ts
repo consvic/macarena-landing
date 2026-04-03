@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       itemCount,
     });
 
-    let savedItems;
+    let savedItems: Array<{ toObject: () => unknown }> = [];
     try {
       savedItems = await OrderItemModel.insertMany(
         orderItemsPayload.map((item) => ({
@@ -98,8 +98,7 @@ export async function POST(request: Request) {
     } catch (emailError) {
       console.error("[orders:POST] Failed to send email notification", {
         orderId: order._id,
-        error:
-          emailError instanceof Error ? emailError.message : emailError,
+        error: emailError instanceof Error ? emailError.message : emailError,
       });
     }
 

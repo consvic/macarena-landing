@@ -187,7 +187,9 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                   >
                     <div
                       className="absolute inset-0 bg-cover bg-center opacity-35"
-                      style={{ backgroundImage: `url(${encodeURI(flavor.coverImage)})` }}
+                      style={{
+                        backgroundImage: `url(${encodeURI(flavor.coverImage)})`,
+                      }}
                     />
                     <div className="absolute right-5 top-5 rounded-full bg-white/70 px-3 py-1 text-xs text-royal-blue">
                       {flavor.base}

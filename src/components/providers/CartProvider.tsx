@@ -62,7 +62,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
           setItems(valid);
         }
       } catch {
-        console.warn("[CartProvider] Failed to restore cart from localStorage, clearing.");
+        console.warn(
+          "[CartProvider] Failed to restore cart from localStorage, clearing.",
+        );
         window.localStorage.removeItem(CART_STORAGE_KEY);
       }
     }
@@ -74,7 +76,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch (error) {
-      console.warn("[CartProvider] Failed to persist cart to localStorage", error);
+      console.warn(
+        "[CartProvider] Failed to persist cart to localStorage",
+        error,
+      );
     }
   }, [items]);
 

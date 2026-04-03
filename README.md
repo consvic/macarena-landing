@@ -12,10 +12,14 @@ Macarena Landing is the marketing site and digital menu for Macarena Gelateria. 
 - Email notifications (order pending and order confirmed) built with `react-email` and sent through the Resend API.
 - API endpoints for flavors and orders.
 - Mongo-backed flavor data with an `exists` flag to control which flavors are currently available to customers.
+- Protected admin portal at `/admin` with sections for `Resumen`, `Pedidos`, `Sabores`, and `Análisis`.
+- Admin APIs under `/api/admin/*` protected with HTTP Basic Auth.
+- CSV historical order import via `/api/admin/orders/import`.
 
 ## Menu Availability
 
 Flavors include an `exists` boolean field in the database.
+Admin routes also track `isVisibleOnSite` and `isArchived` to support hide vs soft-delete lifecycle.
 
 - Only flavors with `exists: true` are returned by the public backend read paths.
 - `GET /api/flavors` only returns currently available flavors.
@@ -90,10 +94,22 @@ npm run dev
 - `/`: Brand landing page.
 - `/menu`: Customer-facing flavor menu.
 - `/menu/cart`: Cart and checkout flow.
+- `/admin`: Internal dashboard (`Resumen`).
+- `/admin/pedidos`: Internal order operations + CSV import.
+- `/admin/sabores`: Internal flavor management.
+- `/admin/analisis`: Internal analytics dashboard.
 - `/api/flavors`: Flavor list and flavor creation.
 - `/api/flavors/:id`: Single flavor read, update, and delete.
 - `/api/orders`: Order creation and order listing.
 - `/api/orders/:id`: Order detail and order status updates.
+- `/api/admin/orders`: Admin order list with filters and pagination.
+- `/api/admin/orders/:id/status`: Admin status updates.
+- `/api/admin/orders/import`: Admin CSV import endpoint.
+- `/api/admin/flavors`: Admin flavor list/create.
+- `/api/admin/flavors/:id`: Admin flavor update.
+- `/api/admin/flavors/:id/visibility`: Toggle flavor visibility on main menu.
+- `/api/admin/flavors/:id/archive`: Soft delete / restore flavor.
+- `/api/admin/stats`: Analytics aggregates for admin.
 
 ## Scripts
 
@@ -105,11 +121,16 @@ npm run dev
 - `npm test`: Run the test suite.
 - `npm run test:watch`: Run tests in watch mode.
 - `npm run test:coverage`: Run tests with coverage.
+- `npm run admin:create -- --email <email> --password <password>`: Create an admin user in MongoDB for Basic Auth access.
 - `npm run seed:flavors -- <json-path> [--replace]`: Seed or replace flavor records from JSON.
 - `npm run backfill:flavor-existence -- <true|false>`: Update all existing flavors to the provided availability state.
 - `npm run email:dev`: Launch the react-email preview server on port 3030.
 
 Flavor script details and JSON format are documented in [SEED_FLAVORS.md](./SEED_FLAVORS.md).
+
+Orders CSV import format is documented in [docs/orders-csv-import.md](./docs/orders-csv-import.md), with a template at [examples/orders-import-template.csv](./examples/orders-import-template.csv).
+
+Admin user creation and operations are documented in [docs/admin-users.md](./docs/admin-users.md).
 
 ## Development Notes
 

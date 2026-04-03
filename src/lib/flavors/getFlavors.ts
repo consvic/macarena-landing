@@ -5,7 +5,10 @@ import { FlavorModel } from "@/models/Flavor";
 export async function getFlavors(): Promise<Flavor[]> {
   await connectToDatabase();
 
-  const flavors = await FlavorModel.find({ exists: true })
+  const flavors = await FlavorModel.find({
+    exists: true,
+    isArchived: { $ne: true },
+  })
     .sort({ createdAt: -1 })
     .lean();
 
@@ -13,5 +16,7 @@ export async function getFlavors(): Promise<Flavor[]> {
     ...flavor,
     _id: String(flavor._id),
     exists: flavor.exists ?? true,
+    isVisibleOnSite: flavor.isVisibleOnSite ?? flavor.exists ?? true,
+    isArchived: flavor.isArchived ?? false,
   })) as Flavor[];
 }

@@ -86,7 +86,12 @@ describe("CartProvider", () => {
 
   it("hydrates cart from localStorage", () => {
     const savedCart = [
-      { id: "saved-1", flavorName: "Mango", presentation: "1/2 litro", price: 150 },
+      {
+        id: "saved-1",
+        flavorName: "Mango",
+        presentation: "1/2 litro",
+        price: 150,
+      },
     ];
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(savedCart));
 
@@ -107,24 +112,25 @@ describe("CartProvider", () => {
       });
     });
 
-    const stored = JSON.parse(
-      window.localStorage.getItem(STORAGE_KEY) ?? "[]",
-    );
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
     expect(stored).toHaveLength(1);
     expect(stored[0].flavorName).toBe("Mango");
   });
 
   it("does not overwrite saved cart with empty array on mount", () => {
     const savedCart = [
-      { id: "saved-1", flavorName: "Mango", presentation: "1/2 litro", price: 150 },
+      {
+        id: "saved-1",
+        flavorName: "Mango",
+        presentation: "1/2 litro",
+        price: 150,
+      },
     ];
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(savedCart));
 
     renderHook(() => useCart(), { wrapper });
 
-    const stored = JSON.parse(
-      window.localStorage.getItem(STORAGE_KEY) ?? "[]",
-    );
+    const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
     expect(stored).toHaveLength(1);
     expect(stored[0].flavorName).toBe("Mango");
   });
