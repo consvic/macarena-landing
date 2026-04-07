@@ -1,64 +1,26 @@
 import { NextResponse } from "next/server";
-import { ADMIN_AUTH_REALM } from "@/lib/admin/constants";
+import {
+  getUnauthorizedHeaders,
+  parseBasicAuthHeader,
+} from "@/lib/admin/basic-auth";
 import { normalizeAdminEmail, verifyPassword } from "@/lib/admin/password";
+import {
+  getAdminEmailFromSessionToken,
+  getAdminSessionTokenFromRequest,
+} from "@/lib/admin/session";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { AdminUserModel } from "@/models/AdminUser";
 
-type AdminCredential = {
-  username: string;
-  password: string;
-};
-
-function decodeBase64(input: string) {
-  if (typeof atob === "function") {
-    return atob(input);
-  }
-
-  return Buffer.from(input, "base64").toString("utf8");
-}
-
-export function parseBasicAuthHeader(
-  headerValue: string | null,
-): AdminCredential | null {
-  if (!headerValue || !headerValue.startsWith("Basic ")) {
-    return null;
-  }
-
-  const encoded = headerValue.slice("Basic ".length).trim();
-  if (!encoded) {
-    return null;
-  }
-
-  try {
-    const decoded = decodeBase64(encoded);
-    const separatorIndex = decoded.indexOf(":");
-    if (separatorIndex <= 0) {
-      return null;
-    }
-
-    return {
-      username: decoded.slice(0, separatorIndex),
-      password: decoded.slice(separatorIndex + 1),
-    };
-  } catch {
-    return null;
-  }
-}
-
-export async function getAuthorizedAdminUser(
-  headerValue: string | null,
+export async function verifyAdminCredentials(
+  email: string,
+  password: string,
 ): Promise<string | null> {
-  const provided = parseBasicAuthHeader(headerValue);
-  if (!provided) {
+  const normalizedEmail = normalizeAdminEmail(email);
+  if (!normalizedEmail || !password) {
     return null;
   }
 
   await connectToDatabase();
-
-  const normalizedEmail = normalizeAdminEmail(provided.username);
-  if (!normalizedEmail) {
-    return null;
-  }
 
   const adminUser = await AdminUserModel.findOne({
     email: normalizedEmail,
@@ -70,7 +32,7 @@ export async function getAuthorizedAdminUser(
   }
 
   const passwordMatches = await verifyPassword(
-    provided.password,
+    password,
     adminUser.passwordHash,
   );
   if (!passwordMatches) {
@@ -80,21 +42,29 @@ export async function getAuthorizedAdminUser(
   return normalizedEmail;
 }
 
+export async function getAuthorizedAdminUser(
+  headerValue: string | null,
+): Promise<string | null> {
+  const provided = parseBasicAuthHeader(headerValue);
+  if (!provided) {
+    return null;
+  }
+
+  return verifyAdminCredentials(provided.username, provided.password);
+}
+
 export async function getAuthorizedAdminUserFromRequest(
   request: Request,
 ): Promise<string | null> {
-  const injectedUser = request.headers.get("x-admin-user");
-  if (injectedUser) {
-    return normalizeAdminEmail(injectedUser);
+  const basicAuthorizedUser = await getAuthorizedAdminUser(
+    request.headers.get("authorization"),
+  );
+  if (basicAuthorizedUser) {
+    return basicAuthorizedUser;
   }
 
-  return getAuthorizedAdminUser(request.headers.get("authorization"));
-}
-
-export function getUnauthorizedHeaders() {
-  return {
-    "WWW-Authenticate": `Basic realm="${ADMIN_AUTH_REALM}", charset="UTF-8"`,
-  };
+  const sessionToken = getAdminSessionTokenFromRequest(request);
+  return getAdminEmailFromSessionToken(sessionToken);
 }
 
 export function unauthorizedTextResponse() {

@@ -1,60 +1,161 @@
 import type { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const getAuthorizedAdminUserMock = vi.fn();
-
-vi.mock("@/lib/admin/auth", () => ({
-  getAuthorizedAdminUser: (...args: unknown[]) =>
-    getAuthorizedAdminUserMock(...args),
-  getUnauthorizedHeaders: () => ({
-    "WWW-Authenticate": 'Basic realm="Macarena Admin", charset="UTF-8"',
-  }),
-}));
-
-import { middleware } from "./middleware";
+import { middleware } from "./src/middleware";
 
 function createRequest(pathname: string, headers?: HeadersInit) {
+  const url = new URL(`http://localhost${pathname}`);
   return {
-    nextUrl: { pathname },
+    nextUrl: {
+      pathname,
+      clone: () => new URL(url.toString()),
+    },
     headers: new Headers(headers),
   };
 }
 
 describe("admin middleware", () => {
   beforeEach(() => {
-    getAuthorizedAdminUserMock.mockReset();
+    vi.restoreAllMocks();
   });
 
-  it("allows non-admin routes without auth lookup", async () => {
+  it("allows non-admin routes", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
     const request = createRequest("/");
+
     const response = await middleware(request as unknown as NextRequest);
 
     expect(response.status).toBe(200);
-    expect(getAuthorizedAdminUserMock).not.toHaveBeenCalled();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("rejects protected routes when auth fails", async () => {
-    getAuthorizedAdminUserMock.mockResolvedValue(null);
+  it("rejects protected routes when auth header is missing", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const request = createRequest("/admin");
 
-    const request = createRequest("/api/admin/orders");
     const response = await middleware(request as unknown as NextRequest);
 
-    expect(getAuthorizedAdminUserMock).toHaveBeenCalledWith(null);
-    expect(response.status).toBe(401);
-    expect(response.headers.get("WWW-Authenticate")).toContain("Basic realm");
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain(
+      "/admin/login?next=%2Fadmin",
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("allows protected routes with valid auth and injects admin header", async () => {
-    getAuthorizedAdminUserMock.mockResolvedValue("admin@example.com");
+  it("rejects protected routes when auth header is malformed", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const request = createRequest("/api/admin/orders", {
+      authorization: "Bearer token",
+    });
 
-    const request = createRequest("/admin", {
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(401);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("passes api route when auth header exists and verification succeeds", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response("ok", { status: 200 }));
+
+    const request = createRequest("/api/admin/orders", {
       authorization: "Basic YWRtaW5AZXhhbXBsZS5jb206c2VjcmV0",
     });
+
     const response = await middleware(request as unknown as NextRequest);
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("x-middleware-override-headers")).toContain(
-      "x-admin-user",
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const [calledUrl, calledOptions] = fetchSpy.mock.calls[0] ?? [];
+    expect(String(calledUrl)).toBe("http://localhost/api/admin/auth/verify");
+    expect(calledOptions).toEqual(
+      expect.objectContaining({
+        method: "GET",
+        cache: "no-store",
+      }),
     );
+  });
+
+  it("redirects admin page to login when only basic auth is present", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const request = createRequest("/admin/pedidos", {
+      authorization: "Basic YWRtaW5AZXhhbXBsZS5jb206c2VjcmV0",
+    });
+
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain(
+      "/admin/login?next=%2Fadmin%2Fpedidos",
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("rejects when verification endpoint returns non-200", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("Unauthorized", { status: 401 }),
+    );
+
+    const request = createRequest("/api/admin/stats", {
+      authorization: "Basic YWRtaW5AZXhhbXBsZS5jb206d3Jvbmc=",
+    });
+
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(401);
+  });
+
+  it("bypasses verification route to avoid middleware recursion", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const request = createRequest("/api/admin/auth/verify", {
+      authorization: "Basic YWJjOmRlZg==",
+    });
+
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(200);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("allows admin login page without auth", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const request = createRequest("/admin/login");
+
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(200);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("allows login/logout auth APIs without auth", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const loginRequest = createRequest("/api/admin/auth/login");
+    const logoutRequest = createRequest("/api/admin/auth/logout");
+
+    const loginResponse = await middleware(
+      loginRequest as unknown as NextRequest,
+    );
+    const logoutResponse = await middleware(
+      logoutRequest as unknown as NextRequest,
+    );
+
+    expect(loginResponse.status).toBe(200);
+    expect(logoutResponse.status).toBe(200);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("verifies session cookie when basic auth is missing", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response("ok", { status: 200 }));
+
+    const request = createRequest("/admin/sabores", {
+      cookie: "macarena_admin_session=token123",
+    });
+
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(200);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });

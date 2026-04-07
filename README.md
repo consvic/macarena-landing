@@ -13,7 +13,8 @@ Macarena Landing is the marketing site and digital menu for Macarena Gelateria. 
 - API endpoints for flavors and orders.
 - Mongo-backed flavor data with an `exists` flag to control which flavors are currently available to customers.
 - Protected admin portal at `/admin` with sections for `Resumen`, `Pedidos`, `Sabores`, and `Análisis`.
-- Admin APIs under `/api/admin/*` protected with HTTP Basic Auth.
+- Admin login page at `/admin/login` with cookie session auth for internal users.
+- Admin APIs under `/api/admin/*` protected and also accepting HTTP Basic Auth (`email:password`).
 - CSV historical order import via `/api/admin/orders/import`.
 
 ## Menu Availability
@@ -95,6 +96,7 @@ npm run dev
 - `/menu`: Customer-facing flavor menu.
 - `/menu/cart`: Cart and checkout flow.
 - `/admin`: Internal dashboard (`Resumen`).
+- `/admin/login`: Internal login page.
 - `/admin/pedidos`: Internal order operations + CSV import.
 - `/admin/sabores`: Internal flavor management.
 - `/admin/analisis`: Internal analytics dashboard.
@@ -103,6 +105,9 @@ npm run dev
 - `/api/orders`: Order creation and order listing.
 - `/api/orders/:id`: Order detail and order status updates.
 - `/api/admin/orders`: Admin order list with filters and pagination.
+- `/api/admin/auth/login`: Create admin session cookie.
+- `/api/admin/auth/logout`: Revoke current admin session cookie.
+- `/api/admin/auth/verify`: Internal credential/session verification endpoint used by middleware.
 - `/api/admin/orders/:id/status`: Admin status updates.
 - `/api/admin/orders/import`: Admin CSV import endpoint.
 - `/api/admin/flavors`: Admin flavor list/create.

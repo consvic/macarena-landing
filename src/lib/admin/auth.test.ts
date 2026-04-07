@@ -2,14 +2,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getAuthorizedAdminUser,
   getAuthorizedAdminUserFromRequest,
-  parseBasicAuthHeader,
 } from "@/lib/admin/auth";
+import { parseBasicAuthHeader } from "@/lib/admin/basic-auth";
 
 const connectToDatabaseMock = vi.fn();
 const findOneMock = vi.fn();
 const selectMock = vi.fn();
 const leanMock = vi.fn();
 const verifyPasswordMock = vi.fn();
+const getAdminEmailFromSessionTokenMock = vi.fn();
+const getAdminSessionTokenFromRequestMock = vi.fn();
 
 vi.mock("@/lib/db/mongoose", () => ({
   connectToDatabase: () => connectToDatabaseMock(),
@@ -32,6 +34,13 @@ vi.mock("@/lib/admin/password", async () => {
   };
 });
 
+vi.mock("@/lib/admin/session", () => ({
+  getAdminEmailFromSessionToken: (...args: unknown[]) =>
+    getAdminEmailFromSessionTokenMock(...args),
+  getAdminSessionTokenFromRequest: (...args: unknown[]) =>
+    getAdminSessionTokenFromRequestMock(...args),
+}));
+
 describe("admin auth", () => {
   beforeEach(() => {
     connectToDatabaseMock.mockReset();
@@ -39,6 +48,8 @@ describe("admin auth", () => {
     selectMock.mockReset();
     leanMock.mockReset();
     verifyPasswordMock.mockReset();
+    getAdminEmailFromSessionTokenMock.mockReset();
+    getAdminSessionTokenFromRequestMock.mockReset();
 
     findOneMock.mockReturnValue({ select: selectMock });
     selectMock.mockReturnValue({ lean: leanMock });
@@ -101,16 +112,36 @@ describe("admin auth", () => {
     expect(result).toBeNull();
   });
 
-  it("uses injected x-admin-user header when available", async () => {
+  it("reads credentials from authorization header in request", async () => {
+    leanMock.mockResolvedValue({
+      email: "admin@example.com",
+      passwordHash: "scrypt$n=16384,r=8,p=1$abc$def",
+    });
+    verifyPasswordMock.mockResolvedValue(true);
+
     const request = new Request("http://localhost/api/admin/orders", {
       headers: {
-        "x-admin-user": "  Admin@Example.com  ",
+        authorization: "Basic YWRtaW5AZXhhbXBsZS5jb206c2VjcmV0",
       },
     });
 
     const result = await getAuthorizedAdminUserFromRequest(request);
 
     expect(result).toBe("admin@example.com");
-    expect(connectToDatabaseMock).not.toHaveBeenCalled();
+    expect(connectToDatabaseMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to session token when authorization header is missing", async () => {
+    getAdminSessionTokenFromRequestMock.mockReturnValue("session-token");
+    getAdminEmailFromSessionTokenMock.mockResolvedValue("admin@example.com");
+
+    const request = new Request("http://localhost/api/admin/orders");
+    const result = await getAuthorizedAdminUserFromRequest(request);
+
+    expect(getAdminSessionTokenFromRequestMock).toHaveBeenCalledWith(request);
+    expect(getAdminEmailFromSessionTokenMock).toHaveBeenCalledWith(
+      "session-token",
+    );
+    expect(result).toBe("admin@example.com");
   });
 });

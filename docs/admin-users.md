@@ -1,9 +1,10 @@
 # Admin Users
 
-Admin access for `/admin/*` and `/api/admin/*` uses HTTP Basic Auth transport with database-backed credentials.
+Admin access for `/admin/*` and `/api/admin/*` is database-backed (`AdminUser`).
+UI access is through `/admin/login` (session cookie), and API access can also use HTTP Basic Auth.
 
-- Username: admin email
-- Password: plain password provided by operator
+- Login form: `/admin/login` with `email` + `password`
+- Basic Auth (supported for API/tools): `Authorization: Basic base64(email:password)`
 - Source of truth: `AdminUser` collection in MongoDB
 
 ## Prerequisites
@@ -88,8 +89,8 @@ unset ADMIN_PASSWORD
 ## Verify It Works
 
 1. Run the create command and confirm success output.
-2. Open `/admin` in browser and authenticate with the same `email:password`.
-3. Call any protected endpoint (`/api/admin/orders`) with Basic Auth and verify it returns `200` instead of `401`.
+2. Open `/admin/login`, sign in with the same credentials, and confirm redirect to `/admin`.
+3. Call any protected endpoint (`/api/admin/orders`) and verify it returns `200` instead of `401`.
 
 ## Rotation / Reset
 
