@@ -18,7 +18,11 @@ export async function GET(
 
     await connectToDatabase();
 
-    const flavor = await FlavorModel.findOne({ _id: id, exists: true }).lean();
+    const flavor = await FlavorModel.findOne({
+      _id: id,
+      exists: true,
+      isArchived: { $ne: true },
+    }).lean();
     if (!flavor) {
       return NextResponse.json(
         { message: "Flavor not found" },

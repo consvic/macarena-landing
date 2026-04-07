@@ -16,6 +16,9 @@ const flavorSchema = new Schema(
     gradient: { type: String, required: true, trim: true },
     coverImage: { type: String, required: true, trim: true },
     exists: { type: Boolean, required: true, default: true },
+    isVisibleOnSite: { type: Boolean, required: true, default: true },
+    isArchived: { type: Boolean, required: true, default: false },
+    updatedBy: { type: String, trim: true },
   },
   {
     timestamps: true,

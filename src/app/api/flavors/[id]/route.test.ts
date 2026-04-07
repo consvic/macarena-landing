@@ -37,6 +37,7 @@ describe("GET /api/flavors/[id]", () => {
     expect(findOneMock).toHaveBeenCalledWith({
       _id: "507f1f77bcf86cd799439011",
       exists: true,
+      isArchived: { $ne: true },
     });
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual(

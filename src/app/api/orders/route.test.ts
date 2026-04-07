@@ -108,7 +108,12 @@ describe("POST /api/orders", () => {
         status: "confirmed",
         currency: "USD",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: 150 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
         ],
       }),
     );
@@ -128,8 +133,18 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 2, unitPrice: 150 },
-          { flavorName: "Coco", presentation: "1 litro", quantity: 1, unitPrice: 280 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 2,
+            unitPrice: 150,
+          },
+          {
+            flavorName: "Coco",
+            presentation: "1 litro",
+            quantity: 1,
+            unitPrice: 280,
+          },
         ],
       }),
     );
@@ -150,7 +165,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: 150 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
         ],
       }),
     );
@@ -167,7 +187,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: 150 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
         ],
       }),
     );
@@ -184,7 +209,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: "abc" },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: "abc",
+          },
         ],
       }),
     );
@@ -201,7 +231,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: -50 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: -50,
+          },
         ],
       }),
     );
@@ -217,7 +252,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 0, unitPrice: 150 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 0,
+            unitPrice: 150,
+          },
         ],
       }),
     );
@@ -255,7 +295,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "test@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: 150 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
         ],
       }),
     );
@@ -270,7 +315,12 @@ describe("POST /api/orders", () => {
       makeRequest({
         customerEmail: "maria@example.com",
         items: [
-          { flavorName: "Mango", presentation: "1/2 litro", quantity: 1, unitPrice: 150 },
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
         ],
       }),
     );

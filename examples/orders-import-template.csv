@@ -1,0 +1,4 @@
+external_order_id,ordered_at,customer_name,customer_email,customer_phone,status,currency,notes,flavor_id,flavor_name,presentation,quantity,unit_price
+hist-0001,2026-03-01 12:30,Ana Perez,ana@example.com,5512345678,pending_confirmation,MXN,Primer pedido,,Mango Maracuyá,1/2 litro,2,150
+hist-0001,2026-03-01 12:30,Ana Perez,ana@example.com,5512345678,pending_confirmation,MXN,Primer pedido,,Coco,1 litro,1,280
+hist-0002,2026-03-05 18:45,Carlos Ruiz,carlos@example.com,5587654321,confirmed,MXN,Pedido confirmado,,Frutos Rojos,1 litro,1,280

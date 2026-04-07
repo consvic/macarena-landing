@@ -26,7 +26,7 @@ describe("getFlavors", () => {
     sortMock.mockReturnValue({ lean: leanMock });
   });
 
-  it("only queries flavors that exist", async () => {
+  it("only queries visible, non-archived flavors", async () => {
     leanMock.mockResolvedValue([
       {
         _id: "flavor-1",
@@ -47,7 +47,10 @@ describe("getFlavors", () => {
     const flavors = await getFlavors();
 
     expect(connectToDatabaseMock).toHaveBeenCalledTimes(1);
-    expect(findMock).toHaveBeenCalledWith({ exists: true });
+    expect(findMock).toHaveBeenCalledWith({
+      exists: true,
+      isArchived: { $ne: true },
+    });
     expect(sortMock).toHaveBeenCalledWith({ createdAt: -1 });
     expect(flavors).toEqual([
       expect.objectContaining({
