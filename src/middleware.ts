@@ -5,9 +5,54 @@ import {
   parseBasicAuthHeader,
 } from "@/lib/admin/basic-auth";
 import { ADMIN_SESSION_COOKIE_NAME } from "@/lib/admin/constants";
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getClientIdentifier,
+  type RateLimitPolicy,
+} from "@/lib/rate-limit";
+
+const PUBLIC_RATE_LIMIT_POLICIES = {
+  flavorReads: {
+    id: "public:flavor-reads",
+    limit: 120,
+    windowMs: 60 * 1000,
+  },
+  orderCreate: {
+    id: "public:order-create",
+    limit: 10,
+    windowMs: 60 * 1000,
+  },
+  adminLogin: {
+    id: "public:admin-login",
+    limit: 5,
+    windowMs: 15 * 60 * 1000,
+  },
+  adminLogout: {
+    id: "public:admin-logout",
+    limit: 60,
+    windowMs: 60 * 1000,
+  },
+} satisfies Record<string, RateLimitPolicy>;
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const publicRateLimitPolicy = getPublicRateLimitPolicy(
+    pathname,
+    request.method,
+  );
+
+  if (publicRateLimitPolicy) {
+    const rateLimitResult = checkRateLimit(
+      publicRateLimitPolicy,
+      getClientIdentifier(request.headers),
+    );
+
+    if (rateLimitResult.limited) {
+      return createRateLimitResponse(rateLimitResult);
+    }
+  }
+
   const isAdminPagePath = pathname.startsWith("/admin");
   const isAdminApiPath = pathname.startsWith("/api/admin");
   const isProtectedPath = isAdminPagePath || isAdminApiPath;
@@ -86,5 +131,30 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/api/admin", "/api/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/api", "/api/:path*"],
 };
+
+function getPublicRateLimitPolicy(pathname: string, method: string) {
+  const normalizedMethod = method.toUpperCase();
+
+  if (
+    normalizedMethod === "GET" &&
+    /^\/api\/flavors(?:\/[^/]+)?\/?$/.test(pathname)
+  ) {
+    return PUBLIC_RATE_LIMIT_POLICIES.flavorReads;
+  }
+
+  if (normalizedMethod === "POST" && pathname === "/api/orders") {
+    return PUBLIC_RATE_LIMIT_POLICIES.orderCreate;
+  }
+
+  if (normalizedMethod === "POST" && pathname === "/api/admin/auth/login") {
+    return PUBLIC_RATE_LIMIT_POLICIES.adminLogin;
+  }
+
+  if (normalizedMethod === "POST" && pathname === "/api/admin/auth/logout") {
+    return PUBLIC_RATE_LIMIT_POLICIES.adminLogout;
+  }
+
+  return null;
+}

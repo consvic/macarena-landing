@@ -1,20 +1,28 @@
 import type { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { clearRateLimitStore } from "./src/lib/rate-limit";
 import { middleware } from "./src/middleware";
 
-function createRequest(pathname: string, headers?: HeadersInit) {
+function createRequest(
+  pathname: string,
+  headers?: HeadersInit,
+  method = "GET",
+) {
   const url = new URL(`http://localhost${pathname}`);
   return {
     nextUrl: {
-      pathname,
+      pathname: url.pathname,
+      search: url.search,
       clone: () => new URL(url.toString()),
     },
     headers: new Headers(headers),
+    method,
   };
 }
 
 describe("admin middleware", () => {
   beforeEach(() => {
+    clearRateLimitStore();
     vi.restoreAllMocks();
   });
 
@@ -25,6 +33,150 @@ describe("admin middleware", () => {
     const response = await middleware(request as unknown as NextRequest);
 
     expect(response.status).toBe(200);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("allows public api routes while under the rate limit", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const request = createRequest("/api/flavors", {
+      "x-forwarded-for": "203.0.113.10",
+    });
+
+    const response = await middleware(request as unknown as NextRequest);
+
+    expect(response.status).toBe(200);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("applies the public read rate limit to flavor detail routes", async () => {
+    const headers = { "x-forwarded-for": "203.0.113.16" };
+
+    for (let index = 0; index < 120; index += 1) {
+      const response = await middleware(
+        createRequest(
+          "/api/flavors/507f1f77bcf86cd799439011",
+          headers,
+        ) as unknown as NextRequest,
+      );
+
+      expect(response.status).toBe(200);
+    }
+
+    const response = await middleware(
+      createRequest(
+        "/api/flavors/507f1f77bcf86cd799439011",
+        headers,
+      ) as unknown as NextRequest,
+    );
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("X-RateLimit-Limit")).toBe("120");
+  });
+
+  it("returns 429 with rate limit headers after the public api limit is exceeded", async () => {
+    const headers = { "x-forwarded-for": "203.0.113.11" };
+
+    for (let index = 0; index < 5; index += 1) {
+      const response = await middleware(
+        createRequest(
+          "/api/admin/auth/login",
+          headers,
+          "POST",
+        ) as unknown as NextRequest,
+      );
+      expect(response.status).toBe(200);
+    }
+
+    const response = await middleware(
+      createRequest(
+        "/api/admin/auth/login",
+        headers,
+        "POST",
+      ) as unknown as NextRequest,
+    );
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get("Retry-After")).toBe("900");
+    expect(response.headers.get("X-RateLimit-Limit")).toBe("5");
+    expect(response.headers.get("X-RateLimit-Remaining")).toBe("0");
+    expect(response.headers.get("X-RateLimit-Reset")).toMatch(/^\d+$/);
+    await expect(response.json()).resolves.toEqual({
+      message: "Too many requests",
+    });
+  });
+
+  it("tracks public api limits independently for different client ips", async () => {
+    for (let index = 0; index < 5; index += 1) {
+      await middleware(
+        createRequest(
+          "/api/admin/auth/login",
+          { "x-forwarded-for": "203.0.113.12" },
+          "POST",
+        ) as unknown as NextRequest,
+      );
+    }
+
+    const limitedResponse = await middleware(
+      createRequest(
+        "/api/admin/auth/login",
+        { "x-forwarded-for": "203.0.113.12" },
+        "POST",
+      ) as unknown as NextRequest,
+    );
+    const otherIpResponse = await middleware(
+      createRequest(
+        "/api/admin/auth/login",
+        { "x-forwarded-for": "203.0.113.13" },
+        "POST",
+      ) as unknown as NextRequest,
+    );
+
+    expect(limitedResponse.status).toBe(429);
+    expect(otherIpResponse.status).toBe(200);
+  });
+
+  it("does not share counters between read, order, and login policies", async () => {
+    const headers = { "x-forwarded-for": "203.0.113.14" };
+
+    for (let index = 0; index < 10; index += 1) {
+      await middleware(
+        createRequest("/api/orders", headers, "POST") as unknown as NextRequest,
+      );
+    }
+
+    const orderResponse = await middleware(
+      createRequest("/api/orders", headers, "POST") as unknown as NextRequest,
+    );
+    const flavorResponse = await middleware(
+      createRequest("/api/flavors", headers) as unknown as NextRequest,
+    );
+    const loginResponse = await middleware(
+      createRequest(
+        "/api/admin/auth/login",
+        headers,
+        "POST",
+      ) as unknown as NextRequest,
+    );
+
+    expect(orderResponse.status).toBe(429);
+    expect(flavorResponse.status).toBe(200);
+    expect(loginResponse.status).toBe(200);
+  });
+
+  it("does not rate limit protected admin apis with the public limiter", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    for (let index = 0; index < 12; index += 1) {
+      const response = await middleware(
+        createRequest("/api/admin/orders", {
+          authorization: "Bearer token",
+          "x-forwarded-for": "203.0.113.15",
+        }) as unknown as NextRequest,
+      );
+
+      expect(response.status).toBe(401);
+    }
+
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
