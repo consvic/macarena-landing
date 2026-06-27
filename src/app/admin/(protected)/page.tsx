@@ -22,25 +22,25 @@ export default async function AdminResumenPage() {
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
           <p className="text-sm text-oxford-black/70">Pedidos</p>
-          <p className="mt-2 font-numeric text-3xl text-royal-blue">
+          <p className="mt-2 font-data text-3xl text-royal-blue">
             {stats.summary.totalOrders}
           </p>
         </article>
         <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
           <p className="text-sm text-oxford-black/70">Ingresos</p>
-          <p className="mt-2 font-numeric text-3xl text-royal-blue">
+          <p className="mt-2 font-data text-3xl text-royal-blue">
             {formatMXN(stats.summary.totalRevenue)}
           </p>
         </article>
         <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
           <p className="text-sm text-oxford-black/70">Promedio por pedido</p>
-          <p className="mt-2 font-numeric text-3xl text-royal-blue">
+          <p className="mt-2 font-data text-3xl text-royal-blue">
             {formatMXN(stats.summary.averageSpendPerOrder)}
           </p>
         </article>
         <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
           <p className="text-sm text-oxford-black/70">Promedio litros/pedido</p>
-          <p className="mt-2 font-numeric text-3xl text-royal-blue">
+          <p className="mt-2 font-data text-3xl text-royal-blue">
             {stats.summary.averageLitersPerOrder.toFixed(2)}L
           </p>
         </article>
@@ -64,19 +64,19 @@ export default async function AdminResumenPage() {
               key={order._id}
               className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-ochre/15 px-4 py-3"
             >
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-medium text-royal-blue">
                   {order.customerName}
                 </p>
-                <p className="text-xs text-oxford-black/65">
+                <p className="break-all font-data text-xs text-oxford-black/65">
                   {order.customerEmail}
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-numeric text-sm text-royal-blue">
+                <p className="font-data text-sm text-royal-blue">
                   {formatMXN(order.totalPrice)}
                 </p>
-                <p className="text-xs uppercase tracking-[0.2em] text-ochre">
+                <p className="font-data text-xs uppercase tracking-[0.2em] text-ochre">
                   {order.status}
                 </p>
               </div>

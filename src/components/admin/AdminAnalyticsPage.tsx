@@ -119,17 +119,19 @@ export function AdminAnalyticsPage() {
         <div className="flex flex-wrap items-center gap-3">
           <input
             type="date"
+            aria-label="Fecha inicial"
             value={dateFrom}
             onChange={(event) => setDateFrom(event.target.value)}
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
           <input
             type="date"
+            aria-label="Fecha final"
             value={dateTo}
             onChange={(event) => setDateTo(event.target.value)}
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
-          <p className="text-sm text-oxford-black/65">
+          <p className="font-data text-sm text-oxford-black/65">
             Zona horaria: America/Mexico_City
           </p>
         </div>
@@ -143,20 +145,20 @@ export function AdminAnalyticsPage() {
 
       {isLoading || !stats ? (
         <p className="rounded-2xl bg-white px-4 py-6 text-sm text-oxford-black/70">
-          Cargando análisis...
+          Cargando análisis
         </p>
       ) : (
         <>
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
               <p className="text-sm text-oxford-black/65">Pedidos</p>
-              <p className="mt-2 font-numeric text-3xl text-royal-blue">
+              <p className="mt-2 font-data text-3xl text-royal-blue">
                 {stats.summary.totalOrders}
               </p>
             </article>
             <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
               <p className="text-sm text-oxford-black/65">Ingresos</p>
-              <p className="mt-2 font-numeric text-3xl text-royal-blue">
+              <p className="mt-2 font-data text-3xl text-royal-blue">
                 {formatMXN(stats.summary.totalRevenue)}
               </p>
             </article>
@@ -164,7 +166,7 @@ export function AdminAnalyticsPage() {
               <p className="text-sm text-oxford-black/65">
                 Promedio por pedido
               </p>
-              <p className="mt-2 font-numeric text-3xl text-royal-blue">
+              <p className="mt-2 font-data text-3xl text-royal-blue">
                 {formatMXN(stats.summary.averageSpendPerOrder)}
               </p>
             </article>
@@ -172,7 +174,7 @@ export function AdminAnalyticsPage() {
               <p className="text-sm text-oxford-black/65">
                 Promedio litros/pedido
               </p>
-              <p className="mt-2 font-numeric text-3xl text-royal-blue">
+              <p className="mt-2 font-data text-3xl text-royal-blue">
                 {stats.summary.averageLitersPerOrder.toFixed(2)}L
               </p>
             </article>
@@ -190,7 +192,7 @@ export function AdminAnalyticsPage() {
                     className="flex items-center justify-between gap-3 rounded-xl bg-cream-white px-3 py-2"
                   >
                     <span>{entry.flavorName}</span>
-                    <span className="font-numeric text-royal-blue">
+                    <span className="font-data text-royal-blue">
                       {entry.quantity}
                     </span>
                   </li>
@@ -206,10 +208,12 @@ export function AdminAnalyticsPage() {
                 {stats.frequentBuyers.map((entry) => (
                   <li
                     key={entry.buyerKey}
-                    className="rounded-xl bg-cream-white px-3 py-2"
+                    className="min-w-0 rounded-xl bg-cream-white px-3 py-2"
                   >
-                    <p className="text-royal-blue">{entry.displayName}</p>
-                    <p className="text-xs text-oxford-black/65">
+                    <p className="break-words font-data text-royal-blue">
+                      {entry.displayName}
+                    </p>
+                    <p className="break-words font-data text-xs text-oxford-black/65">
                       {entry.orderCount} pedidos · {formatMXN(entry.totalSpent)}
                     </p>
                   </li>
@@ -225,10 +229,12 @@ export function AdminAnalyticsPage() {
                 {stats.topSpenders.map((entry) => (
                   <li
                     key={entry.buyerKey}
-                    className="rounded-xl bg-cream-white px-3 py-2"
+                    className="min-w-0 rounded-xl bg-cream-white px-3 py-2"
                   >
-                    <p className="text-royal-blue">{entry.displayName}</p>
-                    <p className="text-xs text-oxford-black/65">
+                    <p className="break-words font-data text-royal-blue">
+                      {entry.displayName}
+                    </p>
+                    <p className="break-words font-data text-xs text-oxford-black/65">
                       {formatMXN(entry.totalSpent)} · {entry.liters.toFixed(1)}L
                     </p>
                   </li>

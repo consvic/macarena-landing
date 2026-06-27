@@ -279,7 +279,7 @@ export function AdminFlavorsPage() {
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-oxford-black/70">Cargando sabores...</p>
+            <p className="text-sm text-oxford-black/70">Cargando sabores</p>
           ) : (
             <ul className="space-y-3">
               {flavors.map((flavor) => (
@@ -327,7 +327,7 @@ export function AdminFlavorsPage() {
                   <p className="mt-2 text-sm text-oxford-black/65">
                     {flavor.description}
                   </p>
-                  <p className="mt-2 text-xs text-oxford-black/60">
+                  <p className="mt-2 font-data text-xs text-oxford-black/60">
                     Visible: {flavor.isVisibleOnSite ? "Sí" : "No"} · Archivado:{" "}
                     {flavor.isArchived ? "Sí" : "No"}
                   </p>
@@ -351,6 +351,7 @@ export function AdminFlavorsPage() {
           <form className="mt-4 space-y-3" onSubmit={saveFlavor}>
             <input
               required
+              aria-label="Nombre del sabor"
               value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, name: event.target.value }))
@@ -360,6 +361,7 @@ export function AdminFlavorsPage() {
             />
             <input
               required
+              aria-label="Categoría del sabor"
               value={form.category}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, category: event.target.value }))
@@ -369,6 +371,7 @@ export function AdminFlavorsPage() {
             />
             <textarea
               required
+              aria-label="Descripción del sabor"
               value={form.description}
               onChange={(event) =>
                 setForm((prev) => ({
@@ -381,6 +384,7 @@ export function AdminFlavorsPage() {
             />
 
             <select
+              aria-label="Base del sabor"
               value={form.base}
               onChange={(event) =>
                 setForm((prev) => ({
@@ -399,6 +403,7 @@ export function AdminFlavorsPage() {
 
             <input
               required
+              aria-label="Tags del sabor separados por coma"
               value={form.tags}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, tags: event.target.value }))
@@ -412,6 +417,7 @@ export function AdminFlavorsPage() {
                 required
                 type="number"
                 min="0"
+                aria-label="Precio de medio litro"
                 value={form.halfLiter}
                 onChange={(event) =>
                   setForm((prev) => ({
@@ -426,6 +432,7 @@ export function AdminFlavorsPage() {
                 required
                 type="number"
                 min="0"
+                aria-label="Precio de un litro"
                 value={form.liter}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, liter: event.target.value }))
@@ -437,6 +444,7 @@ export function AdminFlavorsPage() {
 
             <input
               required
+              aria-label="Alérgenos del sabor"
               value={form.allergens}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, allergens: event.target.value }))
@@ -446,6 +454,7 @@ export function AdminFlavorsPage() {
             />
             <input
               required
+              aria-label="Clase de gradiente del sabor"
               value={form.gradient}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, gradient: event.target.value }))
@@ -455,6 +464,7 @@ export function AdminFlavorsPage() {
             />
             <input
               required
+              aria-label="Ruta de imagen del sabor"
               value={form.coverImage}
               onChange={(event) =>
                 setForm((prev) => ({ ...prev, coverImage: event.target.value }))
@@ -469,7 +479,7 @@ export function AdminFlavorsPage() {
               className="w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
             >
               {isSaving
-                ? "Guardando..."
+                ? "Guardando"
                 : selectedId
                   ? "Actualizar sabor"
                   : "Crear sabor"}

@@ -107,7 +107,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
               <div className="mt-4 flex flex-col gap-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-light-beige/85">Presentaciones</span>
-                  <span className="font-medium font-numeric">
+                  <span className="font-data font-medium">
                     1/2 litro / 1 litro
                   </span>
                 </div>
@@ -115,7 +115,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                   <span className="text-light-beige/85">
                     Tiempo ideal de consumo
                   </span>
-                  <span className="font-medium font-numeric">6-8 minutos</span>
+                  <span className="font-data font-medium">6-8 minutos</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-light-beige/85">Disponibilidad</span>
@@ -157,10 +157,10 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                 placeholder="Pistacho, sorbetes, cacao..."
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                className="w-full rounded-full border border-ochre/30 bg-white px-4 py-3 text-sm text-oxford-black shadow-sm outline-none transition focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20"
+                className="w-full rounded-full border border-ochre/30 bg-white px-4 py-3 text-sm text-oxford-black shadow-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
               />
               <div className="min-w-[118px] rounded-full border border-royal-blue/30 px-4 py-2 text-center text-sm text-royal-blue">
-                <span className="font-numeric">{filteredFlavors.length}</span>{" "}
+                <span className="font-data">{filteredFlavors.length}</span>{" "}
                 sabores
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                           ) : null}
                         </div>
                       </div>
-                      <span className="rounded-full border border-royal-blue/20 px-3 py-1 text-sm text-royal-blue font-numeric">
+                      <span className="rounded-full border border-royal-blue/20 px-3 py-1 font-data text-sm text-royal-blue">
                         {formatMXN(itemPrice)}
                       </span>
                     </div>

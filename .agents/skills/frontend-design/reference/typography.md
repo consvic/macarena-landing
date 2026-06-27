@@ -53,6 +53,12 @@ When pairing, contrast on multiple axes:
 
 **Never pair fonts that are similar but not identical** (e.g., two geometric sans-serifs). They create visual tension without clear hierarchy.
 
+### Data & Symbol Text
+
+For the Macarena project, keep the brand/display fonts on names, headings, flavor copy, and normal prose, but switch data-heavy strings to the data font. Use `font-data` for emails, URLs, phone numbers, order IDs, dates, currency, quantities, percentages, and any mixed string with symbols such as `@`, `+`, `-`, `/`, or many digits. The Coco Gothic glyphs for these characters are visually rough; the Inter-backed data font reads cleaner.
+
+Use `font-numeric` for purely numeric values when that is the existing local pattern. Prefer `font-data` when letters are mixed with symbols or numbers.
+
 ### Web Font Loading
 
 The layout shift problem: fonts load late, text reflows, and users see content jump. Here's the fix:

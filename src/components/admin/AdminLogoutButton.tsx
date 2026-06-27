@@ -27,7 +27,7 @@ export function AdminLogoutButton() {
       disabled={isLoading}
       className="rounded-2xl border border-ochre/40 px-4 py-2 text-sm text-royal-blue transition hover:bg-royal-blue/5 disabled:opacity-60"
     >
-      {isLoading ? "Saliendo..." : "Cerrar sesión"}
+      {isLoading ? "Saliendo" : "Cerrar sesión"}
     </button>
   );
 }

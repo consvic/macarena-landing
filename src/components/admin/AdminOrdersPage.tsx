@@ -215,6 +215,7 @@ export function AdminOrdersPage() {
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
           <input
             type="search"
+            aria-label="Buscar pedidos por cliente o email"
             placeholder="Buscar por cliente o email"
             value={filters.search}
             onChange={(event) =>
@@ -224,10 +225,11 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus:border-royal-blue"
+            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
 
           <select
+            aria-label="Filtrar pedidos por estado"
             value={filters.status}
             onChange={(event) =>
               setFilters((previous) => ({
@@ -236,7 +238,7 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus:border-royal-blue"
+            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           >
             <option value="">Todos los estados</option>
             {ORDER_STATUSES.map((status) => (
@@ -248,6 +250,7 @@ export function AdminOrdersPage() {
 
           <input
             type="date"
+            aria-label="Fecha inicial"
             value={filters.dateFrom}
             onChange={(event) =>
               setFilters((previous) => ({
@@ -256,11 +259,12 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus:border-royal-blue"
+            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
 
           <input
             type="date"
+            aria-label="Fecha final"
             value={filters.dateTo}
             onChange={(event) =>
               setFilters((previous) => ({
@@ -269,7 +273,7 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus:border-royal-blue"
+            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
 
           <button
@@ -298,7 +302,7 @@ export function AdminOrdersPage() {
         ) : null}
 
         {isLoading ? (
-          <p className="text-sm text-oxford-black/70">Cargando pedidos...</p>
+          <p className="text-sm text-oxford-black/70">Cargando pedidos</p>
         ) : (
           <div className="space-y-3">
             <div className="grid grid-cols-[1.2fr_1fr_auto_auto_auto] gap-2 px-2 text-xs uppercase tracking-[0.2em] text-oxford-black/50">
@@ -314,24 +318,24 @@ export function AdminOrdersPage() {
                 key={order._id}
                 className="grid grid-cols-[1.2fr_1fr_auto_auto_auto] items-center gap-2 rounded-2xl border border-ochre/15 px-3 py-3"
               >
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-medium text-royal-blue">
                     {order.customerName}
                   </p>
-                  <p className="text-xs text-oxford-black/60">
+                  <p className="break-all font-data text-xs text-oxford-black/60">
                     {order.customerEmail}
                   </p>
                 </div>
 
-                <p className="text-sm text-oxford-black/70">
+                <p className="font-data text-sm text-oxford-black/70">
                   {new Date(order.createdAt).toLocaleString("es-MX")}
                 </p>
 
-                <p className="font-numeric text-sm text-royal-blue">
+                <p className="font-data text-sm text-royal-blue">
                   {formatMXN(order.totalPrice)}
                 </p>
 
-                <span className="rounded-full bg-royal-blue/10 px-3 py-1 text-xs text-royal-blue">
+                <span className="rounded-full bg-royal-blue/10 px-3 py-1 font-data text-xs text-royal-blue">
                   {order.status}
                 </span>
 
@@ -363,7 +367,7 @@ export function AdminOrdersPage() {
         )}
 
         <div className="mt-4 flex items-center justify-between text-sm text-oxford-black/70">
-          <p>
+          <p className="font-data">
             Página {orders.pagination.page} de {orders.pagination.totalPages} ·{" "}
             {orders.pagination.total} pedidos
           </p>
@@ -404,7 +408,7 @@ export function AdminOrdersPage() {
         </h3>
         <p className="mt-2 text-sm text-oxford-black/70">
           Solo crea pedidos históricos nuevos. Usa el formato documentado en{" "}
-          <code>docs/orders-csv-import.md</code>.
+          <code className="font-data">docs/orders-csv-import.md</code>.
         </p>
 
         <form
@@ -414,24 +418,27 @@ export function AdminOrdersPage() {
           <input
             type="file"
             name="file"
+            aria-label="Archivo CSV de pedidos históricos"
             accept=".csv,text/csv"
-            className="rounded-2xl border border-ochre/30 bg-white px-3 py-2 text-sm"
+            className="rounded-2xl border border-ochre/30 bg-white px-3 py-2 font-data text-sm"
           />
           <button
             type="submit"
             disabled={isImporting}
             className="rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
           >
-            {isImporting ? "Importando..." : "Importar archivo"}
+            {isImporting ? "Importando" : "Importar archivo"}
           </button>
         </form>
 
         {importMessage ? (
-          <p className="mt-3 text-sm text-royal-blue">{importMessage}</p>
+          <p className="mt-3 font-data text-sm text-royal-blue">
+            {importMessage}
+          </p>
         ) : null}
 
         {importErrors.length > 0 ? (
-          <ul className="mt-3 max-h-48 space-y-2 overflow-auto rounded-2xl bg-white px-3 py-3 text-xs text-wine-red">
+          <ul className="mt-3 max-h-48 space-y-2 overflow-auto rounded-2xl bg-white px-3 py-3 font-data text-xs text-wine-red">
             {importErrors.map((error) => (
               <li key={`${error.row}-${error.column}-${error.message}`}>
                 Fila {error.row} · {error.column}: {error.message}

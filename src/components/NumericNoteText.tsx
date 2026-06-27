@@ -4,19 +4,18 @@ type NumericNoteTextProps = {
 };
 
 export function NumericNoteText({ text }: NumericNoteTextProps) {
-  const parts = text.split(/(\d+)/);
+  const parts = text.split(/([^\p{L}\s]+)/gu).filter(Boolean);
 
   return (
     <>
-      {parts.map((part, index) =>
-        /\d+/.test(part) ? (
-          <span key={`${part}-${index}`} className="font-numeric">
-            {part}
-          </span>
-        ) : (
-          <span key={`${part}-${index}`}>{part}</span>
-        ),
-      )}
+      {parts.map((part, index) => (
+        <span
+          key={`${part}-${index}`}
+          className={/[^\p{L}\s]/u.test(part) ? "font-data" : undefined}
+        >
+          {part}
+        </span>
+      ))}
     </>
   );
 }

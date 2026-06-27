@@ -333,7 +333,7 @@ export default function MacarenaGelateria() {
           </div>
 
           <h2
-            className={`text-4xl md:text-7xl font-serif font-bold tracking-[2.5px] mb-4 md:mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
+            className={`text-4xl md:text-7xl font-serif font-bold mb-4 md:mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
               isVisible.cta
                 ? "animate-scale-up opacity-100"
                 : "opacity-0 scale-95"

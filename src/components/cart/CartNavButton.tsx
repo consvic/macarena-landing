@@ -16,9 +16,7 @@ export function CartNavButton() {
     >
       <Link href="/menu/cart" aria-label="Ver carrito">
         <ShoppingCart className="size-4" />
-        <span className="font-numeric text-[11px] leading-none">
-          {itemsCount}
-        </span>
+        <span className="font-data text-[11px] leading-none">{itemsCount}</span>
       </Link>
     </Button>
   );

@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus:border-royal-blue"
+              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
               autoComplete="username"
               required
             />
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
                 type={isPasswordVisible ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none focus:border-royal-blue"
+                className="w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
                 autoComplete="current-password"
                 required
               />
@@ -135,7 +135,7 @@ export default function AdminLoginPage() {
             disabled={isSubmitting}
             className="w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
           >
-            {isSubmitting ? "Entrando..." : "Entrar"}
+            {isSubmitting ? "Entrando" : "Entrar"}
           </button>
         </form>
       </section>

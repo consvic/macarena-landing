@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
 import { formatMXN } from "@/lib/pricing";
@@ -104,11 +105,11 @@ export function CartPageView() {
                       {item.flavorName}
                     </h2>
                     <p className="text-sm text-oxford-black/70">
-                      {item.presentation}
+                      <NumericNoteText text={item.presentation} />
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="font-numeric text-sm text-royal-blue">
+                    <span className="font-data text-sm text-royal-blue">
                       {formatMXN(item.price)}
                     </span>
                     <Button
@@ -128,11 +129,11 @@ export function CartPageView() {
         <div className="mt-8 rounded-3xl border border-royal-blue/20 bg-white p-6">
           <div className="flex items-center justify-between text-sm text-oxford-black/70">
             <span>Items</span>
-            <span className="font-numeric">{itemsCount}</span>
+            <span className="font-data">{itemsCount}</span>
           </div>
           <div className="mt-3 flex items-center justify-between">
             <span className="text-lg text-royal-blue">Total</span>
-            <span className="font-numeric text-2xl text-royal-blue">
+            <span className="font-data text-2xl text-royal-blue">
               {formattedTotalPrice}
             </span>
           </div>
@@ -150,7 +151,7 @@ export function CartPageView() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="Ingresa tu email"
-              className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 text-sm outline-none transition focus:border-royal-blue focus:ring-2 focus:ring-royal-blue/20"
+              className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 text-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
             />
             <Button
               type="button"
@@ -158,7 +159,7 @@ export function CartPageView() {
               className="h-11 w-full rounded-full bg-royal-blue text-light-beige hover:bg-royal-blue/90"
               onClick={handleCreateOrder}
             >
-              {isSubmitting ? "Creando pedido..." : "Realizar pedido"}
+              {isSubmitting ? "Creando pedido" : "Realizar pedido"}
             </Button>
             {errorMessage ? (
               <p className="text-sm text-wine-red">{errorMessage}</p>
