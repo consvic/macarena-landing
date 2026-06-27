@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getAuthorizedAdminUser,
   getAuthorizedAdminUserFromRequest,
+  unauthorizedJsonResponse,
+  unauthorizedTextResponse,
 } from "@/lib/admin/auth";
 import { parseBasicAuthHeader } from "@/lib/admin/basic-auth";
 
@@ -143,5 +145,22 @@ describe("admin auth", () => {
       "session-token",
     );
     expect(result).toBe("admin@example.com");
+  });
+
+  it("does not send a Basic Auth challenge for text unauthorized responses", () => {
+    const response = unauthorizedTextResponse();
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get("www-authenticate")).toBeNull();
+  });
+
+  it("does not send a Basic Auth challenge for json unauthorized responses", async () => {
+    const response = unauthorizedJsonResponse();
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get("www-authenticate")).toBeNull();
+    await expect(response.json()).resolves.toEqual({
+      message: "Unauthorized",
+    });
   });
 });

@@ -202,6 +202,7 @@ describe("admin middleware", () => {
     const response = await middleware(request as unknown as NextRequest);
 
     expect(response.status).toBe(401);
+    expect(response.headers.get("www-authenticate")).toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -255,6 +256,7 @@ describe("admin middleware", () => {
     const response = await middleware(request as unknown as NextRequest);
 
     expect(response.status).toBe(401);
+    expect(response.headers.get("www-authenticate")).toBeNull();
   });
 
   it("bypasses verification route to avoid middleware recursion", async () => {

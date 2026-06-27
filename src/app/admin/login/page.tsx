@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 
@@ -18,6 +19,7 @@ export default function AdminLoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -81,19 +83,46 @@ export default function AdminLoginPage() {
             />
           </label>
 
-          <label className="block">
-            <span className="mb-1 block text-sm text-oxford-black/80">
+          <div className="block">
+            <label
+              htmlFor="admin-password"
+              className="mb-1 block text-sm text-oxford-black/80"
+            >
               Password
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus:border-royal-blue"
-              autoComplete="current-password"
-              required
-            />
-          </label>
+            </label>
+            <div className="relative">
+              <input
+                id="admin-password"
+                type={isPasswordVisible ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none focus:border-royal-blue"
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                aria-label={
+                  isPasswordVisible
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
+                }
+                title={
+                  isPasswordVisible
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
+                }
+                className="-translate-y-1/2 absolute top-1/2 right-2 inline-flex size-8 items-center justify-center rounded-full text-oxford-black/55 transition hover:bg-ochre/10 hover:text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/45"
+                onClick={() => setIsPasswordVisible((visible) => !visible)}
+              >
+                {isPasswordVisible ? (
+                  <EyeOff aria-hidden="true" className="size-4" />
+                ) : (
+                  <Eye aria-hidden="true" className="size-4" />
+                )}
+              </button>
+            </div>
+          </div>
 
           {errorMessage ? (
             <p className="rounded-2xl bg-wine-red/10 px-4 py-3 text-sm text-wine-red">

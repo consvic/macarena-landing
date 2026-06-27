@@ -1,11 +1,14 @@
-import {
+import mongoose, {
   type InferSchemaType,
+  type Model,
   model,
   models,
   Schema,
   type Types,
 } from "mongoose";
 import { PRESENTATION_OPTIONS } from "@/lib/types";
+
+export const ORDER_ITEM_COLLECTION_NAME = "order-items";
 
 const orderItemSchema = new Schema(
   {
@@ -33,6 +36,7 @@ const orderItemSchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
+    collection: ORDER_ITEM_COLLECTION_NAME,
   },
 );
 
@@ -40,5 +44,20 @@ export type OrderItemDocument = InferSchemaType<typeof orderItemSchema> & {
   _id: Types.ObjectId;
 };
 
-export const OrderItemModel =
-  models.OrderItem || model("OrderItem", orderItemSchema);
+type OrderItemModelType = Model<OrderItemDocument>;
+
+function getOrderItemModel() {
+  const existingModel = models.OrderItem as OrderItemModelType | undefined;
+  if (!existingModel) {
+    return model<OrderItemDocument>("OrderItem", orderItemSchema);
+  }
+
+  if (existingModel.collection.name === ORDER_ITEM_COLLECTION_NAME) {
+    return existingModel;
+  }
+
+  mongoose.deleteModel("OrderItem");
+  return model<OrderItemDocument>("OrderItem", orderItemSchema);
+}
+
+export const OrderItemModel = getOrderItemModel();

@@ -24,7 +24,7 @@ You have to build a CRUD API for the orders, you should use the following endpoi
 You should use a MongoDB database, you should use the following collections:
 - flavors: to store the flavors
 - orders: to store the orders
-- order_items: to store the items in the order
+- order-items: to store the items in the order
 
 Use current ui design from the cards for the flavors model.
 Use standard mongoose model for the database.

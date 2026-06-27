@@ -1,11 +1,12 @@
 # Admin Users
 
-Admin access for `/admin/*` and `/api/admin/*` is database-backed (`AdminUser`).
+Admin access for `/admin/*` and `/api/admin/*` is database-backed (`admin-users` collection).
 UI access is through `/admin/login` (session cookie), and API access can also use HTTP Basic Auth.
 
 - Login form: `/admin/login` with `email` + `password`
 - Basic Auth (supported for API/tools): `Authorization: Basic base64(email:password)`
-- Source of truth: `AdminUser` collection in MongoDB
+- Source of truth: `admin-users` collection in MongoDB
+- Login sessions: `admin-sessions` collection in MongoDB
 
 ## Prerequisites
 

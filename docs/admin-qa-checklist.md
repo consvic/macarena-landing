@@ -34,7 +34,7 @@ This checklist validates the admin implementation against the approved scope.
 
 ### AUTH-003 Valid credentials allow access
 - Priority: P0
-- Preconditions: At least one `AdminUser` exists in MongoDB (create via `npm run admin:create -- --email ... --password ...`).
+- Preconditions: At least one user exists in the `admin-users` MongoDB collection (create via `npm run admin:create -- --email ... --password ...`).
 - Steps:
   1. Send valid Basic auth credentials.
   2. Open admin pages.
@@ -191,7 +191,7 @@ This checklist validates the admin implementation against the approved scope.
   1. Upload a valid file matching `examples/orders-import-template.csv` schema.
 - Expected:
   - `201` response with `{ importedOrders, importedItems, totalRevenue }`.
-  - Records created in `Order` and `OrderItem`.
+  - Records created in `orders` and `order-items`.
 
 ### CSV-002 Strict header order enforcement
 - Priority: P1

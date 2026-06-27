@@ -1,5 +1,3 @@
-import { ADMIN_AUTH_REALM } from "@/lib/admin/constants";
-
 export type AdminCredential = {
   username: string;
   password: string;
@@ -43,10 +41,4 @@ export function parseBasicAuthHeader(
   } catch {
     return null;
   }
-}
-
-export function getUnauthorizedHeaders() {
-  return {
-    "WWW-Authenticate": `Basic realm="${ADMIN_AUTH_REALM}", charset="UTF-8"`,
-  };
 }

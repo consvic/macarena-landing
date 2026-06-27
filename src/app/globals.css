@@ -139,6 +139,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  input,
+  textarea,
+  select {
+    font-family: var(--font-numeric);
+    font-variant-numeric: tabular-nums;
+  }
+
   body {
     @apply bg-background text-foreground;
   }

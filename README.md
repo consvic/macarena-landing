@@ -35,7 +35,7 @@ This lets the team keep historical or temporarily unavailable flavors in the dat
 2. The cart state lives in a `CartProvider` (React Context) and is synced to `localStorage` under the key `macarena:cart:v1`.
 3. A cart nav button in the menu header shows the current item count and links to `/menu/cart`.
 4. At `/menu/cart`, customers see their items, totals (formatted in MXN), and an email field. Submitting calls `POST /api/orders`.
-5. The API creates an `Order` and associated `OrderItem` documents in MongoDB, then sends a pending-confirmation email to the customer.
+5. The API creates an `Order` and associated documents in the `order-items` MongoDB collection, then sends a pending-confirmation email to the customer.
 6. On success the cart is cleared and a confirmation message is shown.
 
 ## Tech Stack

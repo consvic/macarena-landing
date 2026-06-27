@@ -11,6 +11,7 @@ const SCRYPT_R = 8;
 const SCRYPT_P = 1;
 const KEY_LENGTH = 64;
 const SALT_BYTES = 16;
+const ADMIN_USER_COLLECTION_NAME = "admin-users";
 
 const USAGE = [
   "Usage:",
@@ -35,6 +36,7 @@ const adminUserSchema = new mongoose.Schema(
   {
     timestamps: true,
     versionKey: false,
+    collection: ADMIN_USER_COLLECTION_NAME,
   },
 );
 

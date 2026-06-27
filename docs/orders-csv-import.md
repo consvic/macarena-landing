@@ -4,7 +4,7 @@ This document defines the **strict CSV contract** used by `POST /api/admin/order
 
 ## Scope
 
-- Imports historical orders from CSV into `Order` and `OrderItem` collections.
+- Imports historical orders from CSV into `orders` and `order-items` collections.
 - Creates **new** orders only.
 - Does **not** update existing orders.
 - Import rejects duplicate `external_order_id` values that already exist in the database.
@@ -84,4 +84,3 @@ Validation failures return HTTP 400 with:
 Use the committed template:
 
 - `examples/orders-import-template.csv`
-

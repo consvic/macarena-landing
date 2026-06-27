@@ -1,9 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import {
-  getUnauthorizedHeaders,
-  parseBasicAuthHeader,
-} from "@/lib/admin/basic-auth";
+import { parseBasicAuthHeader } from "@/lib/admin/basic-auth";
 import { ADMIN_SESSION_COOKIE_NAME } from "@/lib/admin/constants";
 import {
   checkRateLimit,
@@ -88,7 +85,6 @@ export async function middleware(request: NextRequest) {
   if (isAdminApiPath && !hasBasicCredentials && !hasSessionCookie) {
     return new NextResponse("Unauthorized", {
       status: 401,
-      headers: getUnauthorizedHeaders(),
     });
   }
 
@@ -123,7 +119,6 @@ export async function middleware(request: NextRequest) {
 
     return new NextResponse("Unauthorized", {
       status: 401,
-      headers: getUnauthorizedHeaders(),
     });
   }
 
