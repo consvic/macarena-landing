@@ -219,6 +219,52 @@
     }
   }
 
+  @keyframes cart-add-button-odd {
+    0% {
+      transform: translateY(0) scale(1);
+    }
+    42% {
+      transform: translateY(1px) scale(0.96);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes cart-add-button-even {
+    0% {
+      transform: translateY(0) scale(1);
+    }
+    42% {
+      transform: translateY(1px) scale(0.96);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes cart-add-ring-odd {
+    0% {
+      opacity: 0.45;
+      transform: scale(0.92);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.22);
+    }
+  }
+
+  @keyframes cart-add-ring-even {
+    0% {
+      opacity: 0.45;
+      transform: scale(0.92);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.22);
+    }
+  }
+
   .animate-fade-in {
     animation: fade-in 1s ease-out forwards;
   }
@@ -268,6 +314,39 @@
     animation-delay: 4s;
   }
 
+  .cart-add-feedback {
+    isolation: isolate;
+    animation-duration: 420ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cart-add-feedback::after {
+    position: absolute;
+    inset: -4px;
+    border: 1px solid color-mix(in srgb, var(--ochre) 78%, transparent);
+    border-radius: 9999px;
+    content: "";
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: center;
+  }
+
+  .cart-add-feedback-odd {
+    animation-name: cart-add-button-odd;
+  }
+
+  .cart-add-feedback-odd::after {
+    animation: cart-add-ring-odd 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cart-add-feedback-even {
+    animation-name: cart-add-button-even;
+  }
+
+  .cart-add-feedback-even::after {
+    animation: cart-add-ring-even 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   /* Smooth scroll behavior */
   html {
     scroll-behavior: smooth;
@@ -289,10 +368,16 @@
   .animate-scale-up,
   .animate-float,
   .animate-float-delay,
-  .animate-float-delay-2 {
+  .animate-float-delay-2,
+  .cart-add-feedback,
+  .cart-add-feedback::after {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .cart-add-feedback::after {
+    opacity: 0;
   }
 }
 

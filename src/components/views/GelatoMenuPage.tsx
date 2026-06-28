@@ -1,8 +1,8 @@
 "use client";
 
-import { Leaf } from "lucide-react";
+import { Check, Leaf } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CartNavButton } from "@/components/cart/CartNavButton";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
@@ -19,6 +19,9 @@ import {
   PRESENTATION_OPTIONS,
   type PresentationOption,
 } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+const ADDED_FEEDBACK_DURATION_MS = 2000;
 
 type GelatoMenuPageProps = {
   flavors: Flavor[];
@@ -28,7 +31,21 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPresentationByFlavor, setSelectedPresentationByFlavor] =
     useState<Record<string, PresentationOption>>({});
+  const [addedFeedbackByFlavor, setAddedFeedbackByFlavor] = useState<
+    Record<string, number>
+  >({});
+  const addedFeedbackTimers = useRef<
+    Record<string, ReturnType<typeof setTimeout>>
+  >({});
   const { addItem } = useCart();
+
+  useEffect(() => {
+    return () => {
+      for (const timer of Object.values(addedFeedbackTimers.current)) {
+        clearTimeout(timer);
+      }
+    };
+  }, []);
 
   const filteredFlavors = (() => {
     const query = searchQuery.trim().toLowerCase();
@@ -52,7 +69,49 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
   })();
 
   const resolvePresentation = (flavorName: string): PresentationOption => {
-    return selectedPresentationByFlavor[flavorName] ?? "1/2 litro";
+    return selectedPresentationByFlavor[flavorName] ?? "1 litro";
+  };
+
+  const showAddedFeedback = (flavorName: string) => {
+    setAddedFeedbackByFlavor((previous) => ({
+      ...previous,
+      [flavorName]: (previous[flavorName] ?? 0) + 1,
+    }));
+
+    const existingTimer = addedFeedbackTimers.current[flavorName];
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+    }
+
+    addedFeedbackTimers.current[flavorName] = setTimeout(() => {
+      setAddedFeedbackByFlavor((previous) => {
+        if (!previous[flavorName]) {
+          return previous;
+        }
+
+        const next = { ...previous };
+        delete next[flavorName];
+        return next;
+      });
+      delete addedFeedbackTimers.current[flavorName];
+    }, ADDED_FEEDBACK_DURATION_MS);
+  };
+
+  const handleAddFlavor = ({
+    flavorName,
+    presentation,
+    price,
+  }: {
+    flavorName: string;
+    presentation: PresentationOption;
+    price: number;
+  }) => {
+    addItem({
+      flavorName,
+      presentation,
+      price,
+    });
+    showAddedFeedback(flavorName);
   };
 
   return (
@@ -176,6 +235,8 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
               const isVeganFlavor = flavor.allergens
                 .toLowerCase()
                 .includes("sin lacteos");
+              const addedFeedbackCount = addedFeedbackByFlavor[flavor.name];
+              const isAdded = Boolean(addedFeedbackCount);
 
               return (
                 <article
@@ -186,7 +247,7 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
                     className={`relative min-h-52 h-52 md:min-h-56 md:h-56 bg-gradient-to-br ${flavor.gradient}`}
                   >
                     <div
-                      className="absolute inset-0 bg-cover bg-center opacity-35"
+                      className="absolute inset-0 bg-cover bg-center opacity-75"
                       style={{
                         backgroundImage: `url(${encodeURI(flavor.coverImage)})`,
                       }}
@@ -272,17 +333,34 @@ export default function GelatoMenuPage({ flavors }: GelatoMenuPageProps) {
 
                         <Button
                           type="button"
-                          aria-label={`Agregar ${flavor.name} al carrito`}
-                          className="h-11 rounded-full bg-royal-blue px-4 text-light-beige hover:bg-royal-blue/90"
+                          aria-label={
+                            isAdded
+                              ? `${flavor.name} agregado al carrito`
+                              : `Agregar ${flavor.name} al carrito`
+                          }
+                          className={cn(
+                            "relative h-11 w-32 overflow-visible rounded-full bg-royal-blue px-4 text-light-beige transition-all duration-200 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] hover:bg-royal-blue/90 active:scale-95",
+                            isAdded &&
+                              "bg-ochre text-royal-blue hover:bg-ochre/90",
+                            isAdded &&
+                              (addedFeedbackCount % 2 === 0
+                                ? "cart-add-feedback cart-add-feedback-even"
+                                : "cart-add-feedback cart-add-feedback-odd"),
+                          )}
                           onClick={() =>
-                            addItem({
+                            handleAddFlavor({
                               flavorName: flavor.name,
                               presentation: selectedPresentation,
                               price: itemPrice,
                             })
                           }
                         >
-                          Agregar
+                          {isAdded ? (
+                            <Check className="size-4" aria-hidden="true" />
+                          ) : null}
+                          <span aria-live="polite">
+                            {isAdded ? "Agregado" : "Agregar"}
+                          </span>
                         </Button>
                       </div>
                     </div>
