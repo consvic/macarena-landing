@@ -107,31 +107,31 @@ export function AdminAnalyticsPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-xs uppercase tracking-[0.35em] text-ochre">
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
           Análisis
         </p>
-        <h2 className="mt-2 font-serif text-4xl text-royal-blue">
+        <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
           Tendencias y compradores
         </h2>
       </header>
 
-      <section className="rounded-3xl border border-ochre/20 bg-white p-5">
-        <div className="flex flex-wrap items-center gap-3">
+      <section className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[12rem_12rem_1fr] lg:items-center">
           <input
             type="date"
             aria-label="Fecha inicial"
             value={dateFrom}
             onChange={(event) => setDateFrom(event.target.value)}
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
           <input
             type="date"
             aria-label="Fecha final"
             value={dateTo}
             onChange={(event) => setDateTo(event.target.value)}
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
-          <p className="font-data text-sm text-oxford-black/65">
+          <p className="break-all font-data text-sm text-oxford-black/65 sm:col-span-2 lg:col-span-1">
             Zona horaria: America/Mexico_City
           </p>
         </div>
@@ -150,49 +150,51 @@ export function AdminAnalyticsPage() {
       ) : (
         <>
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
+            <article className="rounded-2xl border border-royal-blue/20 bg-white p-4 sm:rounded-3xl sm:p-5">
               <p className="text-sm text-oxford-black/65">Pedidos</p>
-              <p className="mt-2 font-data text-3xl text-royal-blue">
+              <p className="mt-2 break-words font-data text-2xl text-royal-blue sm:text-3xl">
                 {stats.summary.totalOrders}
               </p>
             </article>
-            <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
+            <article className="rounded-2xl border border-royal-blue/20 bg-white p-4 sm:rounded-3xl sm:p-5">
               <p className="text-sm text-oxford-black/65">Ingresos</p>
-              <p className="mt-2 font-data text-3xl text-royal-blue">
+              <p className="mt-2 break-words font-data text-2xl text-royal-blue sm:text-3xl">
                 {formatMXN(stats.summary.totalRevenue)}
               </p>
             </article>
-            <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
+            <article className="rounded-2xl border border-royal-blue/20 bg-white p-4 sm:rounded-3xl sm:p-5">
               <p className="text-sm text-oxford-black/65">
                 Promedio por pedido
               </p>
-              <p className="mt-2 font-data text-3xl text-royal-blue">
+              <p className="mt-2 break-words font-data text-2xl text-royal-blue sm:text-3xl">
                 {formatMXN(stats.summary.averageSpendPerOrder)}
               </p>
             </article>
-            <article className="rounded-3xl border border-royal-blue/20 bg-white p-5">
+            <article className="rounded-2xl border border-royal-blue/20 bg-white p-4 sm:rounded-3xl sm:p-5">
               <p className="text-sm text-oxford-black/65">
                 Promedio litros/pedido
               </p>
-              <p className="mt-2 font-data text-3xl text-royal-blue">
+              <p className="mt-2 break-words font-data text-2xl text-royal-blue sm:text-3xl">
                 {stats.summary.averageLitersPerOrder.toFixed(2)}L
               </p>
             </article>
           </section>
 
           <section className="grid gap-6 xl:grid-cols-3">
-            <article className="rounded-3xl border border-ochre/20 bg-white p-5">
-              <h3 className="font-serif text-2xl text-royal-blue">
+            <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+              <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
                 Sabores más comprados
               </h3>
               <ul className="mt-3 space-y-2 text-sm">
                 {stats.topFlavors.map((entry) => (
                   <li
                     key={entry.flavorName}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-cream-white px-3 py-2"
+                    className="flex items-start justify-between gap-3 rounded-xl bg-cream-white px-3 py-2"
                   >
-                    <span>{entry.flavorName}</span>
-                    <span className="font-data text-royal-blue">
+                    <span className="min-w-0 break-words">
+                      {entry.flavorName}
+                    </span>
+                    <span className="shrink-0 font-data text-royal-blue">
                       {entry.quantity}
                     </span>
                   </li>
@@ -200,8 +202,8 @@ export function AdminAnalyticsPage() {
               </ul>
             </article>
 
-            <article className="rounded-3xl border border-ochre/20 bg-white p-5">
-              <h3 className="font-serif text-2xl text-royal-blue">
+            <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+              <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
                 Compradores frecuentes
               </h3>
               <ul className="mt-3 space-y-2 text-sm">
@@ -221,8 +223,8 @@ export function AdminAnalyticsPage() {
               </ul>
             </article>
 
-            <article className="rounded-3xl border border-ochre/20 bg-white p-5">
-              <h3 className="font-serif text-2xl text-royal-blue">
+            <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+              <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
                 Mayor gasto
               </h3>
               <ul className="mt-3 space-y-2 text-sm">

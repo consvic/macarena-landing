@@ -13,18 +13,18 @@ export function AdminLayoutShell({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="min-h-screen bg-cream-white text-oxford-black">
-      <div className="border-b border-ochre/20 bg-light-beige/50 px-6 py-4 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-ochre">
+    <div className="min-h-dvh overflow-x-hidden bg-cream-white text-oxford-black">
+      <div className="border-b border-ochre/20 bg-light-beige/50 px-4 py-3 backdrop-blur sm:px-6 sm:py-4">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
               Macarena
             </p>
-            <h1 className="font-serif text-2xl text-royal-blue">
+            <h1 className="font-serif text-2xl text-royal-blue sm:text-3xl">
               Portal Interno
             </h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <p className="hidden text-sm text-oxford-black/70 md:block">
               Gestión de pedidos y catálogo
             </p>
@@ -33,14 +33,14 @@ export function AdminLayoutShell({
         </div>
       </div>
 
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[240px_1fr]">
-        <aside className="self-start rounded-3xl border border-ochre/20 bg-white p-4">
-          <nav className="space-y-2">
+      <div className="mx-auto grid w-full max-w-7xl gap-5 px-4 py-5 sm:gap-8 sm:px-6 sm:py-8 lg:grid-cols-[240px_1fr]">
+        <aside className="-mx-4 border-y border-ochre/20 bg-white/85 px-4 py-3 sm:mx-0 sm:rounded-3xl sm:border sm:bg-white sm:p-4 lg:self-start">
+          <nav className="flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-2 lg:overflow-visible lg:pb-0">
             {sections.map((section) => (
               <Link
                 key={section.href}
                 href={section.href}
-                className="block rounded-2xl px-4 py-2 text-sm text-royal-blue transition hover:bg-royal-blue/5"
+                className="inline-flex min-h-11 shrink-0 items-center rounded-2xl px-4 py-2 text-sm text-royal-blue transition hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 lg:flex"
               >
                 {section.label}
               </Link>
@@ -48,7 +48,7 @@ export function AdminLayoutShell({
           </nav>
         </aside>
 
-        <main>{children}</main>
+        <main className="min-w-0">{children}</main>
       </div>
     </div>
   );

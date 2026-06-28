@@ -56,12 +56,12 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-cream-white px-6 py-12 text-oxford-black">
-      <section className="mx-auto w-full max-w-lg rounded-3xl border border-ochre/20 bg-white p-8">
-        <p className="text-xs uppercase tracking-[0.35em] text-ochre">
+    <div className="min-h-dvh bg-cream-white px-4 py-8 text-oxford-black sm:px-6 sm:py-12">
+      <section className="mx-auto w-full max-w-lg rounded-2xl border border-ochre/20 bg-white p-5 sm:rounded-3xl sm:p-8">
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
           Admin Login
         </p>
-        <h2 className="mt-2 font-serif text-4xl text-royal-blue">
+        <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
           Iniciar sesión
         </h2>
         <p className="mt-2 text-sm text-oxford-black/70">
@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
               autoComplete="username"
               required
             />
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
                 type={isPasswordVisible ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
                 autoComplete="current-password"
                 required
               />
@@ -112,7 +112,7 @@ export default function AdminLoginPage() {
                     ? "Ocultar contraseña"
                     : "Mostrar contraseña"
                 }
-                className="-translate-y-1/2 absolute top-1/2 right-2 inline-flex size-8 items-center justify-center rounded-full text-oxford-black/55 transition hover:bg-ochre/10 hover:text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/45"
+                className="-translate-y-1/2 absolute top-1/2 right-1.5 inline-flex size-10 items-center justify-center rounded-full text-oxford-black/55 transition hover:bg-ochre/10 hover:text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/45"
                 onClick={() => setIsPasswordVisible((visible) => !visible)}
               >
                 {isPasswordVisible ? (
@@ -133,7 +133,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
           >
             {isSubmitting ? "Entrando" : "Entrar"}
           </button>

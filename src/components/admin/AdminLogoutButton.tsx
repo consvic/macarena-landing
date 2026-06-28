@@ -25,7 +25,7 @@ export function AdminLogoutButton() {
       type="button"
       onClick={handleLogout}
       disabled={isLoading}
-      className="rounded-2xl border border-ochre/40 px-4 py-2 text-sm text-royal-blue transition hover:bg-royal-blue/5 disabled:opacity-60"
+      className="inline-flex min-h-11 items-center rounded-2xl border border-ochre/40 px-4 py-2 text-sm text-royal-blue transition hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-60"
     >
       {isLoading ? "Saliendo" : "Cerrar sesión"}
     </button>

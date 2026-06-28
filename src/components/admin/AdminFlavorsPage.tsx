@@ -246,10 +246,10 @@ export function AdminFlavorsPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-xs uppercase tracking-[0.35em] text-ochre">
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
           Sabores
         </p>
-        <h2 className="mt-2 font-serif text-4xl text-royal-blue">
+        <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
           Catálogo interno
         </h2>
       </header>
@@ -260,15 +260,15 @@ export function AdminFlavorsPage() {
         </p>
       ) : null}
 
-      <section className="grid gap-6 xl:grid-cols-[1.2fr_1fr]">
-        <article className="rounded-3xl border border-ochre/20 bg-white p-5">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-serif text-2xl text-royal-blue">
+      <section className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(22rem,1fr)]">
+        <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
               Sabores registrados
             </h3>
             <button
               type="button"
-              className="rounded-2xl border border-ochre/30 px-3 py-1 text-sm text-ochre"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 sm:w-auto"
               onClick={() => {
                 setSelectedId(null);
                 setForm(EMPTY_FORM);
@@ -290,25 +290,25 @@ export function AdminFlavorsPage() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <button
                       type="button"
-                      className="text-left"
+                      className="min-w-0 flex-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
                       onClick={() => setSelectedId(flavor._id)}
                     >
-                      <p className="font-serif text-xl text-royal-blue">
+                      <p className="break-words font-serif text-xl text-royal-blue">
                         {flavor.name}
                       </p>
-                      <p className="text-xs uppercase tracking-[0.2em] text-ochre">
+                      <p className="break-words text-xs uppercase tracking-[0.16em] text-ochre sm:tracking-[0.2em]">
                         {flavor.category}
                       </p>
                     </button>
 
-                    <div className="flex flex-wrap gap-2 text-xs">
+                    <div className="grid w-full grid-cols-2 gap-2 text-sm sm:flex sm:w-auto sm:flex-wrap sm:text-xs">
                       <button
                         type="button"
                         onClick={() =>
                           updateVisibility(flavor, !flavor.isVisibleOnSite)
                         }
                         disabled={flavor.isArchived}
-                        className="rounded-xl border border-royal-blue/30 px-2 py-1 text-royal-blue disabled:opacity-40"
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-royal-blue/30 px-3 py-2 text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-40 sm:min-h-9 sm:px-3 sm:py-1.5"
                       >
                         {flavor.isVisibleOnSite ? "Ocultar" : "Mostrar"}
                       </button>
@@ -317,17 +317,17 @@ export function AdminFlavorsPage() {
                         onClick={() =>
                           updateArchived(flavor, !flavor.isArchived)
                         }
-                        className="rounded-xl border border-wine-red/30 px-2 py-1 text-wine-red"
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 sm:min-h-9 sm:px-3 sm:py-1.5"
                       >
                         {flavor.isArchived ? "Restaurar" : "Archivar"}
                       </button>
                     </div>
                   </div>
 
-                  <p className="mt-2 text-sm text-oxford-black/65">
+                  <p className="mt-2 break-words text-sm text-oxford-black/65">
                     {flavor.description}
                   </p>
-                  <p className="mt-2 font-data text-xs text-oxford-black/60">
+                  <p className="mt-2 break-words font-data text-xs text-oxford-black/60">
                     Visible: {flavor.isVisibleOnSite ? "Sí" : "No"} · Archivado:{" "}
                     {flavor.isArchived ? "Sí" : "No"}
                   </p>
@@ -343,8 +343,8 @@ export function AdminFlavorsPage() {
           )}
         </article>
 
-        <article className="rounded-3xl border border-ochre/20 bg-white p-5">
-          <h3 className="font-serif text-2xl text-royal-blue">
+        <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+          <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
             {selectedId ? "Editar sabor" : "Crear sabor"}
           </h3>
 
@@ -357,7 +357,7 @@ export function AdminFlavorsPage() {
                 setForm((prev) => ({ ...prev, name: event.target.value }))
               }
               placeholder="Nombre"
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
             <input
               required
@@ -367,7 +367,7 @@ export function AdminFlavorsPage() {
                 setForm((prev) => ({ ...prev, category: event.target.value }))
               }
               placeholder="Categoría"
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
             <textarea
               required
@@ -380,7 +380,7 @@ export function AdminFlavorsPage() {
                 }))
               }
               placeholder="Descripción"
-              className="min-h-20 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-24 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
 
             <select
@@ -392,7 +392,7 @@ export function AdminFlavorsPage() {
                   base: event.target.value as FlavorBase,
                 }))
               }
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             >
               {FLAVOR_BASES.map((base) => (
                 <option key={base} value={base}>
@@ -409,10 +409,10 @@ export function AdminFlavorsPage() {
                 setForm((prev) => ({ ...prev, tags: event.target.value }))
               }
               placeholder="Tags separados por coma"
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <input
                 required
                 type="number"
@@ -426,7 +426,7 @@ export function AdminFlavorsPage() {
                   }))
                 }
                 placeholder="Precio 1/2 litro"
-                className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
               />
               <input
                 required
@@ -438,7 +438,7 @@ export function AdminFlavorsPage() {
                   setForm((prev) => ({ ...prev, liter: event.target.value }))
                 }
                 placeholder="Precio 1 litro"
-                className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
               />
             </div>
 
@@ -450,7 +450,7 @@ export function AdminFlavorsPage() {
                 setForm((prev) => ({ ...prev, allergens: event.target.value }))
               }
               placeholder="Alérgenos"
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
             <input
               required
@@ -460,7 +460,7 @@ export function AdminFlavorsPage() {
                 setForm((prev) => ({ ...prev, gradient: event.target.value }))
               }
               placeholder="Clase de gradiente (ej. from-ochre/20 to-terracotta/50)"
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
             <input
               required
@@ -470,13 +470,13 @@ export function AdminFlavorsPage() {
                 setForm((prev) => ({ ...prev, coverImage: event.target.value }))
               }
               placeholder="Ruta de imagen"
-              className="w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
             />
 
             <button
               type="submit"
               disabled={isSaving}
-              className="w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
+              className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
             >
               {isSaving
                 ? "Guardando"

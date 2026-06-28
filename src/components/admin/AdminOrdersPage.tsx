@@ -202,17 +202,17 @@ export function AdminOrdersPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.35em] text-ochre">
+          <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
             Pedidos
           </p>
-          <h2 className="mt-2 font-serif text-4xl text-royal-blue">
+          <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
             Historial y estado
           </h2>
         </div>
       </header>
 
-      <section className="rounded-3xl border border-ochre/20 bg-white p-5">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+      <section className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <input
             type="search"
             aria-label="Buscar pedidos por cliente o email"
@@ -225,7 +225,7 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20 sm:col-span-2 xl:col-span-1"
           />
 
           <select
@@ -238,7 +238,7 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           >
             <option value="">Todos los estados</option>
             {ORDER_STATUSES.map((status) => (
@@ -259,7 +259,7 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
 
           <input
@@ -273,12 +273,12 @@ export function AdminOrdersPage() {
                 page: 1,
               }))
             }
-            className="rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
 
           <button
             type="button"
-            className="rounded-2xl border border-royal-blue/40 bg-royal-blue px-3 py-2 text-sm text-light-beige"
+            className="min-h-11 rounded-2xl border border-royal-blue/40 bg-royal-blue px-3 py-2 text-sm text-light-beige focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
             onClick={() =>
               setFilters({
                 search: "",
@@ -294,7 +294,7 @@ export function AdminOrdersPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-ochre/20 bg-white p-5">
+      <section className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
         {errorMessage ? (
           <p className="mb-3 rounded-xl bg-wine-red/10 px-3 py-2 text-sm text-wine-red">
             {errorMessage}
@@ -305,7 +305,7 @@ export function AdminOrdersPage() {
           <p className="text-sm text-oxford-black/70">Cargando pedidos</p>
         ) : (
           <div className="space-y-3">
-            <div className="grid grid-cols-[1.2fr_1fr_auto_auto_auto] gap-2 px-2 text-xs uppercase tracking-[0.2em] text-oxford-black/50">
+            <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] gap-3 px-2 text-xs uppercase tracking-[0.2em] text-oxford-black/50 md:grid">
               <span>Cliente</span>
               <span>Fecha</span>
               <span>Total</span>
@@ -316,7 +316,7 @@ export function AdminOrdersPage() {
             {orders.data.map((order) => (
               <article
                 key={order._id}
-                className="grid grid-cols-[1.2fr_1fr_auto_auto_auto] items-center gap-2 rounded-2xl border border-ochre/15 px-3 py-3"
+                className="rounded-2xl border border-ochre/15 px-4 py-4 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] md:items-center md:gap-3 md:px-3 md:py-3"
               >
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-royal-blue">
@@ -327,29 +327,48 @@ export function AdminOrdersPage() {
                   </p>
                 </div>
 
-                <p className="font-data text-sm text-oxford-black/70">
-                  {new Date(order.createdAt).toLocaleString("es-MX")}
-                </p>
+                <dl className="mt-4 grid grid-cols-2 gap-3 md:contents">
+                  <div className="min-w-0">
+                    <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
+                      Fecha
+                    </dt>
+                    <dd className="break-words font-data text-sm text-oxford-black/70">
+                      {new Date(order.createdAt).toLocaleString("es-MX")}
+                    </dd>
+                  </div>
 
-                <p className="font-data text-sm text-royal-blue">
-                  {formatMXN(order.totalPrice)}
-                </p>
+                  <div className="min-w-0">
+                    <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
+                      Total
+                    </dt>
+                    <dd className="break-words font-data text-sm text-royal-blue">
+                      {formatMXN(order.totalPrice)}
+                    </dd>
+                  </div>
 
-                <span className="rounded-full bg-royal-blue/10 px-3 py-1 font-data text-xs text-royal-blue">
-                  {order.status}
-                </span>
+                  <div className="col-span-2 min-w-0 md:col-span-1">
+                    <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
+                      Estado
+                    </dt>
+                    <dd>
+                      <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 font-data text-xs text-royal-blue">
+                        {order.status}
+                      </span>
+                    </dd>
+                  </div>
+                </dl>
 
-                <div className="flex gap-2">
+                <div className="mt-4 flex gap-2 md:mt-0">
                   <button
                     type="button"
-                    className="rounded-xl border border-ochre/30 px-2 py-1 text-xs text-ochre"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
                     onClick={() => updateStatus(order._id, "confirmed")}
                   >
                     Confirmar
                   </button>
                   <button
                     type="button"
-                    className="rounded-xl border border-wine-red/30 px-2 py-1 text-xs text-wine-red"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-sm text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
                     onClick={() => updateStatus(order._id, "cancelled")}
                   >
                     Cancelar
@@ -366,16 +385,16 @@ export function AdminOrdersPage() {
           </div>
         )}
 
-        <div className="mt-4 flex items-center justify-between text-sm text-oxford-black/70">
+        <div className="mt-4 flex flex-col gap-3 text-sm text-oxford-black/70 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-data">
             Página {orders.pagination.page} de {orders.pagination.totalPages} ·{" "}
             {orders.pagination.total} pedidos
           </p>
-          <div className="flex gap-2">
+          <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex">
             <button
               type="button"
               disabled={orders.pagination.page <= 1}
-              className="rounded-xl border border-ochre/30 px-3 py-1 disabled:opacity-40"
+              className="min-h-11 rounded-xl border border-ochre/30 px-3 py-2 disabled:opacity-40"
               onClick={() =>
                 setFilters((previous) => ({
                   ...previous,
@@ -388,7 +407,7 @@ export function AdminOrdersPage() {
             <button
               type="button"
               disabled={orders.pagination.page >= orders.pagination.totalPages}
-              className="rounded-xl border border-ochre/30 px-3 py-1 disabled:opacity-40"
+              className="min-h-11 rounded-xl border border-ochre/30 px-3 py-2 disabled:opacity-40"
               onClick={() =>
                 setFilters((previous) => ({
                   ...previous,
@@ -402,30 +421,30 @@ export function AdminOrdersPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-royal-blue/20 bg-light-beige/30 p-5">
-        <h3 className="font-serif text-2xl text-royal-blue">
+      <section className="rounded-2xl border border-royal-blue/20 bg-light-beige/30 p-4 sm:rounded-3xl sm:p-5">
+        <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
           Importar CSV (histórico)
         </h3>
         <p className="mt-2 text-sm text-oxford-black/70">
-          Solo crea pedidos históricos nuevos. Usa el formato documentado en{" "}
-          <code className="font-data">docs/orders-csv-import.md</code>.
+          Solo crea pedidos históricos nuevos. Formato documentado:{" "}
+          <code className="break-all font-data">docs/orders-csv-import.md</code>
         </p>
 
         <form
           onSubmit={handleImportSubmit}
-          className="mt-4 flex flex-wrap items-center gap-3"
+          className="mt-4 grid gap-3 sm:flex sm:flex-wrap sm:items-center"
         >
           <input
             type="file"
             name="file"
             aria-label="Archivo CSV de pedidos históricos"
             accept=".csv,text/csv"
-            className="rounded-2xl border border-ochre/30 bg-white px-3 py-2 font-data text-sm"
+            className="min-h-11 w-full min-w-0 rounded-2xl border border-ochre/30 bg-white px-3 py-2 font-data text-sm sm:w-auto"
           />
           <button
             type="submit"
             disabled={isImporting}
-            className="rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
+            className="min-h-11 rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50 sm:w-auto"
           >
             {isImporting ? "Importando" : "Importar archivo"}
           </button>
@@ -440,7 +459,10 @@ export function AdminOrdersPage() {
         {importErrors.length > 0 ? (
           <ul className="mt-3 max-h-48 space-y-2 overflow-auto rounded-2xl bg-white px-3 py-3 font-data text-xs text-wine-red">
             {importErrors.map((error) => (
-              <li key={`${error.row}-${error.column}-${error.message}`}>
+              <li
+                className="break-words"
+                key={`${error.row}-${error.column}-${error.message}`}
+              >
                 Fila {error.row} · {error.column}: {error.message}
               </li>
             ))}

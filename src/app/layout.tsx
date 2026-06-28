@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import type React from "react";
@@ -48,6 +48,12 @@ export const metadata: Metadata = {
   title: "Macarena Gelateria - Gelato Italiano Premium en México",
   description:
     "Experimenta la mejor tradición italiana de gelato con un toque mexicano. Ingredientes premium, sabores elegantes y gusto sofisticado.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
