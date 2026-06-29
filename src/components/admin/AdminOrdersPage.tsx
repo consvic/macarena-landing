@@ -2,13 +2,17 @@
 
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { formatMXN } from "@/lib/pricing";
-import { ORDER_STATUSES } from "@/lib/types";
+import {
+  formatOrderStatus,
+  ORDER_STATUSES,
+  type OrderStatus,
+} from "@/lib/types";
 
 type AdminOrder = {
   _id: string;
   customerName: string;
   customerEmail: string;
-  status: string;
+  status: OrderStatus;
   totalPrice: number;
   itemCount: number;
   createdAt: string;
@@ -122,7 +126,7 @@ export function AdminOrdersPage() {
     };
   }, [query]);
 
-  async function updateStatus(orderId: string, status: string) {
+  async function updateStatus(orderId: string, status: OrderStatus) {
     try {
       const response = await fetch(`/api/admin/orders/${orderId}/status`, {
         method: "PATCH",
@@ -243,7 +247,7 @@ export function AdminOrdersPage() {
             <option value="">Todos los estados</option>
             {ORDER_STATUSES.map((status) => (
               <option key={status} value={status}>
-                {status}
+                {formatOrderStatus(status)}
               </option>
             ))}
           </select>
@@ -351,8 +355,8 @@ export function AdminOrdersPage() {
                       Estado
                     </dt>
                     <dd>
-                      <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 font-data text-xs text-royal-blue">
-                        {order.status}
+                      <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 text-xs text-royal-blue">
+                        {formatOrderStatus(order.status)}
                       </span>
                     </dd>
                   </div>

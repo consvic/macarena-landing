@@ -40,6 +40,16 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
+export const ORDER_STATUS_LABELS = {
+  pending_confirmation: "pending confirmation",
+  confirmed: "confirmed",
+  cancelled: "cancelled",
+} satisfies Record<OrderStatus, string>;
+
+export function formatOrderStatus(status: OrderStatus) {
+  return ORDER_STATUS_LABELS[status];
+}
+
 export type IncomingOrderItem = {
   flavorId?: string;
   flavorName: string;

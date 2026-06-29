@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAdminStats, listAdminOrders } from "@/lib/admin/services";
 import { formatMXN } from "@/lib/pricing";
+import { formatOrderStatus } from "@/lib/types";
 
 export default async function AdminResumenPage() {
   const [stats, recentOrders] = await Promise.all([
@@ -76,8 +77,8 @@ export default async function AdminResumenPage() {
                 <p className="font-data text-sm text-royal-blue">
                   {formatMXN(order.totalPrice)}
                 </p>
-                <p className="font-data text-xs uppercase tracking-[0.16em] text-ochre sm:tracking-[0.2em]">
-                  {order.status}
+                <p className="text-xs uppercase tracking-[0.16em] text-ochre sm:tracking-[0.2em]">
+                  {formatOrderStatus(order.status)}
                 </p>
               </div>
             </li>
