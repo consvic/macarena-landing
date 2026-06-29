@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { AdminFlavorsResultsLoading } from "@/components/admin/AdminLoadingStates";
 import { FLAVOR_BASES, type FlavorBase } from "@/lib/types";
 
 type AdminFlavor = {
@@ -279,7 +280,7 @@ export function AdminFlavorsPage() {
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-oxford-black/70">Cargando sabores</p>
+            <AdminFlavorsResultsLoading />
           ) : (
             <ul className="space-y-3">
               {flavors.map((flavor) => (

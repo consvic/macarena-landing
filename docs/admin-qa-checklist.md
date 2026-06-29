@@ -78,11 +78,12 @@ This checklist validates the admin implementation against the approved scope.
 - Priority: P1
 - Steps:
   1. Set order to `confirmed`.
-  2. Then set to `cancelled`.
-  3. Then set to `pending_confirmation`.
+  2. Then set to `paid`.
+  3. Then set to `delivered`.
+  4. Verify the admin UI no longer shows forward actions for the delivered order.
 - Expected:
-  - Final status matches last update.
-  - `confirmedAt` behavior follows expected product rule (confirm whether it should be cleared or retained).
+  - Final status is `delivered`.
+  - `confirmedAt` remains set after the order moves through paid and delivered.
 
 ### ORD-004 Invalid status rejected
 - Priority: P1

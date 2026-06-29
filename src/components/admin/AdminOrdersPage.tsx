@@ -1,6 +1,7 @@
 "use client";
 
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { AdminOrdersResultsLoading } from "@/components/admin/AdminLoadingStates";
 import { formatMXN } from "@/lib/pricing";
 import {
   formatOrderStatus,
@@ -38,6 +39,24 @@ const DEFAULT_RESPONSE: OrdersResponse = {
   },
 };
 
+function getNextOrderAction(status: OrderStatus) {
+  switch (status) {
+    case "pending_confirmation":
+      return { label: "Confirmar", status: "confirmed" as const };
+    case "confirmed":
+      return { label: "Pagado", status: "paid" as const };
+    case "paid":
+      return { label: "Entregado", status: "delivered" as const };
+    case "cancelled":
+    case "delivered":
+      return null;
+  }
+}
+
+function canCancelOrder(status: OrderStatus) {
+  return status === "pending_confirmation" || status === "confirmed";
+}
+
 export function AdminOrdersPage() {
   const [filters, setFilters] = useState({
     search: "",
@@ -54,6 +73,10 @@ export function AdminOrdersPage() {
   const [importErrors, setImportErrors] = useState<
     Array<{ row: number; column: string; message: string }>
   >([]);
+  const [orderPendingCancellation, setOrderPendingCancellation] =
+    useState<AdminOrder | null>(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const confirmCancellationButtonRef = useRef<HTMLButtonElement>(null);
 
   const query = useMemo(() => {
     const params = new URLSearchParams();
@@ -126,7 +149,36 @@ export function AdminOrdersPage() {
     };
   }, [query]);
 
+  useEffect(() => {
+    if (!orderPendingCancellation) {
+      return;
+    }
+
+    confirmCancellationButtonRef.current?.focus();
+  }, [orderPendingCancellation]);
+
+  useEffect(() => {
+    if (!orderPendingCancellation) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && !updatingOrderId) {
+        setOrderPendingCancellation(null);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [orderPendingCancellation, updatingOrderId]);
+
   async function updateStatus(orderId: string, status: OrderStatus) {
+    setUpdatingOrderId(orderId);
+    setErrorMessage(null);
+
     try {
       const response = await fetch(`/api/admin/orders/${orderId}/status`, {
         method: "PATCH",
@@ -145,10 +197,29 @@ export function AdminOrdersPage() {
           order._id === orderId ? { ...order, status } : order,
         ),
       }));
+      return true;
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Error desconocido",
       );
+      return false;
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  }
+
+  async function confirmCancellation() {
+    if (!orderPendingCancellation) {
+      return;
+    }
+
+    const updated = await updateStatus(
+      orderPendingCancellation._id,
+      "cancelled",
+    );
+
+    if (updated) {
+      setOrderPendingCancellation(null);
     }
   }
 
@@ -306,7 +377,7 @@ export function AdminOrdersPage() {
         ) : null}
 
         {isLoading ? (
-          <p className="text-sm text-oxford-black/70">Cargando pedidos</p>
+          <AdminOrdersResultsLoading />
         ) : (
           <div className="space-y-3">
             <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] gap-3 px-2 text-xs uppercase tracking-[0.2em] text-oxford-black/50 md:grid">
@@ -317,69 +388,86 @@ export function AdminOrdersPage() {
               <span>Acciones</span>
             </div>
 
-            {orders.data.map((order) => (
-              <article
-                key={order._id}
-                className="rounded-2xl border border-ochre/15 px-4 py-4 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] md:items-center md:gap-3 md:px-3 md:py-3"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-royal-blue">
-                    {order.customerName}
-                  </p>
-                  <p className="break-all font-data text-xs text-oxford-black/60">
-                    {order.customerEmail}
-                  </p>
-                </div>
+            {orders.data.map((order) => {
+              const nextAction = getNextOrderAction(order.status);
+              const showCancelAction = canCancelOrder(order.status);
 
-                <dl className="mt-4 grid grid-cols-2 gap-3 md:contents">
+              return (
+                <article
+                  key={order._id}
+                  className="rounded-2xl border border-ochre/15 px-4 py-4 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] md:items-center md:gap-3 md:px-3 md:py-3"
+                >
                   <div className="min-w-0">
-                    <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
-                      Fecha
-                    </dt>
-                    <dd className="break-words font-data text-sm text-oxford-black/70">
-                      {new Date(order.createdAt).toLocaleString("es-MX")}
-                    </dd>
+                    <p className="text-sm font-medium text-royal-blue">
+                      {order.customerName}
+                    </p>
+                    <p className="break-all font-data text-xs text-oxford-black/60">
+                      {order.customerEmail}
+                    </p>
                   </div>
 
-                  <div className="min-w-0">
-                    <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
-                      Total
-                    </dt>
-                    <dd className="break-words font-data text-sm text-royal-blue">
-                      {formatMXN(order.totalPrice)}
-                    </dd>
-                  </div>
+                  <dl className="mt-4 grid grid-cols-2 gap-3 md:contents">
+                    <div className="min-w-0">
+                      <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
+                        Fecha
+                      </dt>
+                      <dd className="break-words font-data text-sm text-oxford-black/70">
+                        {new Date(order.createdAt).toLocaleString("es-MX")}
+                      </dd>
+                    </div>
 
-                  <div className="col-span-2 min-w-0 md:col-span-1">
-                    <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
-                      Estado
-                    </dt>
-                    <dd>
-                      <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 text-xs text-royal-blue">
-                        {formatOrderStatus(order.status)}
-                      </span>
-                    </dd>
-                  </div>
-                </dl>
+                    <div className="min-w-0">
+                      <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
+                        Total
+                      </dt>
+                      <dd className="break-words font-data text-sm text-royal-blue">
+                        {formatMXN(order.totalPrice)}
+                      </dd>
+                    </div>
 
-                <div className="mt-4 flex gap-2 md:mt-0">
-                  <button
-                    type="button"
-                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
-                    onClick={() => updateStatus(order._id, "confirmed")}
-                  >
-                    Confirmar
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-sm text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
-                    onClick={() => updateStatus(order._id, "cancelled")}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </article>
-            ))}
+                    <div className="col-span-2 min-w-0 md:col-span-1">
+                      <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
+                        Estado
+                      </dt>
+                      <dd>
+                        <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 text-xs text-royal-blue">
+                          {formatOrderStatus(order.status)}
+                        </span>
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {nextAction || showCancelAction ? (
+                    <div className="mt-4 flex gap-2 md:mt-0">
+                      {nextAction ? (
+                        <button
+                          type="button"
+                          disabled={Boolean(updatingOrderId)}
+                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
+                          onClick={() =>
+                            updateStatus(order._id, nextAction.status)
+                          }
+                        >
+                          {nextAction.label}
+                        </button>
+                      ) : null}
+                      {showCancelAction ? (
+                        <button
+                          type="button"
+                          disabled={Boolean(updatingOrderId)}
+                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-sm text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
+                          onClick={() => setOrderPendingCancellation(order)}
+                        >
+                          Cancelar
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="hidden md:block" />
+                  )}
+                </article>
+              );
+            })}
 
             {orders.data.length === 0 ? (
               <p className="rounded-2xl bg-cream-white px-4 py-4 text-sm text-oxford-black/65">
@@ -424,6 +512,77 @@ export function AdminOrdersPage() {
           </div>
         </div>
       </section>
+
+      {orderPendingCancellation ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-oxford-black/45 px-4 py-6">
+          <div
+            aria-describedby="cancel-order-dialog-description"
+            aria-labelledby="cancel-order-dialog-title"
+            aria-modal="true"
+            className="w-full max-w-md rounded-2xl border border-wine-red/20 bg-white p-5 shadow-2xl shadow-oxford-black/20 sm:p-6"
+            role="dialog"
+          >
+            <p className="text-[0.68rem] uppercase tracking-[0.2em] text-wine-red">
+              Confirmación
+            </p>
+            <h3
+              className="mt-2 font-serif text-2xl text-royal-blue"
+              id="cancel-order-dialog-title"
+            >
+              Cancelar pedido?
+            </h3>
+            <p
+              className="mt-3 text-sm leading-6 text-oxford-black/70"
+              id="cancel-order-dialog-description"
+            >
+              Vas a cambiar el pedido de{" "}
+              <span className="font-medium text-oxford-black">
+                {orderPendingCancellation.customerName}
+              </span>{" "}
+              a cancelado. Esta acción afecta el estado visible del pedido.
+            </p>
+            <dl className="mt-4 grid grid-cols-2 gap-3 rounded-2xl bg-cream-white px-4 py-3 text-sm">
+              <div className="min-w-0">
+                <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45">
+                  Email
+                </dt>
+                <dd className="break-all font-data text-oxford-black/70">
+                  {orderPendingCancellation.customerEmail}
+                </dd>
+              </div>
+              <div className="min-w-0">
+                <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45">
+                  Total
+                </dt>
+                <dd className="font-data text-royal-blue">
+                  {formatMXN(orderPendingCancellation.totalPrice)}
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <button
+                type="button"
+                disabled={Boolean(updatingOrderId)}
+                className="min-h-11 rounded-xl border border-ochre/30 px-4 py-2 text-sm text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-50"
+                onClick={() => setOrderPendingCancellation(null)}
+              >
+                Volver
+              </button>
+              <button
+                type="button"
+                disabled={Boolean(updatingOrderId)}
+                className="min-h-11 rounded-xl border border-wine-red/40 bg-wine-red px-4 py-2 text-sm text-light-beige focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/30 disabled:opacity-50"
+                onClick={confirmCancellation}
+                ref={confirmCancellationButtonRef}
+              >
+                {updatingOrderId === orderPendingCancellation._id
+                  ? "Cancelando"
+                  : "Cancelar pedido"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <section className="rounded-2xl border border-royal-blue/20 bg-light-beige/30 p-4 sm:rounded-3xl sm:p-5">
         <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">

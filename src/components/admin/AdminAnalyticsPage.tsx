@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AdminAnalyticsResultsLoading } from "@/components/admin/AdminLoadingStates";
 import { formatMXN } from "@/lib/pricing";
 
 type StatsResponse = {
@@ -144,9 +145,7 @@ export function AdminAnalyticsPage() {
       ) : null}
 
       {isLoading || !stats ? (
-        <p className="rounded-2xl bg-white px-4 py-6 text-sm text-oxford-black/70">
-          Cargando análisis
-        </p>
+        <AdminAnalyticsResultsLoading />
       ) : (
         <>
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

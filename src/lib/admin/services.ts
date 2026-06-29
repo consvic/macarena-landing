@@ -23,6 +23,12 @@ import { FlavorModel } from "@/models/Flavor";
 import { OrderModel } from "@/models/Order";
 import { OrderItemModel } from "@/models/OrderItem";
 
+const CONFIRMED_AT_STATUSES = new Set<OrderStatus>([
+  "confirmed",
+  "paid",
+  "delivered",
+]);
+
 type OrdersQueryInput = {
   page?: number;
   limit?: number;
@@ -1090,10 +1096,9 @@ export async function importOrdersFromCsv(
       0,
     );
     const itemCount = group.items.reduce((sum, item) => sum + item.quantity, 0);
-    const confirmedAt =
-      group.orderFields.status === "confirmed"
-        ? group.orderFields.orderedAt
-        : undefined;
+    const confirmedAt = CONFIRMED_AT_STATUSES.has(group.orderFields.status)
+      ? group.orderFields.orderedAt
+      : undefined;
 
     const order = await OrderModel.create({
       externalOrderId,

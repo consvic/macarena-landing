@@ -36,14 +36,18 @@ export type CartItem = {
 export const ORDER_STATUSES = [
   "pending_confirmation",
   "confirmed",
+  "paid",
+  "delivered",
   "cancelled",
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export const ORDER_STATUS_LABELS = {
-  pending_confirmation: "pending confirmation",
-  confirmed: "confirmed",
-  cancelled: "cancelled",
+  pending_confirmation: "pendiente",
+  confirmed: "confirmado",
+  paid: "pagado",
+  delivered: "entregado",
+  cancelled: "cancelado",
 } satisfies Record<OrderStatus, string>;
 
 export function formatOrderStatus(status: OrderStatus) {

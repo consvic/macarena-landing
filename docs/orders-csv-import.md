@@ -29,7 +29,7 @@ external_order_id,ordered_at,customer_name,customer_email,customer_phone,status,
 - `customer_name`: required
 - `customer_email`: required
 - `customer_phone`: optional
-- `status`: required, one of `pending_confirmation`, `confirmed`, `cancelled`
+- `status`: required, one of `pending_confirmation`, `confirmed`, `paid`, `delivered`, `cancelled`
 - `currency`: required, must be `MXN`
 - `notes`: optional
 - `flavor_id`: optional, when present must be a valid Mongo ObjectId
