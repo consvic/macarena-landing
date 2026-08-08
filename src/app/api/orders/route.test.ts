@@ -157,6 +157,50 @@ describe("POST /api/orders", () => {
     );
   });
 
+  it("stores a trimmed customerPhone when provided", async () => {
+    const { POST } = await import("@/app/api/orders/route");
+    await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        customerPhone: "  +52 55 1234 5678  ",
+        items: [
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
+        ],
+      }),
+    );
+
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        customerPhone: "+52 55 1234 5678",
+      }),
+    );
+  });
+
+  it("omits customerPhone when the optional value is blank", async () => {
+    const { POST } = await import("@/app/api/orders/route");
+    await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        customerPhone: "   ",
+        items: [
+          {
+            flavorName: "Mango",
+            presentation: "1/2 litro",
+            quantity: 1,
+            unitPrice: 150,
+          },
+        ],
+      }),
+    );
+
+    expect(createMock.mock.calls[0]?.[0]).not.toHaveProperty("customerPhone");
+  });
+
   it("returns 201 even when email send fails", async () => {
     sendOrderPendingEmailMock.mockRejectedValue(new Error("Resend is down"));
 

@@ -14,6 +14,10 @@ export async function POST(request: Request) {
     const customerEmail = String(payload.customerEmail ?? "")
       .trim()
       .toLowerCase();
+    const customerPhone =
+      typeof payload.customerPhone === "string"
+        ? payload.customerPhone.trim()
+        : "";
     const customerNameFromEmail = customerEmail.split("@")[0] ?? "";
     const customerName =
       String(payload.customerName ?? "").trim() || customerNameFromEmail;
@@ -67,7 +71,7 @@ export async function POST(request: Request) {
     const order = await OrderModel.create({
       customerName,
       customerEmail,
-      customerPhone: payload.customerPhone,
+      ...(customerPhone ? { customerPhone } : {}),
       notes: payload.notes,
       status: "pending_confirmation",
       currency: "MXN",

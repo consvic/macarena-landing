@@ -19,6 +19,7 @@ vi.mock("@/components/providers/CartProvider", () => ({
 describe("CartPageView checkout validation", () => {
   beforeEach(() => {
     useCartMock.mockReset();
+    vi.unstubAllGlobals();
   });
 
   it("keeps order button disabled when cart is empty", async () => {
@@ -68,5 +69,62 @@ describe("CartPageView checkout validation", () => {
     await userEvent.clear(input);
     await userEvent.type(input, "cliente@correo.com");
     expect(button).toBeEnabled();
+  });
+
+  it("sends the optional phone number when creating an order", async () => {
+    const clearCart = vi.fn();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({}),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    useCartMock.mockReturnValue({
+      items: [
+        {
+          id: "1",
+          flavorName: "Mango Maracuya",
+          presentation: "1/2 litro",
+          price: 150,
+        },
+      ],
+      itemsCount: 1,
+      formattedTotalPrice: "$150.00",
+      removeItem: vi.fn(),
+      clearCart,
+    });
+
+    render(<CartPageView />);
+
+    await userEvent.type(
+      screen.getByLabelText("Email para confirmar pedido"),
+      "Cliente@Correo.com",
+    );
+    await userEvent.type(
+      screen.getByLabelText("Telefono (opcional)"),
+      "  +52 55 1234 5678  ",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Realizar pedido" }),
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/orders",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          customerEmail: "cliente@correo.com",
+          customerPhone: "+52 55 1234 5678",
+          items: [
+            {
+              flavorName: "Mango Maracuya",
+              presentation: "1/2 litro",
+              quantity: 1,
+              unitPrice: 150,
+            },
+          ],
+        }),
+      }),
+    );
+    expect(clearCart).toHaveBeenCalled();
   });
 });

@@ -11,6 +11,7 @@ export function CartPageView() {
   const { items, removeItem, formattedTotalPrice, itemsCount, clearCart } =
     useCart();
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -32,6 +33,7 @@ export function CartPageView() {
     setSuccessMessage(null);
 
     const customerEmail = email.trim().toLowerCase();
+    const customerPhone = phone.trim();
 
     try {
       const response = await fetch("/api/orders", {
@@ -41,6 +43,7 @@ export function CartPageView() {
         },
         body: JSON.stringify({
           customerEmail,
+          ...(customerPhone ? { customerPhone } : {}),
           items: items.map((item) => ({
             flavorName: item.flavorName,
             presentation: item.presentation,
@@ -62,6 +65,7 @@ export function CartPageView() {
         "Pedido creado. Te enviaremos un correo con instrucciones de pago.",
       );
       setEmail("");
+      setPhone("");
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Error al crear el pedido.",
@@ -138,21 +142,44 @@ export function CartPageView() {
             </span>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <label
-              htmlFor="checkout-email"
-              className="block text-xs uppercase tracking-[0.25em] text-ochre"
-            >
-              Email para confirmar pedido
-            </label>
-            <input
-              id="checkout-email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Ingresa tu email"
-              className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 text-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
-            />
+          <div className="mt-6 space-y-4">
+            <div className="space-y-2">
+              <label
+                htmlFor="checkout-email"
+                className="block text-xs uppercase tracking-[0.25em] text-ochre"
+              >
+                Email para confirmar pedido
+              </label>
+              <input
+                id="checkout-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="cliente@correo.com"
+                className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 font-data text-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              />
+            </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="checkout-phone"
+                className="block text-xs uppercase tracking-[0.25em] text-ochre"
+              >
+                Telefono (opcional)
+              </label>
+              <input
+                id="checkout-phone"
+                name="phone"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="+52 55 0000 0000"
+                className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 font-data text-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              />
+            </div>
             <Button
               type="button"
               disabled={!canSubmitOrder}
