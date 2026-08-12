@@ -43,3 +43,6 @@ next-env.d.ts
 
 # codex
 .codex
+
+# claude (machine-local permissions)
+.claude/settings.local.json

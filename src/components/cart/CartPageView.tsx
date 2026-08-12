@@ -133,11 +133,16 @@ export function CartPageView() {
         <div className="mt-8 rounded-3xl border border-royal-blue/20 bg-white p-6">
           <div className="flex items-center justify-between text-sm text-oxford-black/70">
             <span>Items</span>
-            <span className="font-data">{itemsCount}</span>
+            <span className="animate-value-tick font-data" key={itemsCount}>
+              {itemsCount}
+            </span>
           </div>
           <div className="mt-3 flex items-center justify-between">
             <span className="text-lg text-royal-blue">Total</span>
-            <span className="font-data text-2xl text-royal-blue">
+            <span
+              className="animate-value-tick font-data text-2xl text-royal-blue"
+              key={formattedTotalPrice}
+            >
               {formattedTotalPrice}
             </span>
           </div>

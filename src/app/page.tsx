@@ -1,381 +1,265 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Reveal } from "@/components/landing/Reveal";
 
-const lifestyleCopy = [
+// Re-render daily so the footer copyright year stays current on a static page
+export const revalidate = 86400;
+
+const values = [
   {
-    color: "bg-ochre",
-    text: "Sabores pensados para paladares curiosos",
+    title: "Calidad sobre cantidad",
+    text: "Pocos sabores, hechos bien y en pequeños lotes.",
   },
   {
-    color: "bg-light-beige",
-    text: "Ingredientes de primera y combinaciones únicas",
+    title: "Tradición italiana",
+    text: "Técnica clásica de gelateria, sin atajos.",
   },
   {
-    color: "bg-wine-red",
-    text: "Una experiencia que se siente tan bien como sabe",
+    title: "Esencia mexicana",
+    text: "Ingredientes y sabores que celebran a México.",
   },
 ];
 
+const lifestyleCopy = [
+  "Sabores pensados para paladares curiosos",
+  "Ingredientes de primera y combinaciones únicas",
+  "Una experiencia que se siente tan bien como sabe",
+];
+
 export default function MacarenaGelateria() {
-  const [scrollY, setScrollY] = useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [isVisible, setIsVisible] = useState({
-    differentiators: false,
-    philosophy: false,
-    lifestyle: false,
-    cta: false,
-  });
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
-    updatePreference();
-    mediaQuery.addEventListener("change", updatePreference);
-    return () => mediaQuery.removeEventListener("change", updatePreference);
-  }, []);
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    let frameId = 0;
-    const handleScroll = () => {
-      if (frameId) {
-        return;
-      }
-
-      frameId = window.requestAnimationFrame(() => {
-        setScrollY(window.scrollY);
-        frameId = 0;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
-    };
-  }, [prefersReducedMotion]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const section = entry.target.getAttribute("data-section");
-            if (section) {
-              setIsVisible((prev) => ({ ...prev, [section]: true }));
-            }
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
-
-    const sections = document.querySelectorAll("[data-section]");
-    sections.forEach((section) => {
-      observer.observe(section);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <main className="min-h-screen overflow-hidden bg-white">
-      {/* Hero Section with Falling Ice Cream Animation */}
-      <section className="relative min-h-screen flex items-center justify-center bg-royal-blue">
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Giant falling gelato scoop */}
-          <Image
-            src="/scoop-vanilla.png"
-            alt="Giant vanilla gelato scoop"
-            width={600}
-            height={600}
-            className="absolute transition-transform duration-300 ease-out"
-            style={{
-              bottom: `${Math.max(-600, (prefersReducedMotion ? 0 : scrollY) * 0.8 - 400)}px`,
-              right: "-12%",
-              transform: `rotate(${prefersReducedMotion ? 0 : -scrollY * 0.05}deg)`,
-              filter: "drop-shadow(0 30px 60px hsla(0, 0%, 0%, 0.3))",
-              opacity: prefersReducedMotion
-                ? 1
-                : Math.max(0.1, 1 - scrollY / 800),
-              willChange: prefersReducedMotion ? "auto" : "transform, opacity",
-            }}
-          />
-        </div>
-
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <div className="mb-6 animate-fade-in flex justify-center">
+    <>
+      <header className="sticky top-0 z-50 border-b border-light-beige/10 bg-royal-blue/90 backdrop-blur">
+        <div className="container mx-auto flex h-12 items-center justify-between px-6">
+          <Link
+            href="/"
+            className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-light-beige"
+          >
             <Image
               src="/MacaBeige2.png"
-              alt="Macarena Gelateria"
-              width={180}
-              height={180}
+              alt=""
+              width={36}
+              height={36}
+              priority
             />
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-[100%] animate-slide-up text-light-beige">
-            Macarena
-            <br />
-            <span className="text-3xl md:text-5xl animate-slide-up-delay">
-              La nueva experiencia de gelato en México
+            <span className="font-serif text-lg text-light-beige">
+              Macarena
             </span>
-          </h1>
-
-          <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-sans font-light leading-[100%] animate-fade-in-delay text-light-beige">
-            Ingredientes premium, tradición italiana, y un sabor único con una
-            esencia mexicana.
-          </p>
-
-          <a
-            href="#philosophy"
-            className="inline-block px-10 py-2 text-lg font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-xl hover:shadow-white/20 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 animate-fade-in-delay-2 hover:border-opacity-80 active:border-opacity-100 border-light-beige text-light-beige text-center"
-          >
-            Descubre más
-          </a>
-        </div>
-      </section>
-
-      <section
-        id="philosophy"
-        className="py-24 relative overflow-hidden bg-cream-white"
-        data-section="philosophy"
-        style={{
-          backgroundImage: `url('/MacaRojo3.png')`,
-          backgroundSize: "120px 120px",
-          backgroundRepeat: "repeat",
-          backgroundPosition: "0 0",
-          backgroundAttachment: "scroll",
-        }}
-      >
-        {/* Overlay to soften the pattern */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.75)",
-            backgroundImage: `
-              linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.1) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.1) 75%),
-              linear-gradient(-45deg, transparent 25%, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.1) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.1) 75%)
-            `,
-            backgroundSize: "40px 40px",
-          }}
-        ></div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div
-              className={`mb-12 transition-all duration-1000 ${
-                isVisible.philosophy
-                  ? "animate-fade-in opacity-100"
-                  : "opacity-0"
-              }`}
-            >
-              <Image
-                width={200}
-                height={200}
-                src="/image-1.png"
-                alt="Artisanal gelato making process"
-                className="w-full max-w-lg mx-auto rounded-lg shadow-2xl hover:shadow-3xl transition-shadow duration-500"
-              />
-            </div>
-
-            <h2
-              className={`text-4xl md:text-5xl font-serif font-bold mb-8 transition-all duration-1000 text-royal-blue ${
-                isVisible.philosophy
-                  ? "animate-slide-up opacity-100"
-                  : "opacity-0 translate-y-10"
-              }`}
-            >
-              Nacido de la pasión, creado con amor
-            </h2>
-
-            <div
-              className={`flex flex-wrap justify-center gap-4 transition-all duration-1000 delay-400 ${
-                isVisible.philosophy
-                  ? "animate-slide-up opacity-100"
-                  : "opacity-0 translate-y-10"
-              }`}
-            >
-              <div className="relative bg-gradient-to-r from-ochre/20 to-ochre/10 px-6 py-3 rounded-lg border-l-4 border-ochre shadow-sm">
-                <span className="text-lg font-medium text-ochre">
-                  Calidad sobre cantidad
-                </span>
-              </div>
-              <div className="relative bg-gradient-to-r from-terracotta/20 to-terracotta/10 px-6 py-3 rounded-lg border-l-4 border-terracotta shadow-sm">
-                <span className="text-lg font-medium text-terracotta">
-                  Tradición italiana
-                </span>
-              </div>
-              <div className="relative bg-gradient-to-r from-wine-red/20 to-wine-red/10 px-6 py-3 rounded-lg border-l-4 border-wine-red shadow-sm">
-                <span className="text-lg font-medium text-wine-red">
-                  Esencia mexicana
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="py-24 relative overflow-hidden bg-terracotta"
-        data-section="lifestyle"
-      >
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
-            <div
-              className={`transition-all duration-1000 ${
-                isVisible.lifestyle
-                  ? "animate-slide-left opacity-100"
-                  : "opacity-0 -translate-x-10"
-              }`}
-            >
-              <Image
-                width={400}
-                height={400}
-                src="/image-2.png"
-                alt="Elegant gelato tasting experience"
-                className="w-full max-w-lg mx-auto rounded-lg shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105"
-              />
-            </div>
-
-            <div
-              className={`transition-all duration-1000 delay-300 ${
-                isVisible.lifestyle
-                  ? "animate-slide-right opacity-100"
-                  : "opacity-0 translate-x-10"
-              }`}
-            >
-              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8 text-light-beige">
-                Para el paladar sofisticado
-              </h2>
-
-              <p className="text-xl font-sans leading-relaxed mb-8 text-light-beige">
-                Hecho para quienes saben disfrutar lo bueno de la vida. Nuestro
-                gelato no es solo un postre: es un antojo que combina calidad,
-                autenticidad y ese toque especial que te hace volver por más.
-              </p>
-
-              <div className="space-y-4">
-                {lifestyleCopy.map((item, index) => (
-                  <div
-                    key={item.text}
-                    className={`flex items-center gap-4 transition-all duration-500 hover:translate-x-2 ${
-                      isVisible.lifestyle
-                        ? "animate-fade-in opacity-100"
-                        : "opacity-0"
-                    }`}
-                    style={{ animationDelay: `${0.5 + index * 0.1}s` }}
-                  >
-                    <div
-                      className={`w-3 h-3 rounded-full animate-pulse ${item.color}`}
-                    ></div>
-                    <span className="text-lg font-sans text-light-beige">
-                      {item.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="py-32 relative overflow-hidden bg-light-beige"
-        data-section="cta"
-      >
-        {/* Floating background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <Image
-            src="/scoop-pistache.png"
-            alt="Pistachio gelato scoop"
-            width={120}
-            height={120}
-            className="absolute top-10 left-10 animate-float"
-          />
-          <Image
-            src="/scoop-pistache.png"
-            alt="Pistachio gelato scoop"
-            width={100}
-            height={100}
-            className="absolute bottom-20 right-20 animate-float-delay"
-          />
-          <Image
-            src="/scoop-pistache.png"
-            alt="Pistachio gelato scoop"
-            width={80}
-            height={80}
-            className="absolute top-1/2 right-10 animate-float-delay-2"
-          />
-        </div>
-
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <div
-            className={`mb-2 transition-all duration-1000 ${
-              isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
-            }`}
-          >
-            <Image
-              src="/MacaAzul1.png"
-              alt="Macarena Gelateria"
-              width={300}
-              height={300}
-              className="mx-auto"
-            />
-          </div>
-
-          <h2
-            className={`text-4xl md:text-7xl font-serif font-bold mb-4 md:mb-8 transition-all duration-1000 delay-200 text-royal-blue ${
-              isVisible.cta
-                ? "animate-scale-up opacity-100"
-                : "opacity-0 scale-95"
-            }`}
-          >
-            La espera ha terminado
-          </h2>
-
-          <p
-            className={`text-2xl md:text-3xl mb-12 max-w-3xl mx-auto font-sans leading-[100%] transition-all duration-1000 delay-300 text-wine-red ${
-              isVisible.cta ? "animate-fade-in opacity-100" : "opacity-0"
-            }`}
-          >
-            Síguenos en redes sociales para enterarte de nuestras novedades y
-            sabores.
-          </p>
-
-          <div
-            className={`flex flex-col sm:flex-row gap-6 justify-center items-center transition-all duration-1000 delay-500 ${
-              isVisible.cta
-                ? "animate-slide-up opacity-100"
-                : "opacity-0 translate-y-10"
-            }`}
-          >
+          </Link>
+          <nav className="flex items-center gap-6">
             <a
-              id="instagram-link"
-              href="https://www.instagram.com/macarenagelateria?igsh=MTRmbDhlYmY3aG54dw=="
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-transparent cursor-pointer hover:bg-opacity-20 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-royal-blue text-center"
+              href="#philosophy"
+              className="hidden text-sm text-light-beige/80 transition-colors duration-200 hover:text-light-beige focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-light-beige sm:block"
             >
-              Síguenos en Instagram
+              Nuestra historia
             </a>
             <Link
               href="/menu"
-              className="inline-block px-6 py-3 text-base font-medium rounded-full border-2 bg-royal-blue text-light-beige cursor-pointer hover:bg-royal-blue/90 hover:shadow-2xl hover:shadow-slate-900/30 active:scale-95 active:shadow-inner transition-all duration-300 ease-out hover:scale-105 hover:border-opacity-80 active:border-opacity-100 hover:brightness-110 border-royal-blue text-center"
+              className="rounded-full bg-light-beige px-5 py-2 text-sm font-medium text-royal-blue transition-[background-color,transform] duration-200 hover:bg-cream-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-light-beige"
             >
-              Ver menu
+              Ver menú
             </Link>
-          </div>
+          </nav>
         </div>
-      </section>
-    </main>
+      </header>
+
+      <main className="overflow-x-clip bg-cream-white">
+        <section className="relative flex min-h-[calc(100dvh-3rem)] items-center overflow-hidden bg-royal-blue">
+          <div className="container mx-auto grid items-center gap-8 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4 lg:py-16">
+            <div className="max-w-xl">
+              <h1 className="animate-slide-up font-serif text-4xl font-bold leading-[1.05] text-light-beige [text-wrap:balance] md:text-6xl">
+                La nueva experiencia de gelato en México
+              </h1>
+              <p className="mt-6 max-w-[46ch] animate-fade-in-delay font-sans text-lg font-light leading-relaxed text-light-beige/90 md:text-xl">
+                Ingredientes premium, tradición italiana y un sabor único con
+                esencia mexicana.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-4 animate-fade-in-delay-2">
+                <Link
+                  href="/menu"
+                  className="w-full rounded-full bg-light-beige px-8 py-3 text-center text-base font-medium text-royal-blue transition-[background-color,transform] duration-200 hover:bg-cream-white hover:-translate-y-px active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-light-beige sm:w-auto"
+                >
+                  Ver menú
+                </Link>
+                <a
+                  href="#philosophy"
+                  className="w-full rounded-full border-2 border-light-beige/60 px-8 py-3 text-center text-base font-medium text-light-beige transition-[border-color,transform] duration-200 hover:border-light-beige hover:-translate-y-px active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-light-beige sm:w-auto"
+                >
+                  Nuestra historia
+                </a>
+              </div>
+            </div>
+
+            <div className="relative mx-auto w-56 sm:w-80 lg:w-full lg:max-w-lg lg:translate-x-12">
+              <Image
+                src="/scoop-vanilla.png"
+                alt=""
+                width={512}
+                height={768}
+                priority
+                className="w-full animate-float-slow [filter:drop-shadow(0_40px_80px_rgba(9,14,38,0.55))]"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="philosophy"
+          className="scroll-mt-12 bg-light-beige py-32 md:py-44"
+        >
+          <div className="container mx-auto px-6">
+            <Reveal>
+              <h2 className="max-w-2xl font-serif text-3xl font-bold text-royal-blue [text-wrap:balance] md:text-5xl">
+                Nacido de la pasión, creado con amor
+              </h2>
+              <p className="mt-6 max-w-[60ch] font-sans text-lg leading-relaxed text-oxford-black/75">
+                Gelato artesanal con técnica italiana clásica y sabores que
+                celebran a México.
+              </p>
+            </Reveal>
+
+            <div className="mt-16 grid gap-10 md:grid-cols-3 md:gap-0 md:divide-x md:divide-ochre/30">
+              {values.map((value, index) => (
+                <Reveal
+                  key={value.title}
+                  delay={index * 120}
+                  className="md:px-8 md:first:pl-0 md:last:pr-0"
+                >
+                  <h3 className="font-serif text-xl font-bold text-terracotta">
+                    {value.title}
+                  </h3>
+                  <p className="mt-3 max-w-[36ch] font-sans leading-relaxed text-oxford-black/75">
+                    {value.text}
+                  </p>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="overflow-hidden bg-wine-red py-24 md:py-32">
+          <div className="container mx-auto px-6">
+            <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-16">
+              <Reveal>
+                <Image
+                  src="/image-2.png"
+                  alt="Bolas de gelato de pistache y chocolate sobre mármol"
+                  width={800}
+                  height={800}
+                  className="w-full max-w-lg rounded-2xl shadow-2xl shadow-black/30"
+                />
+              </Reveal>
+
+              <Reveal delay={150}>
+                <h2 className="font-serif text-3xl font-bold text-light-beige [text-wrap:balance] md:text-5xl">
+                  Para el paladar sofisticado
+                </h2>
+                <p className="mt-6 max-w-[52ch] font-sans text-lg leading-relaxed text-light-beige/90">
+                  Nuestro gelato no es solo un postre: es un antojo que combina
+                  calidad, autenticidad y ese toque especial que te hace volver
+                  por más.
+                </p>
+                <ul className="mt-8 space-y-4">
+                  {lifestyleCopy.map((item) => (
+                    <li
+                      key={item}
+                      className="border-l-2 border-ochre pl-4 font-sans text-light-beige/90"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden bg-light-beige py-24 md:py-32">
+          <Image
+            src="/scoop-pistache.png"
+            alt=""
+            width={120}
+            height={180}
+            className="absolute left-10 top-12 hidden animate-float opacity-80 md:block"
+          />
+          <Image
+            src="/scoop-pistache.png"
+            alt=""
+            width={90}
+            height={135}
+            className="absolute bottom-16 right-16 hidden animate-float-delay opacity-80 md:block"
+          />
+
+          <div className="container mx-auto px-6 text-center">
+            <Reveal>
+              <Image
+                src="/MacaAzul1.png"
+                alt="Macarena Gelateria"
+                width={260}
+                height={260}
+                className="mx-auto"
+              />
+              <h2 className="mt-2 font-serif text-4xl font-bold text-royal-blue [text-wrap:balance] md:text-6xl">
+                La espera ha terminado
+              </h2>
+              <p className="mx-auto mt-6 max-w-[44ch] font-sans text-lg leading-relaxed text-oxford-black/75 md:text-xl">
+                Pide en línea o síguenos para enterarte de nuestras novedades y
+                sabores.
+              </p>
+            </Reveal>
+            <Reveal delay={150}>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Link
+                  href="/menu"
+                  className="w-full max-w-xs rounded-full bg-royal-blue px-8 py-3 text-center text-base font-medium text-light-beige transition-[background-color,transform] duration-200 hover:bg-royal-blue/90 hover:-translate-y-px active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal-blue sm:w-auto sm:max-w-none"
+                >
+                  Ver menú
+                </Link>
+                <a
+                  id="instagram-link"
+                  href="https://www.instagram.com/macarenagelateria?igsh=MTRmbDhlYmY3aG54dw=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full max-w-xs rounded-full border-2 border-royal-blue px-8 py-3 text-center text-base font-medium text-royal-blue transition-[background-color,transform] duration-200 hover:bg-royal-blue/10 hover:-translate-y-px active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal-blue sm:w-auto sm:max-w-none"
+                >
+                  Síguenos en Instagram
+                </a>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-royal-blue py-12">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-8 px-6 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <Image src="/MacaBeige2.png" alt="" width={32} height={32} />
+            <span className="font-serif text-light-beige">
+              Macarena Gelateria
+            </span>
+          </div>
+          <nav className="flex items-center gap-6">
+            <Link
+              href="/menu"
+              className="text-sm text-light-beige/80 transition-colors duration-200 hover:text-light-beige"
+            >
+              Ver menú
+            </Link>
+            <a
+              href="https://www.instagram.com/macarenagelateria?igsh=MTRmbDhlYmY3aG54dw=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-light-beige/80 transition-colors duration-200 hover:text-light-beige"
+            >
+              Instagram
+            </a>
+          </nav>
+          <p className="text-sm text-light-beige/60">
+            <span className="font-data">© {new Date().getFullYear()}</span>{" "}
+            Macarena Gelateria
+          </p>
+        </div>
+      </footer>
+    </>
   );
 }

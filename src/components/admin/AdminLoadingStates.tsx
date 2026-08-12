@@ -6,7 +6,9 @@ const FLAVOR_ROWS = [0, 1, 2] as const;
 const ANALYTICS_LISTS = [0, 1, 2] as const;
 
 function SkeletonLine({ className }: { className: string }) {
-  return <div className={`rounded-full bg-cream-white ${className}`} />;
+  return (
+    <div className={`animate-pulse rounded-full bg-cream-white ${className}`} />
+  );
 }
 
 function SkeletonCard({ children }: { children: ReactNode }) {

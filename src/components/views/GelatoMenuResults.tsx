@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Leaf } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
@@ -149,7 +149,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
       </div>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredFlavors.map((flavor) => {
+        {filteredFlavors.map((flavor, index) => {
           const selectedPresentation = resolvePresentation(flavor.name);
           const itemPrice = resolveFlavorPrice(
             flavor.price,
@@ -164,7 +164,8 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
           return (
             <article
               key={flavor.name}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ochre/20 bg-white"
+              style={{ "--enter-index": index } as CSSProperties}
+              className="menu-card-enter group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ochre/20 bg-white"
             >
               <div
                 className={`relative h-52 min-h-52 bg-gradient-to-br md:h-56 md:min-h-56 ${flavor.gradient}`}
@@ -195,10 +196,14 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                           <button
                             type="button"
                             aria-label={`Sabor vegano: ${flavor.name}`}
+                            aria-describedby={`vegan-tip-${flavor.name.replace(/\s+/g, "-")}`}
                             className="group/vegan inline-flex text-royal-blue"
                           >
                             <Leaf className="size-3.5" />
-                            <span className="pointer-events-none absolute top-full left-1/2 z-10 mt-2 w-52 -translate-x-1/2 rounded-md border border-ochre/20 bg-white/40 px-2 py-1 text-left text-[11px] text-oxford-black opacity-0 shadow-sm backdrop-blur-[6px] transition-opacity group-hover/vegan:opacity-100 group-focus-visible/vegan:opacity-100">
+                            <span
+                              id={`vegan-tip-${flavor.name.replace(/\s+/g, "-")}`}
+                              className="pointer-events-none absolute top-full left-1/2 z-10 mt-2 w-52 -translate-x-1/2 rounded-md border border-ochre/20 bg-white/40 px-2 py-1 text-left text-[11px] text-oxford-black opacity-0 shadow-sm backdrop-blur-[6px] transition-opacity group-hover/vegan:opacity-100 group-focus-visible/vegan:opacity-100 group-focus/vegan:opacity-100"
+                            >
                               {flavor.allergens}
                             </span>
                           </button>
@@ -262,7 +267,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                           : `Agregar ${flavor.name} al carrito`
                       }
                       className={cn(
-                        "relative h-11 w-32 overflow-visible rounded-full bg-royal-blue px-4 text-light-beige transition-all duration-200 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] hover:bg-royal-blue/90 active:scale-95",
+                        "relative h-11 w-32 overflow-visible rounded-full bg-royal-blue px-4 text-light-beige transition-[transform,background-color,color] duration-150 ease-out-strong hover:bg-royal-blue/90 active:scale-[0.97]",
                         isAdded && "bg-ochre text-royal-blue hover:bg-ochre/90",
                         isAdded &&
                           (addedFeedbackCount % 2 === 0
