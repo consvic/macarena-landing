@@ -45,11 +45,11 @@ export const ORDER_STATUSES = [
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export const ORDER_STATUS_LABELS = {
-  pending_confirmation: "pendiente",
-  confirmed: "confirmado",
-  paid: "pagado",
-  delivered: "entregado",
-  cancelled: "cancelado",
+  pending_confirmation: "Pendiente",
+  confirmed: "Confirmado",
+  paid: "Pagado",
+  delivered: "Entregado",
+  cancelled: "Cancelado",
 } satisfies Record<OrderStatus, string>;
 
 export function formatOrderStatus(status: OrderStatus) {
