@@ -100,6 +100,9 @@ export function AdminFlavorsPage() {
   const [form, setForm] = useState<FlavorFormState>(EMPTY_FORM);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [updatingVisibilityId, setUpdatingVisibilityId] = useState<
+    string | null
+  >(null);
   const [message, setMessage] = useState<string | null>(null);
   const [productionDemand, setProductionDemand] =
     useState<ProductionDemandResponse | null>(null);
@@ -252,6 +255,9 @@ export function AdminFlavorsPage() {
     flavor: AdminFlavor,
     isVisibleOnSite: boolean,
   ) {
+    if (updatingVisibilityId) return;
+
+    setUpdatingVisibilityId(flavor._id);
     try {
       const response = await fetch(
         `/api/admin/flavors/${flavor._id}/visibility`,
@@ -278,6 +284,8 @@ export function AdminFlavorsPage() {
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Error desconocido");
+    } finally {
+      setUpdatingVisibilityId(null);
     }
   }
 
@@ -371,18 +379,22 @@ export function AdminFlavorsPage() {
 
                   <button
                     type="button"
+                    aria-busy={updatingVisibilityId === flavor._id}
                     onClick={() =>
                       updateVisibility(flavor, !flavor.isVisibleOnSite)
                     }
-                    className={`inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 ${
+                    disabled={updatingVisibilityId !== null}
+                    className={`inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:cursor-wait disabled:opacity-60 ${
                       flavor.isVisibleOnSite
                         ? "bg-wine-red/10 text-wine-red hover:bg-wine-red/15"
                         : "bg-royal-blue text-light-beige hover:bg-royal-blue/90"
                     }`}
                   >
-                    {flavor.isVisibleOnSite
-                      ? "Detener pedidos"
-                      : "Aceptar pedidos"}
+                    {updatingVisibilityId === flavor._id
+                      ? "Actualizando…"
+                      : flavor.isVisibleOnSite
+                        ? "Detener pedidos"
+                        : "Aceptar pedidos"}
                   </button>
                 </li>
               );
@@ -438,13 +450,20 @@ export function AdminFlavorsPage() {
                     <div className="grid w-full grid-cols-2 gap-2 text-sm sm:flex sm:w-auto sm:flex-wrap sm:text-xs">
                       <button
                         type="button"
+                        aria-busy={updatingVisibilityId === flavor._id}
                         onClick={() =>
                           updateVisibility(flavor, !flavor.isVisibleOnSite)
                         }
-                        disabled={flavor.isArchived}
-                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-royal-blue/30 px-3 py-2 text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-40 sm:min-h-9 sm:px-3 sm:py-1.5"
+                        disabled={
+                          flavor.isArchived || updatingVisibilityId !== null
+                        }
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-royal-blue/30 px-3 py-2 text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:cursor-wait disabled:opacity-40 sm:min-h-9 sm:px-3 sm:py-1.5"
                       >
-                        {flavor.isVisibleOnSite ? "Ocultar" : "Mostrar"}
+                        {updatingVisibilityId === flavor._id
+                          ? "Actualizando…"
+                          : flavor.isVisibleOnSite
+                            ? "Ocultar"
+                            : "Mostrar"}
                       </button>
                       <button
                         type="button"
@@ -523,33 +542,35 @@ export function AdminFlavorsPage() {
                 </div>
                 <div className="grid gap-4 py-3 sm:grid-cols-2">
                   <div>
-                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    <dt className="font-data text-xs uppercase tracking-[0.18em] text-ochre">
                       Precio 1/2 litro
                     </dt>
                     <dd className="mt-1 font-data text-lg text-royal-blue">
-                      {formatMXN(selectedFlavor.price.halfLiter)}
-                      {!selectedFlavor.availablePresentations.includes(
+                      {selectedFlavor.availablePresentations.includes(
                         "1/2 litro",
                       ) ? (
-                        <span className="ml-2 text-xs text-oxford-black/50">
+                        formatMXN(selectedFlavor.price.halfLiter)
+                      ) : (
+                        <span className="text-sm text-oxford-black/50">
                           No disponible
                         </span>
-                      ) : null}
+                      )}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    <dt className="font-data text-xs uppercase tracking-[0.18em] text-ochre">
                       Precio 1 litro
                     </dt>
                     <dd className="mt-1 font-data text-lg text-royal-blue">
-                      {formatMXN(selectedFlavor.price.liter)}
-                      {!selectedFlavor.availablePresentations.includes(
+                      {selectedFlavor.availablePresentations.includes(
                         "1 litro",
                       ) ? (
-                        <span className="ml-2 text-xs text-oxford-black/50">
+                        formatMXN(selectedFlavor.price.liter)
+                      ) : (
+                        <span className="text-sm text-oxford-black/50">
                           No disponible
                         </span>
-                      ) : null}
+                      )}
                     </dd>
                   </div>
                 </div>

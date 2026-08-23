@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AdminFlavorsPage } from "@/components/admin/AdminFlavorsPage";
@@ -100,6 +100,8 @@ describe("AdminFlavorsPage production demand", () => {
     );
 
     expect(screen.getByText("Detalle del sabor")).toBeInTheDocument();
+    expect(screen.getByText("Precio 1/2 litro")).toHaveClass("font-data");
+    expect(screen.getByText("Precio 1 litro")).toHaveClass("font-data");
     expect(screen.getByText(/150\.00/)).toBeInTheDocument();
     expect(screen.getByText(/280\.00/)).toBeInTheDocument();
     expect(
@@ -111,5 +113,77 @@ describe("AdminFlavorsPage production demand", () => {
     expect(
       screen.getByRole("textbox", { name: "Nombre del sabor" }),
     ).toHaveValue("Mango");
+  });
+
+  it("hides the stored price for an unavailable presentation", async () => {
+    const halfLiterOnlyFlavor = {
+      ...FLAVOR,
+      availablePresentations: ["1/2 litro"],
+    };
+    const fetchMock = vi.fn((input: RequestInfo | URL) => {
+      if (String(input) === "/api/admin/flavors") {
+        return Promise.resolve(jsonResponse([halfLiterOnlyFlavor]));
+      }
+      return Promise.resolve(jsonResponse({ date: "2026-08-22", entries: [] }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AdminFlavorsPage />);
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: /Mango Frutal/ }),
+    );
+
+    expect(screen.getByText(/150\.00/)).toBeInTheDocument();
+    expect(screen.queryByText(/280\.00/)).not.toBeInTheDocument();
+    expect(screen.getByText("No disponible")).toBeInTheDocument();
+  });
+
+  it("disables both visibility controls while showing their loading state", async () => {
+    let resolveVisibility!: (response: Response) => void;
+    const visibilityResponse = new Promise<Response>((resolve) => {
+      resolveVisibility = resolve;
+    });
+    const hiddenFlavor = { ...FLAVOR, isVisibleOnSite: false };
+    const fetchMock = vi.fn((input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url === "/api/admin/flavors") {
+        return Promise.resolve(jsonResponse([hiddenFlavor]));
+      }
+      if (url === "/api/admin/production-demand") {
+        return Promise.resolve(
+          jsonResponse({ date: "2026-08-22", entries: [] }),
+        );
+      }
+      if (url.endsWith("/visibility")) {
+        return visibilityResponse;
+      }
+      return Promise.resolve(new Response(null, { status: 404 }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AdminFlavorsPage />);
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Aceptar pedidos" }),
+    );
+
+    const loadingButtons = screen.getAllByRole("button", {
+      name: "Actualizando…",
+    });
+    expect(loadingButtons).toHaveLength(2);
+    for (const button of loadingButtons) {
+      expect(button).toBeDisabled();
+      expect(button).toHaveAttribute("aria-busy", "true");
+    }
+
+    await act(async () => {
+      resolveVisibility(jsonResponse({ ...FLAVOR, isVisibleOnSite: true }));
+    });
+
+    expect(
+      await screen.findByRole("button", { name: "Detener pedidos" }),
+    ).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Ocultar" })).toBeEnabled();
   });
 });
