@@ -101,7 +101,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
     presentation,
     price,
   }: {
-    flavorId?: string;
+    flavorId: string;
     flavorName: string;
     presentation: PresentationOption;
     price: number;

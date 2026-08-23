@@ -14,7 +14,7 @@ import { formatMXN } from "@/lib/pricing";
 import type { CartItem, PresentationOption } from "@/lib/types";
 
 type NewCartItem = {
-  flavorId?: string;
+  flavorId: string;
   flavorName: string;
   presentation: PresentationOption;
   price: number;
@@ -56,6 +56,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
               typeof item === "object" &&
               item !== null &&
               typeof item.id === "string" &&
+              typeof item.flavorId === "string" &&
               typeof item.flavorName === "string" &&
               typeof item.presentation === "string" &&
               typeof item.price === "number",

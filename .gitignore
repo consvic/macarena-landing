@@ -44,4 +44,7 @@ yarn-error.log*
 next-env.d.ts
 
 # codex
-.codex
+.codex/*
+!.codex/environments/
+.codex/environments/*
+!.codex/environments/environment.toml
