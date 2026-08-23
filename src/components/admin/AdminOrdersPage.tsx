@@ -2,6 +2,7 @@
 
 import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AdminOrdersResultsLoading } from "@/components/admin/AdminLoadingStates";
+import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { formatMXN } from "@/lib/pricing";
 import {
   formatOrderStatus,
@@ -77,6 +78,7 @@ export function AdminOrdersPage() {
     useState<AdminOrder | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const confirmCancellationButtonRef = useRef<HTMLButtonElement>(null);
+  const cancellationDialogRef = useRef<HTMLDivElement>(null);
 
   const query = useMemo(() => {
     const params = new URLSearchParams();
@@ -165,12 +167,43 @@ export function AdminOrdersPage() {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape" && !updatingOrderId) {
         setOrderPendingCancellation(null);
+        return;
+      }
+
+      // Keep Tab inside the dialog so focus cannot land on the page behind it.
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const dialog = cancellationDialogRef.current;
+      if (!dialog) {
+        return;
+      }
+
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) {
+        return;
+      }
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     }
 
+    const { overflow } = document.body.style;
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      document.body.style.overflow = overflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [orderPendingCancellation, updatingOrderId]);
@@ -277,7 +310,7 @@ export function AdminOrdersPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
+          <p className="text-[0.68rem] uppercase tracking-[0.25em] text-oxford-black/60 sm:text-xs sm:tracking-[0.35em]">
             Pedidos
           </p>
           <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
@@ -370,11 +403,13 @@ export function AdminOrdersPage() {
       </section>
 
       <section className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
-        {errorMessage ? (
-          <p className="mb-3 rounded-xl bg-wine-red/10 px-3 py-2 text-sm text-wine-red">
-            {errorMessage}
-          </p>
-        ) : null}
+        <div aria-live="polite">
+          {errorMessage ? (
+            <p className="mb-3 rounded-xl bg-wine-red/10 px-3 py-2 text-sm text-wine-red">
+              {errorMessage}
+            </p>
+          ) : null}
+        </div>
 
         {isLoading ? (
           <AdminOrdersResultsLoading />
@@ -430,9 +465,7 @@ export function AdminOrdersPage() {
                         Estado
                       </dt>
                       <dd>
-                        <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 text-xs text-royal-blue">
-                          {formatOrderStatus(order.status)}
-                        </span>
+                        <OrderStatusBadge status={order.status} />
                       </dd>
                     </div>
                   </dl>
@@ -443,7 +476,7 @@ export function AdminOrdersPage() {
                         <button
                           type="button"
                           disabled={Boolean(updatingOrderId)}
-                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
+                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-royal-blue/30 px-3 py-2 text-sm text-royal-blue transition-[background-color] duration-200 hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-50 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
                           onClick={() =>
                             updateStatus(order._id, nextAction.status)
                           }
@@ -455,7 +488,7 @@ export function AdminOrdersPage() {
                         <button
                           type="button"
                           disabled={Boolean(updatingOrderId)}
-                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-sm text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
+                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-sm text-wine-red transition-[background-color] duration-200 hover:bg-wine-red/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 disabled:opacity-50 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
                           onClick={() => setOrderPendingCancellation(order)}
                         >
                           Cancelar
@@ -486,7 +519,7 @@ export function AdminOrdersPage() {
             <button
               type="button"
               disabled={orders.pagination.page <= 1}
-              className="min-h-11 rounded-xl border border-ochre/30 px-3 py-2 disabled:opacity-40"
+              className="min-h-11 rounded-xl border border-ochre/30 px-3 py-2 transition-[background-color] duration-200 hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:pointer-events-none disabled:opacity-40"
               onClick={() =>
                 setFilters((previous) => ({
                   ...previous,
@@ -499,7 +532,7 @@ export function AdminOrdersPage() {
             <button
               type="button"
               disabled={orders.pagination.page >= orders.pagination.totalPages}
-              className="min-h-11 rounded-xl border border-ochre/30 px-3 py-2 disabled:opacity-40"
+              className="min-h-11 rounded-xl border border-ochre/30 px-3 py-2 transition-[background-color] duration-200 hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:pointer-events-none disabled:opacity-40"
               onClick={() =>
                 setFilters((previous) => ({
                   ...previous,
@@ -514,22 +547,33 @@ export function AdminOrdersPage() {
       </section>
 
       {orderPendingCancellation ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-oxford-black/45 px-4 py-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain px-4 py-6">
+          {/* Backdrop is a sibling, not a wrapper: the dialog's own buttons
+              cannot be nested inside another button. */}
+          <button
+            type="button"
+            aria-hidden="true"
+            tabIndex={-1}
+            className="absolute inset-0 cursor-default bg-oxford-black/45"
+            onClick={() => {
+              if (!updatingOrderId) {
+                setOrderPendingCancellation(null);
+              }
+            }}
+          />
           <div
+            ref={cancellationDialogRef}
             aria-describedby="cancel-order-dialog-description"
             aria-labelledby="cancel-order-dialog-title"
             aria-modal="true"
-            className="w-full max-w-md rounded-2xl border border-wine-red/20 bg-white p-5 shadow-2xl shadow-oxford-black/20 sm:p-6"
+            className="relative w-full max-w-md rounded-2xl border border-wine-red/20 bg-white p-5 shadow-2xl shadow-oxford-black/20 sm:p-6"
             role="dialog"
           >
-            <p className="text-[0.68rem] uppercase tracking-[0.2em] text-wine-red">
-              Confirmación
-            </p>
             <h3
-              className="mt-2 font-serif text-2xl text-royal-blue"
+              className="font-serif text-2xl text-royal-blue"
               id="cancel-order-dialog-title"
             >
-              Cancelar pedido?
+              ¿Cancelar pedido?
             </h3>
             <p
               className="mt-3 text-sm leading-6 text-oxford-black/70"
@@ -563,7 +607,7 @@ export function AdminOrdersPage() {
               <button
                 type="button"
                 disabled={Boolean(updatingOrderId)}
-                className="min-h-11 rounded-xl border border-ochre/30 px-4 py-2 text-sm text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-50"
+                className="min-h-11 rounded-xl border border-ochre/30 px-4 py-2 text-sm text-royal-blue transition-[background-color] duration-200 hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-50"
                 onClick={() => setOrderPendingCancellation(null)}
               >
                 Volver
@@ -571,12 +615,12 @@ export function AdminOrdersPage() {
               <button
                 type="button"
                 disabled={Boolean(updatingOrderId)}
-                className="min-h-11 rounded-xl border border-wine-red/40 bg-wine-red px-4 py-2 text-sm text-light-beige focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/30 disabled:opacity-50"
+                className="min-h-11 rounded-xl border border-wine-red/40 bg-wine-red px-4 py-2 text-sm text-light-beige transition-[background-color] duration-200 hover:bg-wine-red/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/30 disabled:opacity-50"
                 onClick={confirmCancellation}
                 ref={confirmCancellationButtonRef}
               >
                 {updatingOrderId === orderPendingCancellation._id
-                  ? "Cancelando"
+                  ? "Cancelando…"
                   : "Cancelar pedido"}
               </button>
             </div>
@@ -613,11 +657,13 @@ export function AdminOrdersPage() {
           </button>
         </form>
 
-        {importMessage ? (
-          <p className="mt-3 font-data text-sm text-royal-blue">
-            {importMessage}
-          </p>
-        ) : null}
+        <div aria-live="polite">
+          {importMessage ? (
+            <p className="mt-3 font-data text-sm text-royal-blue">
+              {importMessage}
+            </p>
+          ) : null}
+        </div>
 
         {importErrors.length > 0 ? (
           <ul className="mt-3 max-h-48 space-y-2 overflow-auto rounded-2xl bg-white px-3 py-3 font-data text-xs text-wine-red">

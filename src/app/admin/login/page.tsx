@@ -58,26 +58,27 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-dvh bg-cream-white px-4 py-8 text-oxford-black sm:px-6 sm:py-12">
       <section className="mx-auto w-full max-w-lg rounded-2xl border border-ochre/20 bg-white p-5 sm:rounded-3xl sm:p-8">
-        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
-          Admin Login
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-oxford-black/60 sm:text-xs sm:tracking-[0.35em]">
+          Portal interno
         </p>
-        <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
+        <h1 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
           Iniciar sesión
-        </h2>
+        </h1>
         <p className="mt-2 text-sm text-oxford-black/70">
           Acceso interno para operación de pedidos, sabores y análisis.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <label className="block">
-            <span className="mb-1 block text-sm text-oxford-black/80">
-              Email
+            <span className="mb-1 block text-sm font-medium text-royal-blue">
+              Correo
             </span>
             <input
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              spellCheck={false}
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none transition-[border-color,box-shadow] duration-200 focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
               autoComplete="username"
               required
             />
@@ -86,9 +87,9 @@ export default function AdminLoginPage() {
           <div className="block">
             <label
               htmlFor="admin-password"
-              className="mb-1 block text-sm text-oxford-black/80"
+              className="mb-1 block text-sm font-medium text-royal-blue"
             >
-              Password
+              Contraseña
             </label>
             <div className="relative">
               <input
@@ -96,7 +97,7 @@ export default function AdminLoginPage() {
                 type={isPasswordVisible ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 pr-12 text-sm outline-none transition-[border-color,box-shadow] duration-200 focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
                 autoComplete="current-password"
                 required
               />
@@ -124,18 +125,20 @@ export default function AdminLoginPage() {
             </div>
           </div>
 
-          {errorMessage ? (
-            <p className="rounded-2xl bg-wine-red/10 px-4 py-3 text-sm text-wine-red">
-              {errorMessage}
-            </p>
-          ) : null}
+          <div aria-live="polite">
+            {errorMessage ? (
+              <p className="rounded-2xl bg-wine-red/10 px-4 py-3 text-sm text-wine-red">
+                {errorMessage}
+              </p>
+            ) : null}
+          </div>
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+            className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm font-medium text-light-beige transition-[background-color,transform] duration-200 hover:bg-royal-blue/90 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-60"
           >
-            {isSubmitting ? "Entrando" : "Entrar"}
+            {isSubmitting ? "Entrando…" : "Entrar"}
           </button>
         </form>
       </section>

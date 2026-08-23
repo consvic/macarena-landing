@@ -108,7 +108,7 @@ export function AdminAnalyticsPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-oxford-black/60 sm:text-xs sm:tracking-[0.35em]">
           Análisis
         </p>
         <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
@@ -138,11 +138,13 @@ export function AdminAnalyticsPage() {
         </div>
       </section>
 
-      {errorMessage ? (
-        <p className="rounded-2xl bg-wine-red/10 px-4 py-3 text-sm text-wine-red">
-          {errorMessage}
-        </p>
-      ) : null}
+      <div aria-live="polite">
+        {errorMessage ? (
+          <p className="rounded-2xl bg-wine-red/10 px-4 py-3 text-sm text-wine-red">
+            {errorMessage}
+          </p>
+        ) : null}
+      </div>
 
       {isLoading || !stats ? (
         <AdminAnalyticsResultsLoading />

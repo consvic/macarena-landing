@@ -4,9 +4,9 @@ import {
   AdminRecentOrdersLoading,
   AdminSummaryStatsLoading,
 } from "@/components/admin/AdminLoadingStates";
+import { OrderStatusBadge } from "@/components/admin/OrderStatusBadge";
 import { getAdminStats, listAdminOrders } from "@/lib/admin/services";
 import { formatMXN } from "@/lib/pricing";
-import { formatOrderStatus } from "@/lib/types";
 
 type SummaryStatsProps = {
   statsPromise: ReturnType<typeof getAdminStats>;
@@ -59,7 +59,7 @@ async function RecentOrders({ recentOrdersPromise }: RecentOrdersProps) {
           Últimos pedidos
         </h3>
         <Link
-          className="inline-flex min-h-11 items-center text-sm text-ochre hover:text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
+          className="inline-flex min-h-11 items-center rounded-xl text-sm text-royal-blue underline-offset-4 transition-colors duration-200 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
           href="/admin/pedidos"
         >
           Ver todos
@@ -83,8 +83,8 @@ async function RecentOrders({ recentOrdersPromise }: RecentOrdersProps) {
               <p className="font-data text-sm text-royal-blue">
                 {formatMXN(order.totalPrice)}
               </p>
-              <p className="text-xs uppercase tracking-[0.16em] text-ochre sm:tracking-[0.2em]">
-                {formatOrderStatus(order.status)}
+              <p className="mt-1">
+                <OrderStatusBadge status={order.status} />
               </p>
             </div>
           </li>
@@ -101,7 +101,7 @@ export default function AdminResumenPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-oxford-black/60 sm:text-xs sm:tracking-[0.35em]">
           Resumen
         </p>
         <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
