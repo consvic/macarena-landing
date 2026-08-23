@@ -11,12 +11,12 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { formatMXN, resolveFlavorPrice } from "@/lib/pricing";
 import {
-  type Flavor,
-  PRESENTATION_OPTIONS,
-  type PresentationOption,
-} from "@/lib/types";
+  formatMXN,
+  getAvailablePresentations,
+  resolveFlavorPrice,
+} from "@/lib/pricing";
+import type { Flavor, PresentationOption } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const ADDED_FEEDBACK_DURATION_MS = 2000;
@@ -66,8 +66,16 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
     });
   })();
 
-  const resolvePresentation = (flavorName: string): PresentationOption => {
-    return selectedPresentationByFlavor[flavorName] ?? "1 litro";
+  const resolvePresentation = (flavor: Flavor): PresentationOption => {
+    const availablePresentations = getAvailablePresentations(
+      flavor.availablePresentations,
+    );
+    const selected = selectedPresentationByFlavor[flavor.name];
+    return selected && availablePresentations.includes(selected)
+      ? selected
+      : availablePresentations.includes("1 litro")
+        ? "1 litro"
+        : (availablePresentations[0] ?? "1/2 litro");
   };
 
   const showAddedFeedback = (flavorName: string) => {
@@ -153,7 +161,10 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredFlavors.map((flavor) => {
-          const selectedPresentation = resolvePresentation(flavor.name);
+          const availablePresentations = getAvailablePresentations(
+            flavor.availablePresentations,
+          );
+          const selectedPresentation = resolvePresentation(flavor);
           const itemPrice = resolveFlavorPrice(
             flavor.price,
             selectedPresentation,
@@ -249,7 +260,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                         </span>
                       </SelectTrigger>
                       <SelectContent>
-                        {PRESENTATION_OPTIONS.map((option) => (
+                        {availablePresentations.map((option) => (
                           <SelectItem key={option} value={option}>
                             <NumericNoteText text={option} />
                           </SelectItem>

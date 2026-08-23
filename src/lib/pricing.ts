@@ -1,4 +1,14 @@
-import type { PresentationOption, PriceByPresentation } from "@/lib/types";
+import {
+  PRESENTATION_OPTIONS,
+  type PresentationOption,
+  type PriceByPresentation,
+} from "@/lib/types";
+
+export function getAvailablePresentations(
+  availablePresentations?: PresentationOption[],
+) {
+  return availablePresentations ?? [...PRESENTATION_OPTIONS];
+}
 
 export function resolveFlavorPrice(
   price: PriceByPresentation,

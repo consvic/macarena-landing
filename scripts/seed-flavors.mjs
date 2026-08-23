@@ -39,6 +39,12 @@ const flavorSchema = new mongoose.Schema(
       halfLiter: { type: Number, required: true, min: 0 },
       liter: { type: Number, required: true, min: 0 },
     },
+    availablePresentations: {
+      type: [String],
+      required: true,
+      default: () => ["1/2 litro", "1 litro"],
+      enum: ["1/2 litro", "1 litro"],
+    },
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },
     coverImage: { type: String, required: true, trim: true },
@@ -116,6 +122,9 @@ function normalizeFlavor(rawFlavor, index) {
       ? flavor.tags.map((tag) => String(tag))
       : [],
     price,
+    availablePresentations: Array.isArray(flavor.availablePresentations)
+      ? flavor.availablePresentations
+      : ["1/2 litro", "1 litro"],
     allergens: String(flavor.allergens ?? ""),
     gradient: String(flavor.gradient ?? ""),
     coverImage: flavor.coverImage,

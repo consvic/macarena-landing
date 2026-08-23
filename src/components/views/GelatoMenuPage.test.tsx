@@ -80,4 +80,33 @@ describe("GelatoMenuPage", () => {
 
     unmount();
   });
+
+  it("defaults to the only presentation a flavor sells", () => {
+    render(
+      <GelatoMenuPage
+        flavors={[
+          {
+            ...flavors[0],
+            name: "Pistache con kataifi",
+            price: { halfLiter: 160, liter: 280 },
+            availablePresentations: ["1/2 litro"],
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Agregar Pistache con kataifi al carrito",
+      }),
+    );
+
+    expect(addItemMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        flavorName: "Pistache con kataifi",
+        presentation: "1/2 litro",
+        price: 160,
+      }),
+    );
+  });
 });

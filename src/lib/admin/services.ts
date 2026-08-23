@@ -76,6 +76,7 @@ export type AdminFlavor = {
     halfLiter: number;
     liter: number;
   };
+  availablePresentations: PresentationOption[];
   allergens: string;
   gradient: string;
   coverImage: string;
@@ -152,6 +153,7 @@ type MutableFlavorPayload = {
     halfLiter?: unknown;
     liter?: unknown;
   };
+  availablePresentations?: unknown;
   allergens?: string;
   gradient?: string;
   coverImage?: string;
@@ -220,6 +222,11 @@ function mapFlavor(flavor: Record<string, unknown>): AdminFlavor {
       ),
       liter: Number((flavor.price as Record<string, unknown>)?.liter ?? 0),
     },
+    availablePresentations: Array.isArray(flavor.availablePresentations)
+      ? (flavor.availablePresentations.filter((presentation) =>
+          PRESENTATION_OPTIONS.includes(presentation as PresentationOption),
+        ) as PresentationOption[])
+      : [...PRESENTATION_OPTIONS],
     allergens: String(flavor.allergens ?? ""),
     gradient: String(flavor.gradient ?? ""),
     coverImage: String(flavor.coverImage ?? ""),
@@ -369,6 +376,23 @@ function parseMutableFlavorPayload(
       throw new Error("Flavor price is invalid");
     }
     record.price = { halfLiter, liter };
+  }
+
+  if (mode === "create" || payload.availablePresentations != null) {
+    const rawPresentations = payload.availablePresentations;
+    const availablePresentations = Array.isArray(rawPresentations)
+      ? rawPresentations.filter((presentation) =>
+          PRESENTATION_OPTIONS.includes(presentation as PresentationOption),
+        )
+      : [];
+    if (
+      availablePresentations.length === 0 ||
+      availablePresentations.length !==
+        (Array.isArray(rawPresentations) ? rawPresentations.length : 0)
+    ) {
+      throw new Error("Flavor available presentations are invalid");
+    }
+    record.availablePresentations = availablePresentations;
   }
 
   if (mode === "create" || payload.allergens != null) {

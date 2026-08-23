@@ -1,5 +1,5 @@
 import { type InferSchemaType, model, models, Schema } from "mongoose";
-import { FLAVOR_BASES } from "@/lib/types";
+import { FLAVOR_BASES, PRESENTATION_OPTIONS } from "@/lib/types";
 
 const flavorSchema = new Schema(
   {
@@ -11,6 +11,15 @@ const flavorSchema = new Schema(
     price: {
       halfLiter: { type: Number, required: true, min: 0 },
       liter: { type: Number, required: true, min: 0 },
+    },
+    availablePresentations: {
+      type: [{ type: String, enum: PRESENTATION_OPTIONS }],
+      required: true,
+      default: () => [...PRESENTATION_OPTIONS],
+      validate: {
+        validator: (value: string[]) => value.length > 0,
+        message: "At least one presentation is required",
+      },
     },
     allergens: { type: String, required: true, trim: true },
     gradient: { type: String, required: true, trim: true },

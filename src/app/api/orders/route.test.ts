@@ -178,6 +178,27 @@ describe("POST /api/orders", () => {
     expect(createMock).not.toHaveBeenCalled();
   });
 
+  it("rejects a presentation disabled after it was added to the cart", async () => {
+    leanFlavorsMock.mockResolvedValue([
+      { ...FLAVORS[0], availablePresentations: ["1/2 litro"] },
+    ]);
+
+    const { POST } = await import("@/app/api/orders/route");
+    const response = await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [item({ presentation: "1 litro" })],
+      }),
+    );
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toEqual({
+      message:
+        "1 litro de Mango ya no está disponible. Retíralo del carrito para continuar.",
+    });
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it.each([
     ["invalid flavor id", item({ flavorId: "not-an-id" }), "Invalid flavor"],
     [

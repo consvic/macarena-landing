@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db/mongoose";
-import type { Flavor } from "@/lib/types";
+import { type Flavor, PRESENTATION_OPTIONS } from "@/lib/types";
 import { FlavorModel } from "@/models/Flavor";
 
 export async function getFlavors(): Promise<Flavor[]> {
@@ -16,6 +16,9 @@ export async function getFlavors(): Promise<Flavor[]> {
     ...flavor,
     _id: String(flavor._id),
     exists: flavor.exists ?? true,
+    availablePresentations: flavor.availablePresentations ?? [
+      ...PRESENTATION_OPTIONS,
+    ],
     isVisibleOnSite: flavor.isVisibleOnSite ?? flavor.exists ?? true,
     isArchived: flavor.isArchived ?? false,
   })) as Flavor[];

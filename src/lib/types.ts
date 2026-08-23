@@ -14,6 +14,7 @@ export type Flavor = {
   base: FlavorBase;
   tags: string[];
   price: PriceByPresentation;
+  availablePresentations?: PresentationOption[];
   allergens: string;
   gradient: string;
   coverImage: string;

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatMXN, resolveFlavorPrice } from "@/lib/pricing";
+import {
+  formatMXN,
+  getAvailablePresentations,
+  resolveFlavorPrice,
+} from "@/lib/pricing";
 
 describe("resolveFlavorPrice", () => {
   const price = {
@@ -13,6 +17,12 @@ describe("resolveFlavorPrice", () => {
 
   it("returns liter price", () => {
     expect(resolveFlavorPrice(price, "1 litro")).toBe(280);
+  });
+});
+
+describe("getAvailablePresentations", () => {
+  it("keeps old flavor records compatible by defaulting to both sizes", () => {
+    expect(getAvailablePresentations()).toEqual(["1/2 litro", "1 litro"]);
   });
 });
 

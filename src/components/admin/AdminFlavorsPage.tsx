@@ -8,7 +8,13 @@ import {
   useState,
 } from "react";
 import { AdminFlavorsResultsLoading } from "@/components/admin/AdminLoadingStates";
-import { FLAVOR_BASES, type FlavorBase } from "@/lib/types";
+import { formatMXN } from "@/lib/pricing";
+import {
+  FLAVOR_BASES,
+  type FlavorBase,
+  PRESENTATION_OPTIONS,
+  type PresentationOption,
+} from "@/lib/types";
 
 type AdminFlavor = {
   _id: string;
@@ -21,6 +27,7 @@ type AdminFlavor = {
     halfLiter: number;
     liter: number;
   };
+  availablePresentations: PresentationOption[];
   allergens: string;
   gradient: string;
   coverImage: string;
@@ -50,6 +57,7 @@ type FlavorFormState = {
   tags: string;
   halfLiter: string;
   liter: string;
+  availablePresentations: PresentationOption[];
   allergens: string;
   gradient: string;
   coverImage: string;
@@ -63,6 +71,7 @@ const EMPTY_FORM: FlavorFormState = {
   tags: "",
   halfLiter: "",
   liter: "",
+  availablePresentations: [...PRESENTATION_OPTIONS],
   allergens: "",
   gradient: "",
   coverImage: "",
@@ -77,6 +86,7 @@ function flavorToForm(flavor: AdminFlavor): FlavorFormState {
     tags: flavor.tags.join(", "),
     halfLiter: String(flavor.price.halfLiter),
     liter: String(flavor.price.liter),
+    availablePresentations: flavor.availablePresentations,
     allergens: flavor.allergens,
     gradient: flavor.gradient,
     coverImage: flavor.coverImage,
@@ -86,6 +96,7 @@ function flavorToForm(flavor: AdminFlavor): FlavorFormState {
 export function AdminFlavorsPage() {
   const [flavors, setFlavors] = useState<AdminFlavor[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<FlavorFormState>(EMPTY_FORM);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -185,6 +196,7 @@ export function AdminFlavorsPage() {
           halfLiter: Number(form.halfLiter),
           liter: Number(form.liter),
         },
+        availablePresentations: form.availablePresentations,
         allergens: form.allergens,
         gradient: form.gradient,
         coverImage: form.coverImage,
@@ -225,6 +237,8 @@ export function AdminFlavorsPage() {
       if (!selectedId) {
         setSelectedId(flavor._id);
       }
+
+      setIsEditing(false);
 
       setMessage(selectedId ? "Sabor actualizado" : "Sabor creado");
     } catch (error) {
@@ -377,8 +391,8 @@ export function AdminFlavorsPage() {
       </section>
 
       <section className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(22rem,1fr)]">
-        <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <article className="flex max-h-[44rem] min-w-0 self-start flex-col overflow-hidden rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+          <div className="mb-4 flex shrink-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
               Sabores registrados
             </h3>
@@ -388,6 +402,7 @@ export function AdminFlavorsPage() {
               onClick={() => {
                 setSelectedId(null);
                 setForm(EMPTY_FORM);
+                setIsEditing(true);
               }}
             >
               Nuevo sabor
@@ -397,7 +412,7 @@ export function AdminFlavorsPage() {
           {isLoading ? (
             <AdminFlavorsResultsLoading />
           ) : (
-            <ul className="space-y-3">
+            <ul className="min-h-0 space-y-3 overflow-y-auto overscroll-contain pr-1">
               {flavors.map((flavor) => (
                 <li
                   key={flavor._id}
@@ -407,7 +422,10 @@ export function AdminFlavorsPage() {
                     <button
                       type="button"
                       className="min-w-0 flex-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
-                      onClick={() => setSelectedId(flavor._id)}
+                      onClick={() => {
+                        setSelectedId(flavor._id);
+                        setIsEditing(false);
+                      }}
                     >
                       <p className="break-words font-serif text-xl text-royal-blue">
                         {flavor.name}
@@ -460,147 +478,355 @@ export function AdminFlavorsPage() {
         </article>
 
         <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
-          <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
-            {selectedId ? "Editar sabor" : "Crear sabor"}
-          </h3>
+          {selectedFlavor && !isEditing ? (
+            <>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-ochre">
+                    Detalle del sabor
+                  </p>
+                  <h3 className="mt-1 font-serif text-2xl text-royal-blue sm:text-3xl">
+                    {selectedFlavor.name}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="inline-flex min-h-11 items-center justify-center rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
+                >
+                  Editar
+                </button>
+              </div>
 
-          <form className="mt-4 space-y-3" onSubmit={saveFlavor}>
-            <input
-              required
-              aria-label="Nombre del sabor"
-              value={form.name}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, name: event.target.value }))
-              }
-              placeholder="Nombre"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <input
-              required
-              aria-label="Categoría del sabor"
-              value={form.category}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, category: event.target.value }))
-              }
-              placeholder="Categoría"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <textarea
-              required
-              aria-label="Descripción del sabor"
-              value={form.description}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  description: event.target.value,
-                }))
-              }
-              placeholder="Descripción"
-              className="min-h-24 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
+              <dl className="mt-6 divide-y divide-ochre/15 text-sm">
+                <div className="py-3">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    Descripción
+                  </dt>
+                  <dd className="mt-1 text-oxford-black/75">
+                    {selectedFlavor.description}
+                  </dd>
+                </div>
+                <div className="grid gap-4 py-3 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                      Categoría
+                    </dt>
+                    <dd className="mt-1">{selectedFlavor.category}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                      Base
+                    </dt>
+                    <dd className="mt-1">{selectedFlavor.base}</dd>
+                  </div>
+                </div>
+                <div className="grid gap-4 py-3 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                      Precio 1/2 litro
+                    </dt>
+                    <dd className="mt-1 font-data text-lg text-royal-blue">
+                      {formatMXN(selectedFlavor.price.halfLiter)}
+                      {!selectedFlavor.availablePresentations.includes(
+                        "1/2 litro",
+                      ) ? (
+                        <span className="ml-2 text-xs text-oxford-black/50">
+                          No disponible
+                        </span>
+                      ) : null}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                      Precio 1 litro
+                    </dt>
+                    <dd className="mt-1 font-data text-lg text-royal-blue">
+                      {formatMXN(selectedFlavor.price.liter)}
+                      {!selectedFlavor.availablePresentations.includes(
+                        "1 litro",
+                      ) ? (
+                        <span className="ml-2 text-xs text-oxford-black/50">
+                          No disponible
+                        </span>
+                      ) : null}
+                    </dd>
+                  </div>
+                </div>
+                <div className="py-3">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    Presentaciones a la venta
+                  </dt>
+                  <dd className="mt-1 font-data">
+                    {selectedFlavor.availablePresentations.join(" · ")}
+                  </dd>
+                </div>
+                <div className="py-3">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    Etiquetas
+                  </dt>
+                  <dd className="mt-1">{selectedFlavor.tags.join(", ")}</dd>
+                </div>
+                <div className="py-3">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    Alérgenos
+                  </dt>
+                  <dd className="mt-1">{selectedFlavor.allergens}</dd>
+                </div>
+                <div className="grid gap-4 py-3 sm:grid-cols-2">
+                  <div>
+                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                      En el sitio
+                    </dt>
+                    <dd className="mt-1">
+                      {selectedFlavor.isVisibleOnSite ? "Visible" : "Oculto"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                      Estado
+                    </dt>
+                    <dd className="mt-1">
+                      {selectedFlavor.isArchived ? "Archivado" : "Activo"}
+                    </dd>
+                  </div>
+                </div>
+                <div className="py-3">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    Imagen
+                  </dt>
+                  <dd className="mt-1 break-all font-data">
+                    {selectedFlavor.coverImage}
+                  </dd>
+                </div>
+                <div className="py-3">
+                  <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
+                    Gradiente
+                  </dt>
+                  <dd className="mt-1 break-all font-data">
+                    {selectedFlavor.gradient}
+                  </dd>
+                </div>
+              </dl>
+            </>
+          ) : isEditing ? (
+            <>
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="font-serif text-2xl text-royal-blue sm:text-3xl">
+                  {selectedId ? "Editar sabor" : "Crear sabor"}
+                </h3>
+                {selectedId ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="min-h-11 rounded-2xl border border-ochre/30 px-4 py-2 text-sm text-ochre"
+                  >
+                    Cancelar
+                  </button>
+                ) : null}
+              </div>
 
-            <select
-              aria-label="Base del sabor"
-              value={form.base}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  base: event.target.value as FlavorBase,
-                }))
-              }
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            >
-              {FLAVOR_BASES.map((base) => (
-                <option key={base} value={base}>
-                  {base}
-                </option>
-              ))}
-            </select>
+              <form className="mt-4 space-y-3" onSubmit={saveFlavor}>
+                <input
+                  required
+                  aria-label="Nombre del sabor"
+                  value={form.name}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, name: event.target.value }))
+                  }
+                  placeholder="Nombre"
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
+                <input
+                  required
+                  aria-label="Categoría del sabor"
+                  value={form.category}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      category: event.target.value,
+                    }))
+                  }
+                  placeholder="Categoría"
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
+                <textarea
+                  required
+                  aria-label="Descripción del sabor"
+                  value={form.description}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      description: event.target.value,
+                    }))
+                  }
+                  placeholder="Descripción"
+                  className="min-h-24 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
 
-            <input
-              required
-              aria-label="Tags del sabor separados por coma"
-              value={form.tags}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, tags: event.target.value }))
-              }
-              placeholder="Tags separados por coma"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
+                <select
+                  aria-label="Base del sabor"
+                  value={form.base}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      base: event.target.value as FlavorBase,
+                    }))
+                  }
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                >
+                  {FLAVOR_BASES.map((base) => (
+                    <option key={base} value={base}>
+                      {base}
+                    </option>
+                  ))}
+                </select>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <input
-                required
-                type="number"
-                min="0"
-                aria-label="Precio de medio litro"
-                value={form.halfLiter}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    halfLiter: event.target.value,
-                  }))
-                }
-                placeholder="Precio 1/2 litro"
-                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-              />
-              <input
-                required
-                type="number"
-                min="0"
-                aria-label="Precio de un litro"
-                value={form.liter}
-                onChange={(event) =>
-                  setForm((prev) => ({ ...prev, liter: event.target.value }))
-                }
-                placeholder="Precio 1 litro"
-                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-              />
+                <input
+                  required
+                  aria-label="Tags del sabor separados por coma"
+                  value={form.tags}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, tags: event.target.value }))
+                  }
+                  placeholder="Tags separados por coma"
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <input
+                    required
+                    type="number"
+                    min="0"
+                    aria-label="Precio de medio litro"
+                    value={form.halfLiter}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        halfLiter: event.target.value,
+                      }))
+                    }
+                    placeholder="Precio 1/2 litro"
+                    className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                  />
+                  <input
+                    required
+                    type="number"
+                    min="0"
+                    aria-label="Precio de un litro"
+                    value={form.liter}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        liter: event.target.value,
+                      }))
+                    }
+                    placeholder="Precio 1 litro"
+                    className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                  />
+                </div>
+
+                <fieldset className="rounded-2xl border border-ochre/30 px-3 py-3">
+                  <legend className="px-1 text-xs uppercase tracking-[0.18em] text-ochre">
+                    Presentaciones a la venta
+                  </legend>
+                  <div className="mt-1 grid gap-2 sm:grid-cols-2">
+                    {PRESENTATION_OPTIONS.map((presentation) => (
+                      <label
+                        key={presentation}
+                        className="flex min-h-11 items-center gap-3 rounded-xl bg-cream-white px-3 font-data text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={form.availablePresentations.includes(
+                            presentation,
+                          )}
+                          onChange={(event) =>
+                            setForm((previous) => ({
+                              ...previous,
+                              availablePresentations: event.target.checked
+                                ? [
+                                    ...previous.availablePresentations,
+                                    presentation,
+                                  ]
+                                : previous.availablePresentations.filter(
+                                    (option) => option !== presentation,
+                                  ),
+                            }))
+                          }
+                          className="size-4 accent-royal-blue"
+                        />
+                        {presentation}
+                      </label>
+                    ))}
+                  </div>
+                  {form.availablePresentations.length === 0 ? (
+                    <p className="mt-2 text-xs text-wine-red">
+                      Elige al menos una presentación.
+                    </p>
+                  ) : null}
+                </fieldset>
+
+                <input
+                  required
+                  aria-label="Alérgenos del sabor"
+                  value={form.allergens}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      allergens: event.target.value,
+                    }))
+                  }
+                  placeholder="Alérgenos"
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
+                <input
+                  required
+                  aria-label="Clase de gradiente del sabor"
+                  value={form.gradient}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      gradient: event.target.value,
+                    }))
+                  }
+                  placeholder="Clase de gradiente (ej. from-ochre/20 to-terracotta/50)"
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
+                <input
+                  required
+                  aria-label="Ruta de imagen del sabor"
+                  value={form.coverImage}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      coverImage: event.target.value,
+                    }))
+                  }
+                  placeholder="Ruta de imagen"
+                  className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                />
+
+                <button
+                  type="submit"
+                  disabled={
+                    isSaving || form.availablePresentations.length === 0
+                  }
+                  className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
+                >
+                  {isSaving
+                    ? "Guardando"
+                    : selectedId
+                      ? "Actualizar sabor"
+                      : "Crear sabor"}
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="flex min-h-64 items-center justify-center text-center text-sm text-oxford-black/60">
+              Selecciona un sabor para consultar sus detalles.
             </div>
-
-            <input
-              required
-              aria-label="Alérgenos del sabor"
-              value={form.allergens}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, allergens: event.target.value }))
-              }
-              placeholder="Alérgenos"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <input
-              required
-              aria-label="Clase de gradiente del sabor"
-              value={form.gradient}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, gradient: event.target.value }))
-              }
-              placeholder="Clase de gradiente (ej. from-ochre/20 to-terracotta/50)"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <input
-              required
-              aria-label="Ruta de imagen del sabor"
-              value={form.coverImage}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, coverImage: event.target.value }))
-              }
-              placeholder="Ruta de imagen"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
-            >
-              {isSaving
-                ? "Guardando"
-                : selectedId
-                  ? "Actualizar sabor"
-                  : "Crear sabor"}
-            </button>
-          </form>
+          )}
         </article>
       </section>
     </div>

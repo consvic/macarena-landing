@@ -22,6 +22,7 @@ Each flavor must include:
 - `tags` (string array)
 - `price.halfLiter` (number)
 - `price.liter` (number)
+- `availablePresentations` (`"1/2 litro"`, `"1 litro"`, or both; defaults to both)
 - `allergens`
 - `gradient`
 - `coverImage` (string path, for example `/flavor-images/mango-maracuya.PNG`)
@@ -40,6 +41,7 @@ Example:
       "halfLiter": 150,
       "liter": 280
     },
+    "availablePresentations": ["1/2 litro", "1 litro"],
     "allergens": "Sin lacteos. Puede contener trazas.",
     "gradient": "from-ochre/45 via-terracotta/30 to-light-beige/80",
     "coverImage": "/flavor-images/mango-maracuya.PNG"

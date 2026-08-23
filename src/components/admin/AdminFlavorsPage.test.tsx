@@ -11,6 +11,7 @@ const FLAVOR = {
   base: "Agua",
   tags: ["fruta"],
   price: { halfLiter: 150, liter: 280 },
+  availablePresentations: ["1/2 litro", "1 litro"],
   allergens: "Sin lácteos",
   gradient: "from-ochre to-wine-red",
   coverImage: "/mango.png",
@@ -81,5 +82,34 @@ describe("AdminFlavorsPage production demand", () => {
         body: JSON.stringify({ isVisibleOnSite: false }),
       }),
     );
+  });
+
+  it("shows flavor details before exposing editable fields", async () => {
+    const fetchMock = vi.fn((input: RequestInfo | URL) => {
+      if (String(input) === "/api/admin/flavors") {
+        return Promise.resolve(jsonResponse([FLAVOR]));
+      }
+      return Promise.resolve(jsonResponse({ date: "2026-08-22", entries: [] }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AdminFlavorsPage />);
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: /Mango Frutal/ }),
+    );
+
+    expect(screen.getByText("Detalle del sabor")).toBeInTheDocument();
+    expect(screen.getByText(/150\.00/)).toBeInTheDocument();
+    expect(screen.getByText(/280\.00/)).toBeInTheDocument();
+    expect(
+      screen.queryByRole("textbox", { name: "Nombre del sabor" }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Editar" }));
+
+    expect(
+      screen.getByRole("textbox", { name: "Nombre del sabor" }),
+    ).toHaveValue("Mango");
   });
 });

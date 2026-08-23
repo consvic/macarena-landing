@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { sendOrderPendingEmail } from "@/lib/email/order-notifications";
-import { resolveFlavorPrice } from "@/lib/pricing";
+import { getAvailablePresentations, resolveFlavorPrice } from "@/lib/pricing";
 import {
   type IncomingOrderItem,
   PRESENTATION_OPTIONS,
@@ -82,6 +82,15 @@ export async function POST(request: Request) {
       }
 
       const presentation = item.presentation as PresentationOption;
+      if (
+        !getAvailablePresentations(
+          flavor.availablePresentations as PresentationOption[] | undefined,
+        ).includes(presentation)
+      ) {
+        throw new UnavailableFlavorError(
+          `${presentation} de ${flavor.name} ya no está disponible. Retíralo del carrito para continuar.`,
+        );
+      }
       const unitPrice = resolveFlavorPrice(flavor.price, presentation);
       return {
         flavorId: flavor._id,
