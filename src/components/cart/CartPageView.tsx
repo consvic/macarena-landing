@@ -1,20 +1,45 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
 import { formatMXN } from "@/lib/pricing";
 
-export function CartPageView() {
+type PaymentDetails = {
+  accountName: string;
+  bankClabe: string;
+  bankReference: string;
+  receiptPhone: string;
+};
+
+type OrderConfirmation = {
+  _id: string;
+  totalPrice: number;
+};
+
+const EMPTY_PAYMENT_DETAILS: PaymentDetails = {
+  accountName: "",
+  bankClabe: "",
+  bankReference: "",
+  receiptPhone: "",
+};
+
+export function CartPageView({
+  paymentDetails = EMPTY_PAYMENT_DETAILS,
+}: {
+  paymentDetails?: PaymentDetails;
+}) {
   const { items, removeItem, formattedTotalPrice, itemsCount, clearCart } =
     useCart();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [orderConfirmation, setOrderConfirmation] =
+    useState<OrderConfirmation | null>(null);
+  const confirmationHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const emailIsValid = useMemo(
     () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()),
@@ -23,6 +48,12 @@ export function CartPageView() {
   const hasCartItems = itemsCount > 0;
   const canSubmitOrder = hasCartItems && emailIsValid && !isSubmitting;
 
+  useEffect(() => {
+    if (orderConfirmation) {
+      confirmationHeadingRef.current?.focus();
+    }
+  }, [orderConfirmation]);
+
   async function handleCreateOrder() {
     if (!canSubmitOrder) {
       return;
@@ -30,7 +61,6 @@ export function CartPageView() {
 
     setIsSubmitting(true);
     setErrorMessage(null);
-    setSuccessMessage(null);
 
     const customerEmail = email.trim().toLowerCase();
     const customerPhone = phone.trim();
@@ -45,10 +75,10 @@ export function CartPageView() {
           customerEmail,
           ...(customerPhone ? { customerPhone } : {}),
           items: items.map((item) => ({
+            flavorId: item.flavorId,
             flavorName: item.flavorName,
             presentation: item.presentation,
             quantity: 1,
-            unitPrice: item.price,
           })),
         }),
       });
@@ -60,10 +90,9 @@ export function CartPageView() {
         throw new Error(payload?.message ?? "No fue posible crear el pedido.");
       }
 
+      const order = (await response.json()) as OrderConfirmation;
+      setOrderConfirmation(order);
       clearCart();
-      setSuccessMessage(
-        "Pedido creado. Te enviaremos un correo con instrucciones de pago.",
-      );
       setEmail("");
       setPhone("");
     } catch (error) {
@@ -73,6 +102,99 @@ export function CartPageView() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (orderConfirmation) {
+    const whatsappPhone = paymentDetails.receiptPhone.replace(/\D/g, "");
+    const whatsappMessage = encodeURIComponent(
+      `Hola, quiero enviar el comprobante de pago de mi pedido ${orderConfirmation._id} por ${formatMXN(orderConfirmation.totalPrice)}.`,
+    );
+
+    return (
+      <main className="min-h-screen bg-cream-white px-6 py-12 text-oxford-black">
+        <section className="mx-auto max-w-2xl rounded-3xl border border-royal-blue/20 bg-white p-6 sm:p-10">
+          <p className="text-sm uppercase tracking-[0.3em] text-ochre">
+            Pedido recibido
+          </p>
+          <h1
+            ref={confirmationHeadingRef}
+            tabIndex={-1}
+            className="mt-2 text-4xl font-serif text-royal-blue"
+          >
+            ¡Gracias por tu pedido!
+          </h1>
+          <p className="mt-4 text-oxford-black/70">
+            Para confirmarlo, realiza la transferencia por el siguiente total:
+          </p>
+
+          <div className="mt-6 rounded-3xl bg-light-beige p-6">
+            <p className="text-sm text-oxford-black/70">Total a transferir</p>
+            <p className="mt-1 font-data text-3xl text-royal-blue">
+              {formatMXN(orderConfirmation.totalPrice)}
+            </p>
+
+            <dl className="mt-6 space-y-4 border-t border-ochre/20 pt-6">
+              <div>
+                <dt className="text-xs uppercase tracking-[0.2em] text-ochre">
+                  Beneficiario
+                </dt>
+                <dd className="mt-1">{paymentDetails.accountName}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-[0.2em] text-ochre">
+                  CLABE
+                </dt>
+                <dd className="mt-1 font-data">{paymentDetails.bankClabe}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-[0.2em] text-ochre">
+                  Referencia
+                </dt>
+                <dd className="mt-1 font-data">
+                  {paymentDetails.bankReference || orderConfirmation._id}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <p className="mt-6 text-oxford-black/70">
+            Una vez realizado el pago, envíanos tu comprobante
+            {paymentDetails.receiptPhone ? (
+              <>
+                {" "}
+                por WhatsApp al{" "}
+                <span className="font-data font-medium text-royal-blue">
+                  {paymentDetails.receiptPhone}
+                </span>
+              </>
+            ) : (
+              " respondiendo al correo de tu pedido"
+            )}
+            . Una vez que validemos el pago, podremos confirmar tu pedido.
+          </p>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            {whatsappPhone ? (
+              <Button
+                asChild
+                className="h-11 rounded-full bg-royal-blue text-light-beige hover:bg-royal-blue/90"
+              >
+                <a
+                  href={`https://wa.me/${whatsappPhone}?text=${whatsappMessage}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Enviar comprobante por WhatsApp
+                </a>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" className="h-11 rounded-full">
+              <Link href="/menu">Volver al menú</Link>
+            </Button>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -190,9 +312,6 @@ export function CartPageView() {
             </Button>
             {errorMessage ? (
               <p className="text-sm text-wine-red">{errorMessage}</p>
-            ) : null}
-            {successMessage ? (
-              <p className="text-sm text-royal-blue">{successMessage}</p>
             ) : null}
           </div>
         </div>

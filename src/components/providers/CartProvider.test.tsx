@@ -26,6 +26,7 @@ describe("CartProvider", () => {
 
     act(() => {
       result.current.addItem({
+        flavorId: "flavor-mango",
         flavorName: "Mango",
         presentation: "1/2 litro",
         price: 150,
@@ -44,6 +45,7 @@ describe("CartProvider", () => {
 
     act(() => {
       result.current.addItem({
+        flavorId: "flavor-mango",
         flavorName: "Mango",
         presentation: "1/2 litro",
         price: 150,
@@ -64,11 +66,13 @@ describe("CartProvider", () => {
 
     act(() => {
       result.current.addItem({
+        flavorId: "flavor-mango",
         flavorName: "Mango",
         presentation: "1/2 litro",
         price: 150,
       });
       result.current.addItem({
+        flavorId: "flavor-coco",
         flavorName: "Coco",
         presentation: "1 litro",
         price: 280,
@@ -88,6 +92,7 @@ describe("CartProvider", () => {
     const savedCart = [
       {
         id: "saved-1",
+        flavorId: "flavor-mango",
         flavorName: "Mango",
         presentation: "1/2 litro",
         price: 150,
@@ -106,6 +111,7 @@ describe("CartProvider", () => {
 
     act(() => {
       result.current.addItem({
+        flavorId: "flavor-mango",
         flavorName: "Mango",
         presentation: "1/2 litro",
         price: 150,
@@ -121,6 +127,7 @@ describe("CartProvider", () => {
     const savedCart = [
       {
         id: "saved-1",
+        flavorId: "flavor-mango",
         flavorName: "Mango",
         presentation: "1/2 litro",
         price: 150,

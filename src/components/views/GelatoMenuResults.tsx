@@ -96,15 +96,18 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
   };
 
   const handleAddFlavor = ({
+    flavorId,
     flavorName,
     presentation,
     price,
   }: {
+    flavorId: string;
     flavorName: string;
     presentation: PresentationOption;
     price: number;
   }) => {
     addItem({
+      flavorId,
       flavorName,
       presentation,
       price,
@@ -271,6 +274,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                       )}
                       onClick={() =>
                         handleAddFlavor({
+                          flavorId: flavor._id,
                           flavorName: flavor.name,
                           presentation: selectedPresentation,
                           price: itemPrice,

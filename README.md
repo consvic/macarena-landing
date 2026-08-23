@@ -68,6 +68,7 @@ EMAIL_ASSET_BASE_URL=https://your-domain.com
 BANK_ACCOUNT_NAME=Macarena Gelateria
 BANK_ACCOUNT_CLABE=000000000000000000
 BANK_ACCOUNT_REFERENCE=PEDIDO-MACARENA
+PAYMENT_RECEIPT_PHONE=+525500000000
 ```
 
 3. Start the development server:
@@ -89,6 +90,7 @@ npm run dev
 - `BANK_ACCOUNT_NAME`: Bank account holder name shown in the payment instructions email.
 - `BANK_ACCOUNT_CLABE`: CLABE number included in the payment instructions email.
 - `BANK_ACCOUNT_REFERENCE`: Payment reference shown in the payment instructions email.
+- `PAYMENT_RECEIPT_PHONE`: WhatsApp number where customers send payment receipts.
 
 ## Main Routes
 
