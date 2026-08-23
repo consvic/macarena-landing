@@ -52,6 +52,7 @@
   --color-terracotta: var(--terracotta);
   --color-oxford-black: var(--oxford-black);
   --color-cream-white: var(--cream-white);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 :root {
@@ -91,7 +92,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Adding exact Macarena Gelateria color palette */
+  /* Macarena Gelateria brand palette */
   --royal-blue: #151f49;
   --light-beige: #eddbc3;
   --wine-red: #640a1a;
@@ -151,6 +152,11 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  a,
+  button {
+    touch-action: manipulation;
+  }
 }
 
 @layer utilities {
@@ -173,39 +179,6 @@
     to {
       opacity: 1;
       transform: translateY(0);
-    }
-  }
-
-  @keyframes slide-left {
-    from {
-      opacity: 0;
-      transform: translateX(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slide-right {
-    from {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes scale-up {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
     }
   }
 
@@ -265,39 +238,38 @@
     }
   }
 
-  .animate-fade-in {
-    animation: fade-in 1s ease-out forwards;
-  }
-
   .animate-fade-in-delay {
-    animation: fade-in 1s ease-out 0.5s forwards;
+    animation: fade-in 600ms var(--ease-out-strong) 150ms forwards;
     opacity: 0;
   }
 
   .animate-fade-in-delay-2 {
-    animation: fade-in 1s ease-out 1s forwards;
+    animation: fade-in 600ms var(--ease-out-strong) 250ms forwards;
     opacity: 0;
   }
 
   .animate-slide-up {
-    animation: slide-up 1s ease-out forwards;
+    animation: slide-up 600ms var(--ease-out-strong) forwards;
   }
 
-  .animate-slide-up-delay {
-    animation: slide-up 1s ease-out 0.3s forwards;
-    opacity: 0;
+  .menu-card-enter {
+    animation: slide-up 500ms var(--ease-out-strong) both;
+    animation-delay: calc(min(var(--enter-index, 0), 8) * 50ms);
   }
 
-  .animate-slide-left {
-    animation: slide-left 1s ease-out forwards;
+  @keyframes value-tick {
+    from {
+      opacity: 0.35;
+      transform: translateY(2px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
-  .animate-slide-right {
-    animation: slide-right 1s ease-out forwards;
-  }
-
-  .animate-scale-up {
-    animation: scale-up 1s ease-out forwards;
+  .animate-value-tick {
+    animation: value-tick 150ms var(--ease-out-strong);
   }
 
   .animate-float {
@@ -309,15 +281,42 @@
     animation-delay: 2s;
   }
 
-  .animate-float-delay-2 {
-    animation: float 6s ease-in-out infinite;
-    animation-delay: 4s;
+  .animate-float-slow {
+    animation: float 9s ease-in-out infinite;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 700ms var(--ease-out-strong),
+      transform 700ms var(--ease-out-strong);
+  }
+
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* No-JS fallback: browsers with scripting disabled show reveal content immediately */
+  @media (scripting: none) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media print {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   .cart-add-feedback {
     isolation: isolate;
     animation-duration: 420ms;
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    animation-timing-function: var(--ease-out-strong);
   }
 
   .cart-add-feedback::after {
@@ -336,7 +335,7 @@
   }
 
   .cart-add-feedback-odd::after {
-    animation: cart-add-ring-odd 520ms cubic-bezier(0.16, 1, 0.3, 1);
+    animation: cart-add-ring-odd 520ms var(--ease-out-strong);
   }
 
   .cart-add-feedback-even {
@@ -344,10 +343,9 @@
   }
 
   .cart-add-feedback-even::after {
-    animation: cart-add-ring-even 520ms cubic-bezier(0.16, 1, 0.3, 1);
+    animation: cart-add-ring-even 520ms var(--ease-out-strong);
   }
 
-  /* Smooth scroll behavior */
   html {
     scroll-behavior: smooth;
   }
@@ -358,22 +356,25 @@
     scroll-behavior: auto;
   }
 
-  .animate-fade-in,
   .animate-fade-in-delay,
   .animate-fade-in-delay-2,
   .animate-slide-up,
-  .animate-slide-up-delay,
-  .animate-slide-left,
-  .animate-slide-right,
-  .animate-scale-up,
   .animate-float,
   .animate-float-delay,
-  .animate-float-delay-2,
+  .animate-float-slow,
+  .menu-card-enter,
+  .animate-value-tick,
   .cart-add-feedback,
   .cart-add-feedback::after {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
   .cart-add-feedback::after {
