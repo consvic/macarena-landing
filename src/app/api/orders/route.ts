@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     const flavors = await FlavorModel.find({
       _id: { $in: [...new Set(flavorIds)] },
       exists: true,
-      isVisibleOnSite: true,
+      isVisibleOnSite: { $ne: false },
       isArchived: { $ne: true },
     }).lean();
     const flavorsById = new Map(

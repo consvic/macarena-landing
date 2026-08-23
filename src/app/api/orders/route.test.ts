@@ -125,7 +125,7 @@ describe("POST /api/orders", () => {
     expect(findFlavorsMock).toHaveBeenCalledWith({
       _id: { $in: [MANGO_ID, COCO_ID] },
       exists: true,
-      isVisibleOnSite: true,
+      isVisibleOnSite: { $ne: false },
       isArchived: { $ne: true },
     });
     expect(createMock).toHaveBeenCalledWith(
