@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/landing/Reveal";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteHeader, SiteHeaderCta } from "@/components/site/SiteHeader";
 
 // Re-render daily so the footer copyright year stays current on a static page
 export const revalidate = 86400;
@@ -29,39 +31,10 @@ const lifestyleCopy = [
 export default function MacarenaGelateria() {
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-light-beige/10 bg-royal-blue/90 backdrop-blur">
-        <div className="container mx-auto flex h-12 items-center justify-between px-6">
-          <Link
-            href="/"
-            className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-light-beige"
-          >
-            <Image
-              src="/MacaBeige2.png"
-              alt=""
-              width={36}
-              height={36}
-              priority
-            />
-            <span className="font-serif text-lg text-light-beige">
-              Macarena
-            </span>
-          </Link>
-          <nav className="flex items-center gap-6">
-            <a
-              href="#philosophy"
-              className="hidden text-sm text-light-beige/80 transition-colors duration-200 hover:text-light-beige focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-light-beige sm:block"
-            >
-              Nuestra historia
-            </a>
-            <Link
-              href="/menu"
-              className="rounded-full bg-light-beige px-5 py-2 text-sm font-medium text-royal-blue transition-[background-color,transform] duration-200 hover:bg-cream-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-light-beige"
-            >
-              Ver menú
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader
+        secondaryLink={{ href: "#philosophy", label: "Nuestra historia" }}
+        action={<SiteHeaderCta href="/menu">Ver menú</SiteHeaderCta>}
+      />
 
       <main className="overflow-x-clip bg-cream-white">
         <section className="relative flex min-h-[calc(100dvh-3rem)] items-center overflow-hidden bg-royal-blue">
@@ -230,36 +203,7 @@ export default function MacarenaGelateria() {
         </section>
       </main>
 
-      <footer className="bg-royal-blue py-12">
-        <div className="container mx-auto flex flex-col items-center justify-between gap-8 px-6 sm:flex-row">
-          <div className="flex items-center gap-3">
-            <Image src="/MacaBeige2.png" alt="" width={32} height={32} />
-            <span className="font-serif text-light-beige">
-              Macarena Gelateria
-            </span>
-          </div>
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/menu"
-              className="text-sm text-light-beige/80 transition-colors duration-200 hover:text-light-beige"
-            >
-              Ver menú
-            </Link>
-            <a
-              href="https://www.instagram.com/macarenagelateria?igsh=MTRmbDhlYmY3aG54dw=="
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-light-beige/80 transition-colors duration-200 hover:text-light-beige"
-            >
-              Instagram
-            </a>
-          </nav>
-          <p className="text-sm text-light-beige/60">
-            <span className="font-data">© {new Date().getFullYear()}</span>{" "}
-            Macarena Gelateria
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
