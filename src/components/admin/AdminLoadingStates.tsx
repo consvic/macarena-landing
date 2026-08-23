@@ -97,10 +97,9 @@ export function AdminOrdersResultsLoading() {
             <SkeletonLine className="mt-4 h-9 w-full bg-royal-blue/10 lg:mt-0" />
             <SkeletonLine className="mt-4 size-11 bg-wine-red/10 lg:mt-0 lg:justify-self-center" />
           </div>
-          <div className="mt-4 space-y-2 border-t border-ochre/15 pt-4">
-            <SkeletonLine className="h-3 w-32 bg-ochre/15" />
-            <SkeletonLine className="h-4 w-3/5" />
-            <SkeletonLine className="h-4 w-2/5" />
+          <div className="mt-4 flex min-h-11 items-center justify-between border-t border-ochre/15 py-3">
+            <SkeletonLine className="h-4 w-24 bg-ochre/15" />
+            <SkeletonLine className="h-3 w-20" />
           </div>
         </div>
       ))}

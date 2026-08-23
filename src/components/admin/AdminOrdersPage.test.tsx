@@ -153,6 +153,10 @@ describe("AdminOrdersPage", () => {
     expect(screen.getByLabelText("Estado del pedido")).toBeInTheDocument();
     expect(screen.getByLabelText("Fecha desde")).toBeInTheDocument();
     expect(screen.getByLabelText("Fecha hasta")).toBeInTheDocument();
+    const details = screen.getByText("Ver detalle").closest("details");
+    expect(details).not.toHaveAttribute("open");
+    await user.click(screen.getByText("Ver detalle"));
+    expect(details).toHaveAttribute("open");
     expect(screen.getByText("Pistache")).toBeInTheDocument();
     expect(screen.getByText("+52 55 1234 5678")).toBeInTheDocument();
     expect(screen.getByText(/Tocar el timbre azul/)).toBeInTheDocument();

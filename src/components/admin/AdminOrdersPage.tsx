@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AdminOrdersResultsLoading } from "@/components/admin/AdminLoadingStates";
 import { formatMXN } from "@/lib/pricing";
@@ -304,24 +304,30 @@ export function AdminOrdersPage() {
             <span className="text-xs text-oxford-black/65">
               Estado del pedido
             </span>
-            <select
-              value={filters.status}
-              onChange={(event) =>
-                setFilters((previous) => ({
-                  ...previous,
-                  status: event.target.value,
-                  page: 1,
-                }))
-              }
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
-            >
-              <option value="">Todos los estados</option>
-              {ORDER_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {formatOrderStatus(status)}
-                </option>
-              ))}
-            </select>
+            <span className="relative block">
+              <select
+                value={filters.status}
+                onChange={(event) =>
+                  setFilters((previous) => ({
+                    ...previous,
+                    status: event.target.value,
+                    page: 1,
+                  }))
+                }
+                className="min-h-11 w-full appearance-none rounded-2xl border border-ochre/30 py-2 pr-11 pl-4 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              >
+                <option value="">Todos los estados</option>
+                {ORDER_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {formatOrderStatus(status)}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-royal-blue"
+              />
+            </span>
           </label>
 
           <label className="grid gap-2">
@@ -438,13 +444,13 @@ export function AdminOrdersPage() {
                           Estado
                         </dt>
                         <dd>
-                          <label>
+                          <label className="relative block">
                             <span className="sr-only">
                               Cambiar estado del pedido de {order.customerName}
                             </span>
                             <select
                               aria-label={`Cambiar estado del pedido de ${order.customerName}`}
-                              className="mt-1 min-h-11 w-full rounded-full border-0 bg-royal-blue/10 px-3 py-2 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:mt-0 lg:min-h-9 lg:text-xs"
+                              className="mt-1 min-h-11 w-full appearance-none rounded-full border-0 bg-royal-blue/10 py-2 pr-10 pl-4 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:mt-0 lg:min-h-9 lg:text-xs"
                               disabled={Boolean(updatingOrderId)}
                               value={order.status}
                               onChange={(event) =>
@@ -464,6 +470,10 @@ export function AdminOrdersPage() {
                                 </option>
                               ))}
                             </select>
+                            <ChevronDown
+                              aria-hidden="true"
+                              className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-royal-blue"
+                            />
                           </label>
                         </dd>
                       </div>
@@ -485,41 +495,54 @@ export function AdminOrdersPage() {
                     )}
                   </div>
 
-                  <div className="mt-4 border-t border-ochre/15 pt-4">
-                    <p className="text-[0.68rem] uppercase tracking-[0.18em] text-ochre">
-                      Contenido del pedido
-                    </p>
-                    {order.items.length > 0 ? (
-                      <ul className="mt-2 divide-y divide-ochre/10">
-                        {order.items.map((item) => (
-                          <li
-                            className="grid gap-1 py-2 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4"
-                            key={item._id}
-                          >
-                            <p className="min-w-0 text-royal-blue">
-                              {item.flavorName}
-                              <span className="font-data text-oxford-black/60">
-                                {` · ${item.presentation} · ${item.quantity} pza.`}
-                              </span>
-                            </p>
-                            <p className="font-data text-oxford-black/70">
-                              {formatMXN(item.subtotal)}
-                            </p>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="mt-2 text-sm text-oxford-black/55">
-                        Sin detalle de productos disponible.
-                      </p>
-                    )}
-                    {order.notes ? (
-                      <p className="mt-3 rounded-xl bg-cream-white px-3 py-2 text-sm text-oxford-black/70">
-                        <span className="text-royal-blue">Nota:</span>{" "}
-                        {order.notes}
-                      </p>
-                    ) : null}
-                  </div>
+                  <details className="group mt-4 border-t border-ochre/15">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm text-ochre outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 [&::-webkit-details-marker]:hidden">
+                      <span>Ver detalle</span>
+                      <span className="flex items-center gap-2">
+                        <span className="font-data text-xs text-oxford-black/55">
+                          {order.itemCount}{" "}
+                          {order.itemCount === 1 ? "producto" : "productos"}
+                        </span>
+                        <ChevronDown
+                          aria-hidden="true"
+                          className="size-4 transition-transform duration-200 group-open:rotate-180"
+                        />
+                      </span>
+                    </summary>
+
+                    <div className="pb-1">
+                      {order.items.length > 0 ? (
+                        <ul className="divide-y divide-ochre/10 border-t border-ochre/10">
+                          {order.items.map((item) => (
+                            <li
+                              className="grid gap-1 py-2 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4"
+                              key={item._id}
+                            >
+                              <p className="min-w-0 text-royal-blue">
+                                {item.flavorName}
+                                <span className="font-data text-oxford-black/60">
+                                  {` · ${item.presentation} · ${item.quantity} pza.`}
+                                </span>
+                              </p>
+                              <p className="font-data text-oxford-black/70">
+                                {formatMXN(item.subtotal)}
+                              </p>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="border-t border-ochre/10 py-3 text-sm text-oxford-black/55">
+                          Sin detalle de productos disponible.
+                        </p>
+                      )}
+                      {order.notes ? (
+                        <p className="mt-3 rounded-xl bg-cream-white px-3 py-2 text-sm text-oxford-black/70">
+                          <span className="text-royal-blue">Nota:</span>{" "}
+                          {order.notes}
+                        </p>
+                      ) : null}
+                    </div>
+                  </details>
                 </article>
               );
             })}
