@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import {
   getAuthorizedAdminUserFromRequest,
   unauthorizedJsonResponse,
@@ -32,18 +32,20 @@ export async function PATCH(
     );
 
     if (status === "confirmed" && previousStatus !== "confirmed") {
-      try {
-        await sendOrderConfirmedEmail(order);
-      } catch (emailError) {
-        console.error(
-          "[admin:orders:status:PATCH] Failed to send confirmation email",
-          {
-            orderId: order._id,
-            error:
-              emailError instanceof Error ? emailError.message : emailError,
-          },
-        );
-      }
+      after(async () => {
+        try {
+          await sendOrderConfirmedEmail(order);
+        } catch (emailError) {
+          console.error(
+            "[admin:orders:status:PATCH] Failed to send confirmation email",
+            {
+              orderId: order._id,
+              error:
+                emailError instanceof Error ? emailError.message : emailError,
+            },
+          );
+        }
+      });
     }
 
     return NextResponse.json(order);

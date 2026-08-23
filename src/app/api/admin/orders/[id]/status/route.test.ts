@@ -3,6 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const authMock = vi.fn();
 const updateStatusMock = vi.fn();
 const sendConfirmedEmailMock = vi.fn();
+const afterMock = vi.fn();
+
+vi.mock("next/server", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("next/server")>();
+  return {
+    ...actual,
+    after: (...args: unknown[]) => afterMock(...args),
+  };
+});
 
 vi.mock("@/lib/admin/auth", () => ({
   getAuthorizedAdminUserFromRequest: (request: Request) => authMock(request),
@@ -57,7 +66,7 @@ describe("PATCH /api/admin/orders/[id]/status", () => {
     authMock.mockReturnValue("admin@macarena.mx");
   });
 
-  it("emails the customer when an order becomes confirmed", async () => {
+  it("schedules the confirmation email after responding", async () => {
     updateStatusMock.mockResolvedValue({
       order: confirmedOrder,
       previousStatus: "pending_confirmation",
@@ -74,6 +83,13 @@ describe("PATCH /api/admin/orders/[id]/status", () => {
       "confirmed",
       "admin@macarena.mx",
     );
+    expect(afterMock).toHaveBeenCalledOnce();
+    expect(sendConfirmedEmailMock).not.toHaveBeenCalled();
+
+    const sendEmailAfterResponse = afterMock.mock.calls[0]?.[0];
+    expect(sendEmailAfterResponse).toBeTypeOf("function");
+    await sendEmailAfterResponse();
+
     expect(sendConfirmedEmailMock).toHaveBeenCalledOnce();
     expect(sendConfirmedEmailMock).toHaveBeenCalledWith(confirmedOrder);
   });
@@ -90,6 +106,7 @@ describe("PATCH /api/admin/orders/[id]/status", () => {
     });
 
     expect(response.status).toBe(200);
+    expect(afterMock).not.toHaveBeenCalled();
     expect(sendConfirmedEmailMock).not.toHaveBeenCalled();
   });
 });
