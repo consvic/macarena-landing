@@ -28,6 +28,20 @@ type AdminFlavor = {
   isArchived: boolean;
 };
 
+type ProductionDemandEntry = {
+  flavorId?: string;
+  flavorName: string;
+  pendingOrders: number;
+  pendingLiters: number;
+  committedOrders: number;
+  committedLiters: number;
+};
+
+type ProductionDemandResponse = {
+  date: string;
+  entries: ProductionDemandEntry[];
+};
+
 type FlavorFormState = {
   name: string;
   description: string;
@@ -76,10 +90,22 @@ export function AdminFlavorsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [productionDemand, setProductionDemand] =
+    useState<ProductionDemandResponse | null>(null);
 
   const selectedFlavor = useMemo(
     () => flavors.find((flavor) => flavor._id === selectedId) ?? null,
     [flavors, selectedId],
+  );
+  const demandByFlavor = useMemo(
+    () =>
+      new Map(
+        (productionDemand?.entries ?? []).map((entry) => [
+          entry.flavorId ?? `name:${entry.flavorName}`,
+          entry,
+        ]),
+      ),
+    [productionDemand],
   );
 
   const loadFlavors = useCallback(async () => {
@@ -103,9 +129,33 @@ export function AdminFlavorsPage() {
     }
   }, []);
 
+  const loadProductionDemand = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/production-demand", {
+        cache: "no-store",
+      });
+      const payload = (await response.json()) as
+        | ProductionDemandResponse
+        | { message?: string };
+      if (!response.ok) {
+        throw new Error(
+          (payload as { message?: string }).message ??
+            "No se pudo cargar la producción de hoy",
+        );
+      }
+      setProductionDemand(payload as ProductionDemandResponse);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Error desconocido");
+    }
+  }, []);
+
   useEffect(() => {
     loadFlavors();
-  }, [loadFlavors]);
+    loadProductionDemand();
+
+    const refreshTimer = window.setInterval(loadProductionDemand, 30_000);
+    return () => window.clearInterval(refreshTimer);
+  }, [loadFlavors, loadProductionDemand]);
 
   useEffect(() => {
     if (!selectedFlavor) {
@@ -260,6 +310,71 @@ export function AdminFlavorsPage() {
           {message}
         </p>
       ) : null}
+
+      <section className="overflow-hidden rounded-2xl border border-royal-blue/20 bg-white sm:rounded-3xl">
+        <div className="flex flex-col gap-2 border-b border-royal-blue/10 bg-cream-white px-4 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-5">
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-ochre">
+              Producción de hoy
+            </p>
+            <h3 className="mt-1 font-serif text-2xl text-royal-blue sm:text-3xl">
+              Demanda por sabor
+            </h3>
+          </div>
+          <p className="font-data text-sm text-oxford-black/60">
+            {productionDemand?.date ?? "Cargando…"}
+          </p>
+        </div>
+
+        <ul className="divide-y divide-ochre/10">
+          {flavors
+            .filter((flavor) => !flavor.isArchived)
+            .map((flavor) => {
+              const demand =
+                demandByFlavor.get(flavor._id) ??
+                demandByFlavor.get(`name:${flavor.name}`);
+
+              return (
+                <li
+                  key={flavor._id}
+                  className="grid gap-4 px-4 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-5"
+                >
+                  <div className="min-w-0">
+                    <p className="break-words font-serif text-xl text-royal-blue">
+                      {flavor.name}
+                    </p>
+                    <div className="mt-2 grid grid-cols-2 gap-x-5 gap-y-1 font-data text-sm">
+                      <p className="text-oxford-black/65">
+                        Pendientes: {demand?.pendingOrders ?? 0} ·{" "}
+                        {(demand?.pendingLiters ?? 0).toFixed(1)}L
+                      </p>
+                      <p className="text-royal-blue">
+                        Comprometidos: {demand?.committedOrders ?? 0} ·{" "}
+                        {(demand?.committedLiters ?? 0).toFixed(1)}L
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateVisibility(flavor, !flavor.isVisibleOnSite)
+                    }
+                    className={`inline-flex min-h-11 items-center justify-center rounded-full px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 ${
+                      flavor.isVisibleOnSite
+                        ? "bg-wine-red/10 text-wine-red hover:bg-wine-red/15"
+                        : "bg-royal-blue text-light-beige hover:bg-royal-blue/90"
+                    }`}
+                  >
+                    {flavor.isVisibleOnSite
+                      ? "Detener pedidos"
+                      : "Aceptar pedidos"}
+                  </button>
+                </li>
+              );
+            })}
+        </ul>
+      </section>
 
       <section className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(22rem,1fr)]">
         <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">

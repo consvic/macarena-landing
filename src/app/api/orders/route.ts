@@ -1,7 +1,14 @@
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { sendOrderPendingEmail } from "@/lib/email/order-notifications";
-import type { IncomingOrderItem } from "@/lib/types";
+import { resolveFlavorPrice } from "@/lib/pricing";
+import {
+  type IncomingOrderItem,
+  PRESENTATION_OPTIONS,
+  type PresentationOption,
+} from "@/lib/types";
+import { FlavorModel } from "@/models/Flavor";
 import { OrderModel } from "@/models/Order";
 import { OrderItemModel } from "@/models/OrderItem";
 
@@ -36,23 +43,50 @@ export async function POST(request: Request) {
       );
     }
 
+    const flavorIds = items.map((item) => String(item.flavorId ?? ""));
+    if (flavorIds.some((id) => !mongoose.Types.ObjectId.isValid(id))) {
+      throw new InvalidInputError("Invalid flavor");
+    }
+
+    const flavors = await FlavorModel.find({
+      _id: { $in: [...new Set(flavorIds)] },
+      exists: true,
+      isVisibleOnSite: { $ne: false },
+      isArchived: { $ne: true },
+    }).lean();
+    const flavorsById = new Map(
+      flavors.map((flavor) => [String(flavor._id), flavor]),
+    );
+
     const orderItemsPayload = items.map((item) => {
       const quantity = item.quantity != null ? Number(item.quantity) : 1;
-      const unitPrice = Number(item.unitPrice);
-      if (!Number.isFinite(unitPrice) || unitPrice < 0) {
-        throw new InvalidInputError(
-          `Invalid unitPrice for "${item.flavorName}"`,
-        );
-      }
-      if (!Number.isFinite(quantity) || quantity < 1) {
+      if (!Number.isInteger(quantity) || quantity < 1) {
         throw new InvalidInputError(
           `Invalid quantity for "${item.flavorName}"`,
         );
       }
+
+      if (
+        !PRESENTATION_OPTIONS.includes(item.presentation as PresentationOption)
+      ) {
+        throw new InvalidInputError(
+          `Invalid presentation for "${item.flavorName}"`,
+        );
+      }
+
+      const flavor = flavorsById.get(String(item.flavorId));
+      if (!flavor) {
+        throw new UnavailableFlavorError(
+          `${item.flavorName || "Este sabor"} ya no está disponible. Retíralo del carrito para continuar.`,
+        );
+      }
+
+      const presentation = item.presentation as PresentationOption;
+      const unitPrice = resolveFlavorPrice(flavor.price, presentation);
       return {
-        flavorId: item.flavorId,
-        flavorName: item.flavorName,
-        presentation: item.presentation,
+        flavorId: flavor._id,
+        flavorName: flavor.name,
+        presentation,
         quantity,
         unitPrice,
         subtotal: quantity * unitPrice,
@@ -111,11 +145,21 @@ export async function POST(request: Request) {
     if (error instanceof InvalidInputError) {
       return NextResponse.json({ message: error.message }, { status: 400 });
     }
+    if (error instanceof UnavailableFlavorError) {
+      return NextResponse.json({ message: error.message }, { status: 409 });
+    }
     console.error("[orders:POST]", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 },
     );
+  }
+}
+
+class UnavailableFlavorError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnavailableFlavorError";
   }
 }
 
