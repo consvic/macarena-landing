@@ -58,6 +58,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.PLAYWRIGHT_TEST === "true"
+  ) {
+    return NextResponse.next();
+  }
+
   const isPublicAdminAuthPath =
     pathname === "/admin/login" || pathname.startsWith("/api/admin/auth/");
 

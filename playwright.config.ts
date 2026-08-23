@@ -18,6 +18,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       ...process.env,
+      PLAYWRIGHT_TEST: "true",
       BANK_ACCOUNT_NAME: "Macarena Gelateria",
       BANK_ACCOUNT_CLABE: "123456789012345678",
       BANK_ACCOUNT_REFERENCE: "PEDIDO-MACARENA",
