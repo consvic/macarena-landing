@@ -177,4 +177,26 @@ describe("AdminOrdersPage", () => {
     ).toEqual([{ status: "delivered" }]);
     expect(statusSelect).toHaveValue("delivered");
   });
+
+  it("visually mutes cancelled orders without disabling status recovery", async () => {
+    const cancelledOrder = {
+      ...pendingOrder,
+      status: "cancelled",
+    } satisfies TestOrder;
+    vi.stubGlobal("fetch", mockAdminOrdersFetch([cancelledOrder]));
+
+    render(<AdminOrdersPage />);
+
+    const customerName = await screen.findByText("Ana Gomez");
+    const article = customerName.closest("article");
+    const statusSelect = screen.getByRole("combobox", {
+      name: "Cambiar estado del pedido de Ana Gomez",
+    });
+
+    expect(article).toHaveClass("bg-oxford-black/[0.03]");
+    expect(statusSelect).toBeEnabled();
+    expect(
+      screen.queryByRole("button", { name: "Cancelar pedido de Ana Gomez" }),
+    ).not.toBeInTheDocument();
+  });
 });

@@ -9,6 +9,7 @@ import {
   ORDER_STATUSES,
   type OrderStatus,
 } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type AdminOrder = {
   _id: string;
@@ -403,9 +404,18 @@ export function AdminOrdersPage() {
               return (
                 <article
                   key={order._id}
-                  className="rounded-2xl border border-ochre/15 px-4 pt-4 pb-0 md:px-5"
+                  className={cn(
+                    "rounded-2xl border border-ochre/15 px-4 pt-4 pb-0 transition-colors duration-200 md:px-5",
+                    order.status === "cancelled" &&
+                      "border-oxford-black/10 bg-oxford-black/[0.03]",
+                  )}
                 >
-                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4">
+                  <div
+                    className={cn(
+                      "grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 transition-opacity duration-200 lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4",
+                      order.status === "cancelled" && "opacity-55",
+                    )}
+                  >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-royal-blue">
                         {order.customerName}
@@ -495,7 +505,12 @@ export function AdminOrdersPage() {
                     )}
                   </div>
 
-                  <details className="group mt-3 border-t border-ochre/15 sm:mt-4">
+                  <details
+                    className={cn(
+                      "group mt-3 border-t border-ochre/15 transition-opacity duration-200 sm:mt-4",
+                      order.status === "cancelled" && "opacity-55",
+                    )}
+                  >
                     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm text-ochre outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 [&::-webkit-details-marker]:hidden">
                       <span>Ver detalle</span>
                       <span className="flex items-center gap-2">
