@@ -558,16 +558,31 @@ export async function updateAdminOrderStatus(
     patch.confirmedAt = new Date();
   }
 
-  const updated = await OrderModel.findByIdAndUpdate(id, patch, {
-    new: true,
+  const previous = await OrderModel.findByIdAndUpdate(id, patch, {
+    new: false,
     runValidators: true,
   }).lean();
+
+  if (!previous) {
+    throw new Error("Order not found");
+  }
+
+  const [updated, orderItems] = await Promise.all([
+    OrderModel.findById(id).lean(),
+    OrderItemModel.find({ orderId: id }).sort({ createdAt: 1 }).lean(),
+  ]);
 
   if (!updated) {
     throw new Error("Order not found");
   }
 
-  return mapOrder(updated as Record<string, unknown>);
+  return {
+    order: mapOrder(
+      updated as Record<string, unknown>,
+      orderItems.map((item) => mapOrderItem(item as Record<string, unknown>)),
+    ),
+    previousStatus: previous.status as OrderStatus,
+  };
 }
 
 export async function listAdminFlavors() {

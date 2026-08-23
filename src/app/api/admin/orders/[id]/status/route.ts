@@ -4,6 +4,7 @@ import {
   unauthorizedJsonResponse,
 } from "@/lib/admin/auth";
 import { updateAdminOrderStatus } from "@/lib/admin/services";
+import { sendOrderConfirmedEmail } from "@/lib/email/order-notifications";
 import { ORDER_STATUSES, type OrderStatus } from "@/lib/types";
 
 export async function PATCH(
@@ -24,8 +25,28 @@ export async function PATCH(
       return NextResponse.json({ message: "Invalid status" }, { status: 400 });
     }
 
-    const updated = await updateAdminOrderStatus(id, status, adminUser);
-    return NextResponse.json(updated);
+    const { order, previousStatus } = await updateAdminOrderStatus(
+      id,
+      status,
+      adminUser,
+    );
+
+    if (status === "confirmed" && previousStatus !== "confirmed") {
+      try {
+        await sendOrderConfirmedEmail(order);
+      } catch (emailError) {
+        console.error(
+          "[admin:orders:status:PATCH] Failed to send confirmation email",
+          {
+            orderId: order._id,
+            error:
+              emailError instanceof Error ? emailError.message : emailError,
+          },
+        );
+      }
+    }
+
+    return NextResponse.json(order);
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
