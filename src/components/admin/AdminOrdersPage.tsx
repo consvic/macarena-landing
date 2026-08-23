@@ -297,7 +297,7 @@ export function AdminOrdersPage() {
                   page: 1,
                 }))
               }
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-4 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
             />
           </label>
 
@@ -343,7 +343,7 @@ export function AdminOrdersPage() {
                   page: 1,
                 }))
               }
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-4 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
             />
           </label>
 
@@ -359,7 +359,7 @@ export function AdminOrdersPage() {
                   page: 1,
                 }))
               }
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-4 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
             />
           </label>
 

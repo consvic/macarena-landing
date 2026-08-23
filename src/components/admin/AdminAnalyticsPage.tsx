@@ -123,14 +123,14 @@ export function AdminAnalyticsPage() {
             aria-label="Fecha inicial"
             value={dateFrom}
             onChange={(event) => setDateFrom(event.target.value)}
-            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-4 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
           <input
             type="date"
             aria-label="Fecha final"
             value={dateTo}
             onChange={(event) => setDateTo(event.target.value)}
-            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="min-h-11 rounded-2xl border border-ochre/30 px-4 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
           <p className="break-all font-data text-sm text-oxford-black/65 sm:col-span-2 lg:col-span-1">
             Zona horaria: America/Mexico_City
