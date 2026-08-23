@@ -25,9 +25,14 @@ export async function POST(request: Request) {
       typeof payload.customerPhone === "string"
         ? payload.customerPhone.trim()
         : "";
-    const customerNameFromEmail = customerEmail.split("@")[0] ?? "";
-    const customerName =
-      String(payload.customerName ?? "").trim() || customerNameFromEmail;
+    const customerName = String(payload.customerName ?? "").trim();
+
+    if (!customerName) {
+      return NextResponse.json(
+        { message: "Customer name is required" },
+        { status: 400 },
+      );
+    }
 
     if (!customerEmail) {
       return NextResponse.json(

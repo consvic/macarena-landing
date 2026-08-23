@@ -36,6 +36,7 @@ test("submits checkout and shows payment instructions without creating an order"
   await expect(page.getByRole("heading", { name: "Tu pedido" })).toBeVisible();
   await expect(page.getByText("Mango Maracuya")).toBeVisible();
 
+  await page.getByLabel("Nombre para el pedido").fill("Ana López");
   await page
     .getByLabel("Email para confirmar pedido")
     .fill("Cliente@Correo.com");
@@ -43,6 +44,7 @@ test("submits checkout and shows payment instructions without creating an order"
   await page.getByRole("button", { name: "Realizar pedido" }).click();
 
   expect((await orderRequest).postDataJSON()).toEqual({
+    customerName: "Ana López",
     customerEmail: "cliente@correo.com",
     customerPhone: "+52 55 9876 5432",
     items: [
@@ -82,6 +84,7 @@ test("keeps the cart intact when order creation fails", async ({ page }) => {
   });
 
   await page.goto("/menu/cart");
+  await page.getByLabel("Nombre para el pedido").fill("Ana López");
   await page
     .getByLabel("Email para confirmar pedido")
     .fill("cliente@correo.com");

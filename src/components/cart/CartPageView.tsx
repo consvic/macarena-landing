@@ -33,6 +33,7 @@ export function CartPageView({
 }) {
   const { items, removeItem, formattedTotalPrice, itemsCount, clearCart } =
     useCart();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +47,8 @@ export function CartPageView({
     [email],
   );
   const hasCartItems = itemsCount > 0;
-  const canSubmitOrder = hasCartItems && emailIsValid && !isSubmitting;
+  const canSubmitOrder =
+    hasCartItems && name.trim().length > 0 && emailIsValid && !isSubmitting;
 
   useEffect(() => {
     if (orderConfirmation) {
@@ -62,6 +64,7 @@ export function CartPageView({
     setIsSubmitting(true);
     setErrorMessage(null);
 
+    const customerName = name.trim();
     const customerEmail = email.trim().toLowerCase();
     const customerPhone = phone.trim();
 
@@ -72,6 +75,7 @@ export function CartPageView({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          customerName,
           customerEmail,
           ...(customerPhone ? { customerPhone } : {}),
           items: items.map((item) => ({
@@ -93,6 +97,7 @@ export function CartPageView({
       const order = (await response.json()) as OrderConfirmation;
       setOrderConfirmation(order);
       clearCart();
+      setName("");
       setEmail("");
       setPhone("");
     } catch (error) {
@@ -265,6 +270,24 @@ export function CartPageView({
           </div>
 
           <div className="mt-6 space-y-4">
+            <div className="space-y-2">
+              <label
+                htmlFor="checkout-name"
+                className="block text-xs uppercase tracking-[0.25em] text-ochre"
+              >
+                Nombre para el pedido
+              </label>
+              <input
+                id="checkout-name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Nombre completo"
+                className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 text-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+              />
+            </div>
             <div className="space-y-2">
               <label
                 htmlFor="checkout-email"

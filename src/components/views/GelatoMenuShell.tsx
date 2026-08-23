@@ -63,16 +63,6 @@ export function GelatoMenuShell({ children }: GelatoMenuShellProps) {
                     1/2 litro / 1 litro
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-light-beige/85">
-                    Tiempo ideal de consumo
-                  </span>
-                  <span className="font-data font-medium">6-8 minutos</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-light-beige/85">Disponibilidad</span>
-                  <span className="font-medium">Mensual</span>
-                </div>
               </div>
               <div className="mt-6 rounded-2xl border border-light-beige/30 px-4 py-3 text-xs text-light-beige/85">
                 Todos los sabores se preparan en lotes pequenos para mantener la

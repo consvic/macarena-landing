@@ -51,11 +51,11 @@ const FLAVORS = [
   },
 ];
 
-function makeRequest(body: unknown) {
+function makeRequest(body: Record<string, unknown>) {
   return new Request("http://localhost/api/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ customerName: "Test Customer", ...body }),
   });
 }
 
@@ -95,6 +95,18 @@ describe("POST /api/orders", () => {
     const missingEmail = await POST(makeRequest({ items: [item()] }));
     expect(missingEmail.status).toBe(400);
 
+    const missingName = await POST(
+      makeRequest({
+        customerName: " ",
+        customerEmail: "test@example.com",
+        items: [item()],
+      }),
+    );
+    expect(missingName.status).toBe(400);
+    await expect(missingName.json()).resolves.toEqual({
+      message: "Customer name is required",
+    });
+
     const emptyOrder = await POST(
       makeRequest({ customerEmail: "test@example.com", items: [] }),
     );
@@ -106,6 +118,7 @@ describe("POST /api/orders", () => {
     const { POST } = await import("@/app/api/orders/route");
     const response = await POST(
       makeRequest({
+        customerName: "  Ana López  ",
         customerEmail: "test@example.com",
         status: "confirmed",
         currency: "USD",
@@ -130,6 +143,7 @@ describe("POST /api/orders", () => {
     });
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({
+        customerName: "Ana López",
         status: "pending_confirmation",
         currency: "MXN",
         totalPrice: 600,

@@ -41,7 +41,7 @@ describe("CartPageView checkout validation", () => {
     ).toBeDisabled();
   });
 
-  it("enables order button only with items and valid email", async () => {
+  it("enables order button only with items, a name, and valid email", async () => {
     useCartMock.mockReturnValue({
       items: [
         {
@@ -69,6 +69,12 @@ describe("CartPageView checkout validation", () => {
 
     await userEvent.clear(input);
     await userEvent.type(input, "cliente@correo.com");
+    expect(button).toBeDisabled();
+
+    await userEvent.type(
+      screen.getByLabelText("Nombre para el pedido"),
+      "Ana López",
+    );
     expect(button).toBeEnabled();
   });
 
@@ -98,6 +104,10 @@ describe("CartPageView checkout validation", () => {
     render(<CartPageView />);
 
     await userEvent.type(
+      screen.getByLabelText("Nombre para el pedido"),
+      "  Ana López  ",
+    );
+    await userEvent.type(
       screen.getByLabelText("Email para confirmar pedido"),
       "Cliente@Correo.com",
     );
@@ -114,6 +124,7 @@ describe("CartPageView checkout validation", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
+          customerName: "Ana López",
           customerEmail: "cliente@correo.com",
           customerPhone: "+52 55 1234 5678",
           items: [
@@ -165,6 +176,10 @@ describe("CartPageView checkout validation", () => {
       />,
     );
 
+    await userEvent.type(
+      screen.getByLabelText("Nombre para el pedido"),
+      "Ana López",
+    );
     await userEvent.type(
       screen.getByLabelText("Email para confirmar pedido"),
       "cliente@correo.com",
