@@ -27,6 +27,7 @@ describe("CartPageView checkout validation", () => {
       items: [],
       itemsCount: 0,
       formattedTotalPrice: "$0.00",
+      addItem: vi.fn(),
       removeItem: vi.fn(),
       clearCart: vi.fn(),
     });
@@ -53,6 +54,7 @@ describe("CartPageView checkout validation", () => {
       ],
       itemsCount: 1,
       formattedTotalPrice: "$150.00",
+      addItem: vi.fn(),
       removeItem: vi.fn(),
       clearCart: vi.fn(),
     });
@@ -89,6 +91,7 @@ describe("CartPageView checkout validation", () => {
       ],
       itemsCount: 1,
       formattedTotalPrice: "$150.00",
+      addItem: vi.fn(),
       removeItem: vi.fn(),
       clearCart,
     });
@@ -100,7 +103,7 @@ describe("CartPageView checkout validation", () => {
       "Cliente@Correo.com",
     );
     await userEvent.type(
-      screen.getByLabelText("Telefono (opcional)"),
+      screen.getByLabelText("Teléfono (opcional)"),
       "  +52 55 1234 5678  ",
     );
     await userEvent.click(
@@ -126,5 +129,98 @@ describe("CartPageView checkout validation", () => {
       }),
     );
     expect(clearCart).toHaveBeenCalled();
+  });
+
+  it("groups repeats of the same flavor and presentation into one line", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({}),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    useCartMock.mockReturnValue({
+      items: [
+        {
+          id: "1",
+          flavorName: "Mango Maracuya",
+          presentation: "1 litro",
+          price: 280,
+        },
+        {
+          id: "2",
+          flavorName: "Mango Maracuya",
+          presentation: "1 litro",
+          price: 280,
+        },
+        {
+          id: "3",
+          flavorName: "Coco",
+          presentation: "1 litro",
+          price: 280,
+        },
+      ],
+      itemsCount: 3,
+      formattedTotalPrice: "$840.00",
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    render(<CartPageView />);
+
+    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(2);
+    expect(
+      screen.getByLabelText("Quitar un Mango Maracuya de 1 litro"),
+    ).toBeInTheDocument();
+
+    await userEvent.type(
+      screen.getByLabelText("Email para confirmar pedido"),
+      "cliente@correo.com",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Realizar pedido" }),
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/orders",
+      expect.objectContaining({
+        body: JSON.stringify({
+          customerEmail: "cliente@correo.com",
+          items: [
+            {
+              flavorName: "Mango Maracuya",
+              presentation: "1 litro",
+              quantity: 2,
+              unitPrice: 280,
+            },
+            {
+              flavorName: "Coco",
+              presentation: "1 litro",
+              quantity: 1,
+              unitPrice: 280,
+            },
+          ],
+        }),
+      }),
+    );
+  });
+
+  it("shows an inline error for an invalid email on blur", async () => {
+    useCartMock.mockReturnValue({
+      items: [],
+      itemsCount: 0,
+      formattedTotalPrice: "$0.00",
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    render(<CartPageView />);
+
+    const input = screen.getByLabelText("Email para confirmar pedido");
+    await userEvent.type(input, "correo-invalido");
+    await userEvent.tab();
+
+    expect(await screen.findByText(/Escribe un correo válido/)).toBeVisible();
+    expect(input).toHaveAttribute("aria-invalid", "true");
   });
 });

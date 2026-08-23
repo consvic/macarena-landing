@@ -2,6 +2,7 @@
 
 import {
   type FormEvent,
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -53,6 +54,34 @@ const EMPTY_FORM: FlavorFormState = {
   gradient: "",
   coverImage: "",
 };
+
+const FIELD_CLASS =
+  "min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none transition-[border-color,box-shadow] duration-200 focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20";
+
+function Field({
+  label,
+  htmlFor,
+  hint,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={htmlFor}
+        className="block text-sm font-medium text-royal-blue"
+      >
+        {label}
+      </label>
+      {children}
+      {hint ? <p className="text-xs text-oxford-black/60">{hint}</p> : null}
+    </div>
+  );
+}
 
 function flavorToForm(flavor: AdminFlavor): FlavorFormState {
   return {
@@ -247,7 +276,7 @@ export function AdminFlavorsPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-ochre sm:text-xs sm:tracking-[0.35em]">
+        <p className="text-[0.68rem] uppercase tracking-[0.25em] text-oxford-black/60 sm:text-xs sm:tracking-[0.35em]">
           Sabores
         </p>
         <h2 className="mt-2 font-serif text-3xl text-royal-blue sm:text-4xl">
@@ -255,11 +284,13 @@ export function AdminFlavorsPage() {
         </h2>
       </header>
 
-      {message ? (
-        <p className="rounded-2xl bg-royal-blue/10 px-4 py-3 text-sm text-royal-blue">
-          {message}
-        </p>
-      ) : null}
+      <div aria-live="polite">
+        {message ? (
+          <p className="rounded-2xl bg-royal-blue/10 px-4 py-3 text-sm text-royal-blue">
+            {message}
+          </p>
+        ) : null}
+      </div>
 
       <section className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(22rem,1fr)]">
         <article className="min-w-0 rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
@@ -269,7 +300,7 @@ export function AdminFlavorsPage() {
             </h3>
             <button
               type="button"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 sm:w-auto"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-royal-blue/30 px-3 py-2 text-sm text-royal-blue transition-[background-color] duration-200 hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 sm:w-auto"
               onClick={() => {
                 setSelectedId(null);
                 setForm(EMPTY_FORM);
@@ -297,7 +328,7 @@ export function AdminFlavorsPage() {
                       <p className="break-words font-serif text-xl text-royal-blue">
                         {flavor.name}
                       </p>
-                      <p className="break-words text-xs uppercase tracking-[0.16em] text-ochre sm:tracking-[0.2em]">
+                      <p className="break-words text-sm text-oxford-black/70">
                         {flavor.category}
                       </p>
                     </button>
@@ -309,7 +340,7 @@ export function AdminFlavorsPage() {
                           updateVisibility(flavor, !flavor.isVisibleOnSite)
                         }
                         disabled={flavor.isArchived}
-                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-royal-blue/30 px-3 py-2 text-royal-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-40 sm:min-h-9 sm:px-3 sm:py-1.5"
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-royal-blue/30 px-3 py-2 text-royal-blue transition-[background-color] duration-200 hover:bg-royal-blue/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-40 sm:min-h-9 sm:px-3 sm:py-1.5"
                       >
                         {flavor.isVisibleOnSite ? "Ocultar" : "Mostrar"}
                       </button>
@@ -318,7 +349,7 @@ export function AdminFlavorsPage() {
                         onClick={() =>
                           updateArchived(flavor, !flavor.isArchived)
                         }
-                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 sm:min-h-9 sm:px-3 sm:py-1.5"
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-wine-red transition-[background-color] duration-200 hover:bg-wine-red/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 sm:min-h-9 sm:px-3 sm:py-1.5"
                       >
                         {flavor.isArchived ? "Restaurar" : "Archivar"}
                       </button>
@@ -349,138 +380,173 @@ export function AdminFlavorsPage() {
             {selectedId ? "Editar sabor" : "Crear sabor"}
           </h3>
 
-          <form className="mt-4 space-y-3" onSubmit={saveFlavor}>
-            <input
-              required
-              aria-label="Nombre del sabor"
-              value={form.name}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, name: event.target.value }))
-              }
-              placeholder="Nombre"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <input
-              required
-              aria-label="Categoría del sabor"
-              value={form.category}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, category: event.target.value }))
-              }
-              placeholder="Categoría"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <textarea
-              required
-              aria-label="Descripción del sabor"
-              value={form.description}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  description: event.target.value,
-                }))
-              }
-              placeholder="Descripción"
-              className="min-h-24 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-
-            <select
-              aria-label="Base del sabor"
-              value={form.base}
-              onChange={(event) =>
-                setForm((prev) => ({
-                  ...prev,
-                  base: event.target.value as FlavorBase,
-                }))
-              }
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            >
-              {FLAVOR_BASES.map((base) => (
-                <option key={base} value={base}>
-                  {base}
-                </option>
-              ))}
-            </select>
-
-            <input
-              required
-              aria-label="Tags del sabor separados por coma"
-              value={form.tags}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, tags: event.target.value }))
-              }
-              placeholder="Tags separados por coma"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-
-            <div className="grid gap-3 sm:grid-cols-2">
+          <form className="mt-4 space-y-4" onSubmit={saveFlavor}>
+            <Field label="Nombre" htmlFor="flavor-name">
               <input
                 required
-                type="number"
-                min="0"
-                aria-label="Precio de medio litro"
-                value={form.halfLiter}
+                id="flavor-name"
+                value={form.name}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, name: event.target.value }))
+                }
+                className={FIELD_CLASS}
+              />
+            </Field>
+
+            <Field label="Categoría" htmlFor="flavor-category">
+              <input
+                required
+                id="flavor-category"
+                value={form.category}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, category: event.target.value }))
+                }
+                className={FIELD_CLASS}
+              />
+            </Field>
+
+            <Field label="Descripción" htmlFor="flavor-description">
+              <textarea
+                required
+                id="flavor-description"
+                value={form.description}
                 onChange={(event) =>
                   setForm((prev) => ({
                     ...prev,
-                    halfLiter: event.target.value,
+                    description: event.target.value,
                   }))
                 }
-                placeholder="Precio 1/2 litro"
-                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                className={`${FIELD_CLASS} min-h-24`}
               />
+            </Field>
+
+            <Field label="Base" htmlFor="flavor-base">
+              <select
+                id="flavor-base"
+                value={form.base}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    base: event.target.value as FlavorBase,
+                  }))
+                }
+                className={`${FIELD_CLASS} bg-white text-oxford-black`}
+              >
+                {FLAVOR_BASES.map((base) => (
+                  <option key={base} value={base}>
+                    {base}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Tags"
+              htmlFor="flavor-tags"
+              hint="Sepáralos con comas, por ejemplo: tropical, frutal"
+            >
               <input
                 required
-                type="number"
-                min="0"
-                aria-label="Precio de un litro"
-                value={form.liter}
+                id="flavor-tags"
+                value={form.tags}
                 onChange={(event) =>
-                  setForm((prev) => ({ ...prev, liter: event.target.value }))
+                  setForm((prev) => ({ ...prev, tags: event.target.value }))
                 }
-                placeholder="Precio 1 litro"
-                className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
+                className={FIELD_CLASS}
               />
+            </Field>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Precio 1/2 litro" htmlFor="flavor-half-liter">
+                <input
+                  required
+                  id="flavor-half-liter"
+                  type="number"
+                  min="0"
+                  value={form.halfLiter}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      halfLiter: event.target.value,
+                    }))
+                  }
+                  className={FIELD_CLASS}
+                />
+              </Field>
+              <Field label="Precio 1 litro" htmlFor="flavor-liter">
+                <input
+                  required
+                  id="flavor-liter"
+                  type="number"
+                  min="0"
+                  value={form.liter}
+                  onChange={(event) =>
+                    setForm((prev) => ({ ...prev, liter: event.target.value }))
+                  }
+                  className={FIELD_CLASS}
+                />
+              </Field>
             </div>
 
-            <input
-              required
-              aria-label="Alérgenos del sabor"
-              value={form.allergens}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, allergens: event.target.value }))
-              }
-              placeholder="Alérgenos"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <input
-              required
-              aria-label="Clase de gradiente del sabor"
-              value={form.gradient}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, gradient: event.target.value }))
-              }
-              placeholder="Clase de gradiente (ej. from-ochre/20 to-terracotta/50)"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
-            <input
-              required
-              aria-label="Ruta de imagen del sabor"
-              value={form.coverImage}
-              onChange={(event) =>
-                setForm((prev) => ({ ...prev, coverImage: event.target.value }))
-              }
-              placeholder="Ruta de imagen"
-              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm"
-            />
+            <Field label="Alérgenos" htmlFor="flavor-allergens">
+              <input
+                required
+                id="flavor-allergens"
+                value={form.allergens}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    allergens: event.target.value,
+                  }))
+                }
+                className={FIELD_CLASS}
+              />
+            </Field>
+
+            <Field
+              label="Clase de gradiente"
+              htmlFor="flavor-gradient"
+              hint="Ejemplo: from-ochre/20 to-terracotta/50"
+            >
+              <input
+                required
+                id="flavor-gradient"
+                spellCheck={false}
+                value={form.gradient}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, gradient: event.target.value }))
+                }
+                className={`${FIELD_CLASS} font-data`}
+              />
+            </Field>
+
+            <Field
+              label="Ruta de imagen"
+              htmlFor="flavor-cover-image"
+              hint="Ejemplo: /flavor-images/pistache.png"
+            >
+              <input
+                required
+                id="flavor-cover-image"
+                spellCheck={false}
+                value={form.coverImage}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    coverImage: event.target.value,
+                  }))
+                }
+                className={`${FIELD_CLASS} font-data`}
+              />
+            </Field>
 
             <button
               type="submit"
               disabled={isSaving}
-              className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
+              className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige transition-[background-color,transform] duration-200 hover:bg-royal-blue/90 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 disabled:opacity-50"
             >
               {isSaving
-                ? "Guardando"
+                ? "Guardando…"
                 : selectedId
                   ? "Actualizar sabor"
                   : "Crear sabor"}

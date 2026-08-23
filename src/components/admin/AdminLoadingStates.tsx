@@ -6,7 +6,9 @@ const FLAVOR_ROWS = [0, 1, 2] as const;
 const ANALYTICS_LISTS = [0, 1, 2] as const;
 
 function SkeletonLine({ className }: { className: string }) {
-  return <div className={`rounded-full bg-cream-white ${className}`} />;
+  return (
+    <div className={`animate-pulse rounded-full bg-cream-white ${className}`} />
+  );
 }
 
 function SkeletonCard({ children }: { children: ReactNode }) {
@@ -37,7 +39,7 @@ export function AdminSummaryStatsLoading() {
 export function AdminRecentOrdersLoading() {
   return (
     <section
-      aria-label="Cargando ultimos pedidos"
+      aria-label="Cargando últimos pedidos"
       aria-busy="true"
       className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-6"
     >
@@ -138,7 +140,7 @@ export function AdminAnalyticsResultsLoading() {
   return (
     <section
       aria-busy="true"
-      aria-label="Cargando analisis"
+      aria-label="Cargando análisis"
       className="space-y-8"
     >
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

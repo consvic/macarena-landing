@@ -3,21 +3,22 @@
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/components/providers/CartProvider";
-import { Button } from "@/components/ui/button";
 
 export function CartNavButton() {
   const { itemsCount } = useCart();
 
   return (
-    <Button
-      asChild
-      variant="outline"
-      className="h-11 rounded-full border-royal-blue/30 px-4 text-royal-blue hover:bg-royal-blue/5"
+    <Link
+      href="/menu/cart"
+      aria-label={
+        itemsCount === 1
+          ? "Ver carrito, 1 producto"
+          : `Ver carrito, ${itemsCount} productos`
+      }
+      className="inline-flex items-center gap-2 rounded-full bg-light-beige px-4 py-2 text-sm font-medium text-royal-blue transition-[background-color,transform] duration-200 hover:bg-cream-white active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-light-beige"
     >
-      <Link href="/menu/cart" aria-label="Ver carrito">
-        <ShoppingCart className="size-4" />
-        <span className="font-data text-[11px] leading-none">{itemsCount}</span>
-      </Link>
-    </Button>
+      <ShoppingCart className="size-4" aria-hidden="true" />
+      <span className="font-data text-sm leading-none">{itemsCount}</span>
+    </Link>
   );
 }

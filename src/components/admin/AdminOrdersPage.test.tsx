@@ -92,7 +92,7 @@ describe("AdminOrdersPage", () => {
     await user.click(screen.getByRole("button", { name: /^Cancelar$/ }));
 
     expect(
-      screen.getByRole("dialog", { name: "Cancelar pedido?" }),
+      screen.getByRole("dialog", { name: "¿Cancelar pedido?" }),
     ).toBeInTheDocument();
     expect(patchStatusCalls(fetchMock)).toHaveLength(0);
 

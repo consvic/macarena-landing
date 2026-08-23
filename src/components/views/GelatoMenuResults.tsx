@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Leaf } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
   PRESENTATION_OPTIONS,
   type PresentationOption,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, foldAccents } from "@/lib/utils";
 
 const ADDED_FEEDBACK_DURATION_MS = 2000;
 
@@ -46,21 +46,21 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
   }, []);
 
   const filteredFlavors = (() => {
-    const query = searchQuery.trim().toLowerCase();
+    const query = foldAccents(searchQuery.trim());
     if (!query) {
       return flavors;
     }
 
     return flavors.filter((flavor) => {
-      const haystack = [
-        flavor.name,
-        flavor.description,
-        flavor.category,
-        flavor.base,
-        ...flavor.tags,
-      ]
-        .join(" ")
-        .toLowerCase();
+      const haystack = foldAccents(
+        [
+          flavor.name,
+          flavor.description,
+          flavor.category,
+          flavor.base,
+          ...flavor.tags,
+        ].join(" "),
+      );
 
       return haystack.includes(query);
     });
@@ -113,43 +113,42 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
   };
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h2 className="font-serif text-3xl text-royal-blue">
-            Sabores disponibles
-          </h2>
-          <p className="mt-2 max-w-xl text-sm text-oxford-black/70">
-            Usa el buscador para encontrar sabores rapidamente.
-          </p>
-        </div>
-        <p className="text-sm text-ochre">Mostrando sabores destacados</p>
-      </div>
+    <section className="container mx-auto px-6 py-16">
+      <h2 className="font-serif text-3xl font-bold text-royal-blue md:text-4xl">
+        Sabores disponibles
+      </h2>
+      <p className="mt-3 max-w-[52ch] leading-relaxed text-oxford-black/75">
+        Usa el buscador para encontrar sabores rápidamente.
+      </p>
 
-      <div className="mt-8 rounded-3xl border border-ochre/20 bg-white/70 p-5">
-        <label
-          className="text-xs uppercase tracking-[0.35em] text-ochre"
-          htmlFor="flavor-search"
-        >
-          Buscar sabor
-        </label>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex-1">
+          <label
+            className="block text-sm font-medium text-royal-blue"
+            htmlFor="flavor-search"
+          >
+            Buscar sabor
+          </label>
           <input
             id="flavor-search"
             type="search"
-            placeholder="Pistacho, sorbetes, cacao..."
+            spellCheck={false}
+            placeholder="Pistache, sorbetes, cacao…"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            className="w-full rounded-full border border-ochre/30 bg-white px-4 py-3 text-sm text-oxford-black shadow-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            className="mt-2 h-12 w-full rounded-full border border-ochre/40 bg-white px-5 text-sm text-oxford-black outline-none transition-[border-color,box-shadow] duration-200 focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
           />
-          <div className="min-w-[118px] rounded-full border border-royal-blue/30 px-4 py-2 text-center text-sm text-royal-blue">
-            <span className="font-data">{filteredFlavors.length}</span> sabores
-          </div>
         </div>
+        <p
+          aria-live="polite"
+          className="shrink-0 rounded-full border border-royal-blue/25 px-4 py-2 text-center text-sm text-royal-blue sm:mt-7"
+        >
+          <span className="font-data">{filteredFlavors.length}</span> sabores
+        </p>
       </div>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredFlavors.map((flavor) => {
+        {filteredFlavors.map((flavor, index) => {
           const selectedPresentation = resolvePresentation(flavor.name);
           const itemPrice = resolveFlavorPrice(
             flavor.price,
@@ -164,7 +163,8 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
           return (
             <article
               key={flavor.name}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ochre/20 bg-white"
+              style={{ "--enter-index": index } as CSSProperties}
+              className="menu-card-enter group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ochre/20 bg-white"
             >
               <div
                 className={`relative h-52 min-h-52 bg-gradient-to-br md:h-56 md:min-h-56 ${flavor.gradient}`}
@@ -181,12 +181,12 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
               </div>
 
               <div className="flex h-full flex-col gap-4 p-6">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.25em] text-ochre">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm text-oxford-black/70">
                       {flavor.category}
                     </p>
-                    <div className="mt-2 flex items-center gap-1.5">
+                    <div className="mt-1 flex items-center gap-1.5">
                       <h3 className="font-serif text-2xl text-royal-blue">
                         {flavor.name}
                       </h3>
@@ -195,10 +195,14 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                           <button
                             type="button"
                             aria-label={`Sabor vegano: ${flavor.name}`}
-                            className="group/vegan inline-flex text-royal-blue"
+                            aria-describedby={`vegan-tip-${flavor.name.replace(/\s+/g, "-")}`}
+                            className="group/vegan inline-flex rounded-full text-royal-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal-blue"
                           >
-                            <Leaf className="size-3.5" />
-                            <span className="pointer-events-none absolute top-full left-1/2 z-10 mt-2 w-52 -translate-x-1/2 rounded-md border border-ochre/20 bg-white/40 px-2 py-1 text-left text-[11px] text-oxford-black opacity-0 shadow-sm backdrop-blur-[6px] transition-opacity group-hover/vegan:opacity-100 group-focus-visible/vegan:opacity-100">
+                            <Leaf className="size-3.5" aria-hidden="true" />
+                            <span
+                              id={`vegan-tip-${flavor.name.replace(/\s+/g, "-")}`}
+                              className="pointer-events-none absolute top-full left-1/2 z-10 mt-2 w-52 -translate-x-1/2 rounded-lg border border-royal-blue/15 bg-white px-3 py-2 text-left text-xs leading-snug text-oxford-black/80 opacity-0 shadow-lg shadow-royal-blue/10 transition-opacity duration-200 group-hover/vegan:opacity-100 group-focus-visible/vegan:opacity-100 group-focus/vegan:opacity-100"
+                            >
                               {flavor.allergens}
                             </span>
                           </button>
@@ -206,12 +210,12 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                       ) : null}
                     </div>
                   </div>
-                  <span className="rounded-full border border-royal-blue/20 px-3 py-1 font-data text-sm text-royal-blue">
+                  <span className="shrink-0 rounded-full border border-royal-blue/20 px-3 py-1 font-data text-sm text-royal-blue">
                     {formatMXN(itemPrice)}
                   </span>
                 </div>
 
-                <p className="text-sm text-oxford-black/70">
+                <p className="text-sm leading-relaxed text-oxford-black/75">
                   {flavor.description}
                 </p>
 
@@ -219,14 +223,14 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                   {flavor.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-cream-white px-3 py-1 text-xs text-oxford-black/70"
+                      className="rounded-full bg-cream-white px-3 py-1 text-xs text-oxford-black/75"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="mt-auto flex flex-col gap-3 pt-2 text-xs text-oxford-black/60">
+                <div className="mt-auto flex flex-col gap-3 pt-2">
                   <div className="grid grid-cols-[1fr_auto] gap-3">
                     <Select
                       value={selectedPresentation}
@@ -238,7 +242,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                       }
                     >
                       <SelectTrigger
-                        aria-label={`Seleccionar presentacion para ${flavor.name}`}
+                        aria-label={`Seleccionar presentación para ${flavor.name}`}
                         className="h-11 rounded-full border-royal-blue/20 text-sm text-royal-blue"
                       >
                         <span className="truncate">
@@ -262,7 +266,7 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                           : `Agregar ${flavor.name} al carrito`
                       }
                       className={cn(
-                        "relative h-11 w-32 overflow-visible rounded-full bg-royal-blue px-4 text-light-beige transition-all duration-200 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] hover:bg-royal-blue/90 active:scale-95",
+                        "relative h-11 w-32 overflow-visible rounded-full bg-royal-blue px-4 text-light-beige transition-[transform,background-color,color] duration-150 ease-out-strong hover:bg-royal-blue/90 active:scale-[0.97]",
                         isAdded && "bg-ochre text-royal-blue hover:bg-ochre/90",
                         isAdded &&
                           (addedFeedbackCount % 2 === 0
@@ -293,9 +297,9 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
       </div>
 
       {filteredFlavors.length === 0 ? (
-        <div className="mt-8 rounded-3xl border border-ochre/20 bg-white p-6 text-center text-sm text-oxford-black/70">
-          No encontramos sabores con ese termino. Prueba con otro nombre.
-        </div>
+        <p className="mt-8 rounded-3xl border border-ochre/20 bg-white p-6 text-center text-sm text-oxford-black/75">
+          No encontramos sabores con ese término. Prueba con otro nombre.
+        </p>
       ) : null}
     </section>
   );
