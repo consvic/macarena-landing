@@ -23,6 +23,8 @@ type OrderWithItems = {
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
+const ORDER_NOTIFICATION_BCC_EMAIL =
+  process.env.ORDER_NOTIFICATION_BCC_EMAIL?.trim();
 
 function toEmailPayload(order: OrderWithItems): OrderEmailPayload {
   return {
@@ -39,10 +41,12 @@ function toEmailPayload(order: OrderWithItems): OrderEmailPayload {
 
 async function sendEmail({
   to,
+  bcc,
   subject,
   html,
 }: {
   to: string;
+  bcc?: string;
   subject: string;
   html: string;
 }) {
@@ -58,6 +62,7 @@ async function sendEmail({
   await resend.emails.send({
     from: RESEND_FROM_EMAIL,
     to,
+    ...(bcc ? { bcc } : {}),
     subject,
     html,
   });
@@ -69,6 +74,7 @@ export async function sendOrderPendingEmail(order: OrderWithItems) {
 
   await sendEmail({
     to: payload.customerEmail,
+    bcc: ORDER_NOTIFICATION_BCC_EMAIL,
     subject: "Tu pedido esta pendiente de confirmacion",
     html,
   });
