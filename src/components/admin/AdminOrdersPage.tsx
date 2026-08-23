@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Trash2 } from "lucide-react";
+import { ChevronDown, LoaderCircle, Trash2 } from "lucide-react";
 import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AdminOrdersResultsLoading } from "@/components/admin/AdminLoadingStates";
 import { formatMXN } from "@/lib/pricing";
@@ -480,10 +480,22 @@ export function AdminOrdersPage() {
                                 </option>
                               ))}
                             </select>
-                            <ChevronDown
-                              aria-hidden="true"
-                              className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-royal-blue"
-                            />
+                            {updatingOrderId === order._id ? (
+                              <>
+                                <LoaderCircle
+                                  aria-hidden="true"
+                                  className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 animate-spin text-royal-blue motion-reduce:animate-none"
+                                />
+                                <output className="sr-only">
+                                  Actualizando estado de {order.customerName}
+                                </output>
+                              </>
+                            ) : (
+                              <ChevronDown
+                                aria-hidden="true"
+                                className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-royal-blue"
+                              />
+                            )}
                           </label>
                         </dd>
                       </div>

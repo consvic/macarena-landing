@@ -178,6 +178,47 @@ describe("AdminOrdersPage", () => {
     expect(statusSelect).toHaveValue("delivered");
   });
 
+  it("shows progress while an order status is updating", async () => {
+    const user = userEvent.setup();
+    let resolveStatusUpdate!: (response: Response) => void;
+    const statusUpdate = new Promise<Response>((resolve) => {
+      resolveStatusUpdate = resolve;
+    });
+    const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) === "/api/admin/orders?page=1&limit=20") {
+        return Promise.resolve(jsonResponse(ordersResponse([pendingOrder])));
+      }
+
+      if (init?.method === "PATCH") {
+        return statusUpdate;
+      }
+
+      return Promise.resolve(
+        jsonResponse({ message: "Not found" }, { status: 404 }),
+      );
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+    render(<AdminOrdersPage />);
+
+    const statusSelect = await screen.findByRole("combobox", {
+      name: "Cambiar estado del pedido de Ana Gomez",
+    });
+    await user.selectOptions(statusSelect, "confirmed");
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Actualizando estado de Ana Gomez",
+    );
+    expect(statusSelect).toBeDisabled();
+
+    resolveStatusUpdate(jsonResponse({}));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    });
+    expect(statusSelect).toHaveValue("confirmed");
+  });
+
   it("visually mutes cancelled orders without disabling status recovery", async () => {
     const cancelledOrder = {
       ...pendingOrder,
