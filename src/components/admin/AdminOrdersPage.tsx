@@ -454,13 +454,13 @@ export function AdminOrdersPage() {
                           Estado
                         </dt>
                         <dd>
-                          <label className="relative block">
+                          <label className="relative mt-1 block lg:mt-0">
                             <span className="sr-only">
                               Cambiar estado del pedido de {order.customerName}
                             </span>
                             <select
                               aria-label={`Cambiar estado del pedido de ${order.customerName}`}
-                              className="mt-1 min-h-11 w-full appearance-none rounded-full border-0 bg-royal-blue/10 py-2 pr-10 pl-4 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:mt-0 lg:min-h-9 lg:text-xs"
+                              className="min-h-11 w-full appearance-none rounded-full border-0 bg-royal-blue/10 py-2 pr-10 pl-4 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:min-h-9 lg:text-xs"
                               disabled={Boolean(updatingOrderId)}
                               value={order.status}
                               onChange={(event) =>
