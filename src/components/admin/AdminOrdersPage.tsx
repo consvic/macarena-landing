@@ -403,9 +403,9 @@ export function AdminOrdersPage() {
               return (
                 <article
                   key={order._id}
-                  className="rounded-2xl border border-ochre/15 px-4 py-4 md:px-5 md:py-4"
+                  className="rounded-2xl border border-ochre/15 px-4 pt-4 pb-0 md:px-5"
                 >
-                  <div className="lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4">
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-royal-blue">
                         {order.customerName}
@@ -420,7 +420,7 @@ export function AdminOrdersPage() {
                       ) : null}
                     </div>
 
-                    <dl className="mt-4 grid grid-cols-2 gap-3 lg:contents">
+                    <dl className="col-span-2 mt-4 grid grid-cols-2 gap-4 lg:contents">
                       <div className="min-w-0">
                         <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 lg:hidden">
                           Fecha
@@ -484,7 +484,7 @@ export function AdminOrdersPage() {
                         type="button"
                         aria-label={`Cancelar pedido de ${order.customerName}`}
                         title="Cancelar pedido"
-                        className="mt-4 inline-flex size-11 items-center justify-center rounded-full text-wine-red transition-colors hover:bg-wine-red/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 disabled:opacity-40 lg:mt-0 lg:justify-self-center"
+                        className="col-start-2 row-start-1 inline-flex size-11 items-center justify-center rounded-full text-wine-red transition-colors hover:bg-wine-red/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 disabled:opacity-40 lg:col-auto lg:row-auto lg:justify-self-center"
                         disabled={Boolean(updatingOrderId)}
                         onClick={() => setOrderPendingCancellation(order)}
                       >
@@ -495,7 +495,7 @@ export function AdminOrdersPage() {
                     )}
                   </div>
 
-                  <details className="group mt-4 border-t border-ochre/15">
+                  <details className="group mt-3 border-t border-ochre/15 sm:mt-4">
                     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm text-ochre outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 [&::-webkit-details-marker]:hidden">
                       <span>Ver detalle</span>
                       <span className="flex items-center gap-2">
@@ -510,7 +510,7 @@ export function AdminOrdersPage() {
                       </span>
                     </summary>
 
-                    <div className="pb-1">
+                    <div className="pb-4">
                       {order.items.length > 0 ? (
                         <ul className="divide-y divide-ochre/10 border-t border-ochre/10">
                           {order.items.map((item) => (
