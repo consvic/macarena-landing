@@ -75,7 +75,7 @@ describe("CartPageView checkout validation", () => {
     const clearCart = vi.fn();
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({}),
+      json: () => Promise.resolve({ _id: "pedido-123", totalPrice: 150 }),
     });
     vi.stubGlobal("fetch", fetchMock);
     useCartMock.mockReturnValue({
@@ -126,5 +126,61 @@ describe("CartPageView checkout validation", () => {
       }),
     );
     expect(clearCart).toHaveBeenCalled();
+  });
+
+  it("shows payment instructions after creating an order", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ _id: "pedido-123", totalPrice: 150 }),
+      }),
+    );
+    useCartMock.mockReturnValue({
+      items: [
+        {
+          id: "1",
+          flavorName: "Mango Maracuya",
+          presentation: "1/2 litro",
+          price: 150,
+        },
+      ],
+      itemsCount: 1,
+      formattedTotalPrice: "$150.00",
+      removeItem: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    render(
+      <CartPageView
+        paymentDetails={{
+          accountName: "Macarena Gelateria",
+          bankClabe: "123456789012345678",
+          bankReference: "PEDIDO-MACARENA",
+          receiptPhone: "+52 55 1234 5678",
+        }}
+      />,
+    );
+
+    await userEvent.type(
+      screen.getByLabelText("Email para confirmar pedido"),
+      "cliente@correo.com",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Realizar pedido" }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "¡Gracias por tu pedido!" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("$150.00")).toBeInTheDocument();
+    expect(screen.getByText("123456789012345678")).toBeInTheDocument();
+    expect(screen.getByText("+52 55 1234 5678")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Enviar comprobante por WhatsApp" }),
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining("https://wa.me/525512345678?text="),
+    );
   });
 });
