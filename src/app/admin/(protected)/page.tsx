@@ -20,7 +20,7 @@ async function SummaryStats({ statsPromise }: SummaryStatsProps) {
   const stats = await statsPromise;
 
   return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid grid-cols-2 gap-4 xl:grid-cols-4">
       <article className="rounded-2xl border border-royal-blue/20 bg-white p-4 sm:rounded-3xl sm:p-5">
         <p className="text-sm text-oxford-black/70">Pedidos</p>
         <p className="mt-2 break-words font-data text-2xl text-royal-blue sm:text-3xl">

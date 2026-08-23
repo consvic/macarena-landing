@@ -22,7 +22,7 @@ export function AdminSummaryStatsLoading() {
     <section
       aria-label="Cargando resumen"
       aria-busy="true"
-      className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      className="grid grid-cols-2 gap-4 xl:grid-cols-4"
     >
       {SUMMARY_CARDS.map((card) => (
         <SkeletonCard key={card}>
