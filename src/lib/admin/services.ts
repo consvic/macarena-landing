@@ -53,6 +53,16 @@ export type AdminOrder = {
   confirmedAt?: string;
   updatedBy?: string;
   externalOrderId?: string;
+  items: AdminOrderItem[];
+};
+
+export type AdminOrderItem = {
+  _id: string;
+  flavorName: string;
+  presentation: PresentationOption;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
 };
 
 export type AdminOrdersResponse = {
@@ -176,7 +186,10 @@ function toIsoDate(value: Date | string | undefined) {
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
-function mapOrder(order: Record<string, unknown>): AdminOrder {
+function mapOrder(
+  order: Record<string, unknown>,
+  items: AdminOrderItem[] = [],
+): AdminOrder {
   return {
     _id: String(order._id),
     customerName: String(order.customerName ?? ""),
@@ -197,6 +210,18 @@ function mapOrder(order: Record<string, unknown>): AdminOrder {
       typeof order.externalOrderId === "string"
         ? order.externalOrderId
         : undefined,
+    items,
+  };
+}
+
+function mapOrderItem(item: Record<string, unknown>): AdminOrderItem {
+  return {
+    _id: String(item._id),
+    flavorName: String(item.flavorName ?? ""),
+    presentation: item.presentation as PresentationOption,
+    quantity: Number(item.quantity ?? 0),
+    unitPrice: Number(item.unitPrice ?? 0),
+    subtotal: Number(item.subtotal ?? 0),
   };
 }
 
@@ -468,15 +493,38 @@ export async function listAdminOrders(
     query.$or = searchClauses;
   }
 
-  const total = await OrderModel.countDocuments(query);
-  const orders = await OrderModel.find(query)
-    .sort({ createdAt: -1 })
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .lean();
+  const [total, orders] = await Promise.all([
+    OrderModel.countDocuments(query),
+    OrderModel.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean(),
+  ]);
+
+  const orderIds = orders.map((order) => order._id);
+  const orderItems =
+    orderIds.length > 0
+      ? await OrderItemModel.find({ orderId: { $in: orderIds } })
+          .sort({ createdAt: 1 })
+          .lean()
+      : [];
+  const itemsByOrderId = new Map<string, AdminOrderItem[]>();
+
+  orderItems.forEach((item) => {
+    const orderId = String(item.orderId);
+    const items = itemsByOrderId.get(orderId) ?? [];
+    items.push(mapOrderItem(item as Record<string, unknown>));
+    itemsByOrderId.set(orderId, items);
+  });
 
   return {
-    data: orders.map((order) => mapOrder(order as Record<string, unknown>)),
+    data: orders.map((order) =>
+      mapOrder(
+        order as Record<string, unknown>,
+        itemsByOrderId.get(String(order._id)) ?? [],
+      ),
+    ),
     pagination: {
       page,
       limit,

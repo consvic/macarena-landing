@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { AdminOrdersResultsLoading } from "@/components/admin/AdminLoadingStates";
 import { formatMXN } from "@/lib/pricing";
@@ -17,6 +18,16 @@ type AdminOrder = {
   totalPrice: number;
   itemCount: number;
   createdAt: string;
+  customerPhone?: string;
+  notes?: string;
+  items: Array<{
+    _id: string;
+    flavorName: string;
+    presentation: string;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }>;
 };
 
 type OrdersResponse = {
@@ -38,24 +49,6 @@ const DEFAULT_RESPONSE: OrdersResponse = {
     totalPages: 1,
   },
 };
-
-function getNextOrderAction(status: OrderStatus) {
-  switch (status) {
-    case "pending_confirmation":
-      return { label: "Confirmar", status: "confirmed" as const };
-    case "confirmed":
-      return { label: "Pagado", status: "paid" as const };
-    case "paid":
-      return { label: "Entregado", status: "delivered" as const };
-    case "cancelled":
-    case "delivered":
-      return null;
-  }
-}
-
-function canCancelOrder(status: OrderStatus) {
-  return status === "pending_confirmation" || status === "confirmed";
-}
 
 export function AdminOrdersPage() {
   const [filters, setFilters] = useState({
@@ -288,72 +281,84 @@ export function AdminOrdersPage() {
 
       <section className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-          <input
-            type="search"
-            aria-label="Buscar pedidos por cliente o email"
-            placeholder="Buscar por cliente o email"
-            value={filters.search}
-            onChange={(event) =>
-              setFilters((previous) => ({
-                ...previous,
-                search: event.target.value,
-                page: 1,
-              }))
-            }
-            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20 sm:col-span-2 xl:col-span-1"
-          />
+          <label className="grid gap-2 sm:col-span-2 xl:col-span-1">
+            <span className="text-xs text-oxford-black/65">
+              Cliente o email
+            </span>
+            <input
+              type="search"
+              placeholder="Nombre o correo"
+              value={filters.search}
+              onChange={(event) =>
+                setFilters((previous) => ({
+                  ...previous,
+                  search: event.target.value,
+                  page: 1,
+                }))
+              }
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            />
+          </label>
 
-          <select
-            aria-label="Filtrar pedidos por estado"
-            value={filters.status}
-            onChange={(event) =>
-              setFilters((previous) => ({
-                ...previous,
-                status: event.target.value,
-                page: 1,
-              }))
-            }
-            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
-          >
-            <option value="">Todos los estados</option>
-            {ORDER_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {formatOrderStatus(status)}
-              </option>
-            ))}
-          </select>
+          <label className="grid gap-2">
+            <span className="text-xs text-oxford-black/65">
+              Estado del pedido
+            </span>
+            <select
+              value={filters.status}
+              onChange={(event) =>
+                setFilters((previous) => ({
+                  ...previous,
+                  status: event.target.value,
+                  page: 1,
+                }))
+              }
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            >
+              <option value="">Todos los estados</option>
+              {ORDER_STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {formatOrderStatus(status)}
+                </option>
+              ))}
+            </select>
+          </label>
 
-          <input
-            type="date"
-            aria-label="Fecha inicial"
-            value={filters.dateFrom}
-            onChange={(event) =>
-              setFilters((previous) => ({
-                ...previous,
-                dateFrom: event.target.value,
-                page: 1,
-              }))
-            }
-            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
-          />
+          <label className="grid gap-2">
+            <span className="text-xs text-oxford-black/65">Fecha desde</span>
+            <input
+              type="date"
+              value={filters.dateFrom}
+              onChange={(event) =>
+                setFilters((previous) => ({
+                  ...previous,
+                  dateFrom: event.target.value,
+                  page: 1,
+                }))
+              }
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            />
+          </label>
 
-          <input
-            type="date"
-            aria-label="Fecha final"
-            value={filters.dateTo}
-            onChange={(event) =>
-              setFilters((previous) => ({
-                ...previous,
-                dateTo: event.target.value,
-                page: 1,
-              }))
-            }
-            className="min-h-11 rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
-          />
+          <label className="grid gap-2">
+            <span className="text-xs text-oxford-black/65">Fecha hasta</span>
+            <input
+              type="date"
+              value={filters.dateTo}
+              onChange={(event) =>
+                setFilters((previous) => ({
+                  ...previous,
+                  dateTo: event.target.value,
+                  page: 1,
+                }))
+              }
+              className="min-h-11 w-full rounded-2xl border border-ochre/30 px-3 py-2 text-sm outline-none focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
+            />
+          </label>
 
           <button
             type="button"
-            className="min-h-11 rounded-2xl border border-royal-blue/40 bg-royal-blue px-3 py-2 text-sm text-light-beige focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
+            className="min-h-11 self-end rounded-2xl border border-royal-blue/40 bg-royal-blue px-3 py-2 text-sm text-light-beige focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30"
             onClick={() =>
               setFilters({
                 search: "",
@@ -380,91 +385,141 @@ export function AdminOrdersPage() {
           <AdminOrdersResultsLoading />
         ) : (
           <div className="space-y-3">
-            <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] gap-3 px-2 text-xs uppercase tracking-[0.2em] text-oxford-black/50 md:grid">
+            <div className="hidden px-5 text-xs uppercase tracking-[0.2em] text-oxford-black/50 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:gap-4">
               <span>Cliente</span>
               <span>Fecha</span>
-              <span>Total</span>
+              <span className="text-right">Total</span>
               <span>Estado</span>
-              <span>Acciones</span>
+              <span className="text-center">Acciones</span>
             </div>
 
             {orders.data.map((order) => {
-              const nextAction = getNextOrderAction(order.status);
-              const showCancelAction = canCancelOrder(order.status);
-
               return (
                 <article
                   key={order._id}
-                  className="rounded-2xl border border-ochre/15 px-4 py-4 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] md:items-center md:gap-3 md:px-3 md:py-3"
+                  className="rounded-2xl border border-ochre/15 px-4 py-4 md:px-5 md:py-4"
                 >
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-royal-blue">
-                      {order.customerName}
-                    </p>
-                    <p className="break-all font-data text-xs text-oxford-black/60">
-                      {order.customerEmail}
-                    </p>
+                  <div className="lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-royal-blue">
+                        {order.customerName}
+                      </p>
+                      <p className="break-all font-data text-xs text-oxford-black/60">
+                        {order.customerEmail}
+                      </p>
+                      {order.customerPhone ? (
+                        <p className="mt-1 font-data text-xs text-oxford-black/60">
+                          {order.customerPhone}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <dl className="mt-4 grid grid-cols-2 gap-3 lg:contents">
+                      <div className="min-w-0">
+                        <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 lg:hidden">
+                          Fecha
+                        </dt>
+                        <dd className="break-words font-data text-sm text-oxford-black/70">
+                          {new Date(order.createdAt).toLocaleString("es-MX")}
+                        </dd>
+                      </div>
+
+                      <div className="min-w-0 lg:text-right">
+                        <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 lg:hidden">
+                          Total
+                        </dt>
+                        <dd className="break-words font-data text-sm text-royal-blue">
+                          {formatMXN(order.totalPrice)}
+                        </dd>
+                      </div>
+
+                      <div className="col-span-2 min-w-0 lg:col-span-1">
+                        <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 lg:hidden">
+                          Estado
+                        </dt>
+                        <dd>
+                          <label>
+                            <span className="sr-only">
+                              Cambiar estado del pedido de {order.customerName}
+                            </span>
+                            <select
+                              aria-label={`Cambiar estado del pedido de ${order.customerName}`}
+                              className="mt-1 min-h-11 w-full rounded-full border-0 bg-royal-blue/10 px-3 py-2 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:mt-0 lg:min-h-9 lg:text-xs"
+                              disabled={Boolean(updatingOrderId)}
+                              value={order.status}
+                              onChange={(event) =>
+                                updateStatus(
+                                  order._id,
+                                  event.target.value as OrderStatus,
+                                )
+                              }
+                            >
+                              {ORDER_STATUSES.filter(
+                                (status) =>
+                                  status !== "cancelled" ||
+                                  status === order.status,
+                              ).map((status) => (
+                                <option key={status} value={status}>
+                                  {formatOrderStatus(status)}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                        </dd>
+                      </div>
+                    </dl>
+
+                    {order.status !== "cancelled" ? (
+                      <button
+                        type="button"
+                        aria-label={`Cancelar pedido de ${order.customerName}`}
+                        title="Cancelar pedido"
+                        className="mt-4 inline-flex size-11 items-center justify-center rounded-full text-wine-red transition-colors hover:bg-wine-red/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 disabled:opacity-40 lg:mt-0 lg:justify-self-center"
+                        disabled={Boolean(updatingOrderId)}
+                        onClick={() => setOrderPendingCancellation(order)}
+                      >
+                        <Trash2 aria-hidden="true" className="size-4" />
+                      </button>
+                    ) : (
+                      <span className="hidden lg:block" />
+                    )}
                   </div>
 
-                  <dl className="mt-4 grid grid-cols-2 gap-3 md:contents">
-                    <div className="min-w-0">
-                      <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
-                        Fecha
-                      </dt>
-                      <dd className="break-words font-data text-sm text-oxford-black/70">
-                        {new Date(order.createdAt).toLocaleString("es-MX")}
-                      </dd>
-                    </div>
-
-                    <div className="min-w-0">
-                      <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
-                        Total
-                      </dt>
-                      <dd className="break-words font-data text-sm text-royal-blue">
-                        {formatMXN(order.totalPrice)}
-                      </dd>
-                    </div>
-
-                    <div className="col-span-2 min-w-0 md:col-span-1">
-                      <dt className="text-[0.68rem] uppercase tracking-[0.16em] text-oxford-black/45 md:hidden">
-                        Estado
-                      </dt>
-                      <dd>
-                        <span className="inline-flex min-h-8 items-center rounded-full bg-royal-blue/10 px-3 py-1 text-xs text-royal-blue">
-                          {formatOrderStatus(order.status)}
-                        </span>
-                      </dd>
-                    </div>
-                  </dl>
-
-                  {nextAction || showCancelAction ? (
-                    <div className="mt-4 flex gap-2 md:mt-0">
-                      {nextAction ? (
-                        <button
-                          type="button"
-                          disabled={Boolean(updatingOrderId)}
-                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-ochre/30 px-3 py-2 text-sm text-ochre focus:outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/30 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
-                          onClick={() =>
-                            updateStatus(order._id, nextAction.status)
-                          }
-                        >
-                          {nextAction.label}
-                        </button>
-                      ) : null}
-                      {showCancelAction ? (
-                        <button
-                          type="button"
-                          disabled={Boolean(updatingOrderId)}
-                          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-wine-red/30 px-3 py-2 text-sm text-wine-red focus:outline-none focus-visible:ring-2 focus-visible:ring-wine-red/25 md:min-h-9 md:flex-none md:px-3 md:py-1.5 md:text-xs"
-                          onClick={() => setOrderPendingCancellation(order)}
-                        >
-                          Cancelar
-                        </button>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <div className="hidden md:block" />
-                  )}
+                  <div className="mt-4 border-t border-ochre/15 pt-4">
+                    <p className="text-[0.68rem] uppercase tracking-[0.18em] text-ochre">
+                      Contenido del pedido
+                    </p>
+                    {order.items.length > 0 ? (
+                      <ul className="mt-2 divide-y divide-ochre/10">
+                        {order.items.map((item) => (
+                          <li
+                            className="grid gap-1 py-2 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4"
+                            key={item._id}
+                          >
+                            <p className="min-w-0 text-royal-blue">
+                              {item.flavorName}
+                              <span className="font-data text-oxford-black/60">
+                                {` · ${item.presentation} · ${item.quantity} pza.`}
+                              </span>
+                            </p>
+                            <p className="font-data text-oxford-black/70">
+                              {formatMXN(item.subtotal)}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-2 text-sm text-oxford-black/55">
+                        Sin detalle de productos disponible.
+                      </p>
+                    )}
+                    {order.notes ? (
+                      <p className="mt-3 rounded-xl bg-cream-white px-3 py-2 text-sm text-oxford-black/70">
+                        <span className="text-royal-blue">Nota:</span>{" "}
+                        {order.notes}
+                      </p>
+                    ) : null}
+                  </div>
                 </article>
               );
             })}
@@ -529,7 +584,7 @@ export function AdminOrdersPage() {
               className="mt-2 font-serif text-2xl text-royal-blue"
               id="cancel-order-dialog-title"
             >
-              Cancelar pedido?
+              ¿Cancelar pedido?
             </h3>
             <p
               className="mt-3 text-sm leading-6 text-oxford-black/70"

@@ -75,7 +75,7 @@ export function AdminOrdersResultsLoading() {
       aria-label="Cargando pedidos"
       className="space-y-3"
     >
-      <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] gap-3 px-2 md:grid">
+      <div className="hidden px-5 lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:gap-4">
         <SkeletonLine className="h-3 w-20" />
         <SkeletonLine className="h-3 w-16" />
         <SkeletonLine className="h-3 w-14" />
@@ -84,25 +84,23 @@ export function AdminOrdersResultsLoading() {
       </div>
       {ORDER_ROWS.map((row) => (
         <div
-          className="rounded-2xl border border-ochre/15 px-4 py-4 md:grid md:grid-cols-[minmax(0,1.2fr)_minmax(9rem,1fr)_auto_auto_auto] md:items-center md:gap-3 md:px-3 md:py-3"
+          className="rounded-2xl border border-ochre/15 px-4 py-4 md:px-5"
           key={row}
         >
-          <div className="min-w-0 space-y-2">
-            <SkeletonLine className="h-4 w-36 bg-royal-blue/10" />
-            <SkeletonLine className="h-3 w-48" />
+          <div className="lg:grid lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4">
+            <div className="min-w-0 space-y-2">
+              <SkeletonLine className="h-4 w-36 bg-royal-blue/10" />
+              <SkeletonLine className="h-3 w-48" />
+            </div>
+            <SkeletonLine className="mt-4 h-4 w-36 lg:mt-0" />
+            <SkeletonLine className="mt-4 h-4 w-20 bg-royal-blue/10 lg:mt-0 lg:justify-self-end" />
+            <SkeletonLine className="mt-4 h-9 w-full bg-royal-blue/10 lg:mt-0" />
+            <SkeletonLine className="mt-4 size-11 bg-wine-red/10 lg:mt-0 lg:justify-self-center" />
           </div>
-          <div className="mt-4 md:mt-0">
-            <SkeletonLine className="h-4 w-36" />
-          </div>
-          <div className="mt-4 md:mt-0">
-            <SkeletonLine className="h-4 w-20 bg-royal-blue/10" />
-          </div>
-          <div className="mt-4 md:mt-0">
-            <SkeletonLine className="h-8 w-24 bg-royal-blue/10" />
-          </div>
-          <div className="mt-4 flex gap-2 md:mt-0">
-            <SkeletonLine className="h-9 w-20 bg-ochre/15" />
-            <SkeletonLine className="h-9 w-20 bg-wine-red/10" />
+          <div className="mt-4 space-y-2 border-t border-ochre/15 pt-4">
+            <SkeletonLine className="h-3 w-32 bg-ochre/15" />
+            <SkeletonLine className="h-4 w-3/5" />
+            <SkeletonLine className="h-4 w-2/5" />
           </div>
         </div>
       ))}

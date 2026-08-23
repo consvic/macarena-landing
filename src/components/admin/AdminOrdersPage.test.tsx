@@ -12,6 +12,16 @@ type TestOrder = {
   totalPrice: number;
   itemCount: number;
   createdAt: string;
+  customerPhone?: string;
+  notes?: string;
+  items: Array<{
+    _id: string;
+    flavorName: string;
+    presentation: string;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }>;
 };
 
 const pendingOrder = {
@@ -22,6 +32,18 @@ const pendingOrder = {
   totalPrice: 320,
   itemCount: 2,
   createdAt: "2026-06-28T12:00:00.000Z",
+  customerPhone: "+52 55 1234 5678",
+  notes: "Tocar el timbre azul",
+  items: [
+    {
+      _id: "item-1",
+      flavorName: "Pistache",
+      presentation: "1 litro",
+      quantity: 2,
+      unitPrice: 160,
+      subtotal: 320,
+    },
+  ],
 } satisfies TestOrder;
 
 function ordersResponse(data: TestOrder[]) {
@@ -89,10 +111,12 @@ describe("AdminOrdersPage", () => {
 
     await screen.findByText("Ana Gomez");
 
-    await user.click(screen.getByRole("button", { name: /^Cancelar$/ }));
+    await user.click(
+      screen.getByRole("button", { name: "Cancelar pedido de Ana Gomez" }),
+    );
 
     expect(
-      screen.getByRole("dialog", { name: "Cancelar pedido?" }),
+      screen.getByRole("dialog", { name: "¿Cancelar pedido?" }),
     ).toBeInTheDocument();
     expect(patchStatusCalls(fetchMock)).toHaveLength(0);
 
@@ -100,7 +124,9 @@ describe("AdminOrdersPage", () => {
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /^Cancelar$/ }));
+    await user.click(
+      screen.getByRole("button", { name: "Cancelar pedido de Ana Gomez" }),
+    );
     await user.click(screen.getByRole("button", { name: "Cancelar pedido" }));
 
     await waitFor(() => {
@@ -114,7 +140,7 @@ describe("AdminOrdersPage", () => {
     });
   });
 
-  it("advances orders through confirmed, paid, and delivered states", async () => {
+  it("shows who ordered what and allows any non-cancelled status", async () => {
     const user = userEvent.setup();
     const fetchMock = mockAdminOrdersFetch([pendingOrder]);
 
@@ -123,33 +149,28 @@ describe("AdminOrdersPage", () => {
     render(<AdminOrdersPage />);
 
     await screen.findByText("Ana Gomez");
+    expect(screen.getByLabelText("Cliente o email")).toBeInTheDocument();
+    expect(screen.getByLabelText("Estado del pedido")).toBeInTheDocument();
+    expect(screen.getByLabelText("Fecha desde")).toBeInTheDocument();
+    expect(screen.getByLabelText("Fecha hasta")).toBeInTheDocument();
+    expect(screen.getByText("Pistache")).toBeInTheDocument();
+    expect(screen.getByText("+52 55 1234 5678")).toBeInTheDocument();
+    expect(screen.getByText(/Tocar el timbre azul/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Confirmar" }));
-    await screen.findByRole("button", { name: "Pagado" });
-
-    await user.click(screen.getByRole("button", { name: "Pagado" }));
-    await screen.findByRole("button", { name: "Entregado" });
-
-    await user.click(screen.getByRole("button", { name: "Entregado" }));
+    const statusSelect = screen.getByRole("combobox", {
+      name: "Cambiar estado del pedido de Ana Gomez",
+    });
+    await user.selectOptions(statusSelect, "delivered");
 
     await waitFor(() => {
-      expect(patchStatusCalls(fetchMock)).toHaveLength(3);
+      expect(patchStatusCalls(fetchMock)).toHaveLength(1);
     });
 
     expect(
       patchStatusCalls(fetchMock).map(([, init]) =>
         JSON.parse(String((init as RequestInit | undefined)?.body)),
       ),
-    ).toEqual([
-      { status: "confirmed" },
-      { status: "paid" },
-      { status: "delivered" },
-    ]);
-    expect(
-      screen.queryByRole("button", { name: "Entregado" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /^Cancelar$/ }),
-    ).not.toBeInTheDocument();
+    ).toEqual([{ status: "delivered" }]);
+    expect(statusSelect).toHaveValue("delivered");
   });
 });
