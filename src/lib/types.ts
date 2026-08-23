@@ -7,7 +7,7 @@ export const FLAVOR_BASES = ["Agua", "Crema"] as const;
 export type FlavorBase = (typeof FLAVOR_BASES)[number];
 
 export type Flavor = {
-  _id?: string;
+  _id: string;
   name: string;
   description: string;
   category: string;
@@ -28,6 +28,7 @@ export type PresentationOption = (typeof PRESENTATION_OPTIONS)[number];
 
 export type CartItem = {
   id: string;
+  flavorId: string;
   flavorName: string;
   presentation: PresentationOption;
   price: number;
@@ -55,9 +56,8 @@ export function formatOrderStatus(status: OrderStatus) {
 }
 
 export type IncomingOrderItem = {
-  flavorId?: string;
+  flavorId: string;
   flavorName: string;
   presentation: string;
   quantity: number;
-  unitPrice: number;
 };

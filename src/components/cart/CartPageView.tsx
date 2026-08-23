@@ -45,10 +45,10 @@ export function CartPageView() {
           customerEmail,
           ...(customerPhone ? { customerPhone } : {}),
           items: items.map((item) => ({
+            flavorId: item.flavorId,
             flavorName: item.flavorName,
             presentation: item.presentation,
             quantity: 1,
-            unitPrice: item.price,
           })),
         }),
       });

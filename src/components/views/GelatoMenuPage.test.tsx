@@ -24,6 +24,7 @@ vi.mock("@/components/providers/CartProvider", () => ({
 
 const flavors: Flavor[] = [
   {
+    _id: "507f1f77bcf86cd799439011",
     name: "Pistache",
     description: "Cremoso con nuez tostada.",
     category: "Clasico",
@@ -58,6 +59,7 @@ describe("GelatoMenuPage", () => {
     fireEvent.click(button);
 
     expect(addItemMock).toHaveBeenCalledWith({
+      flavorId: "507f1f77bcf86cd799439011",
       flavorName: "Pistache",
       presentation: "1 litro",
       price: 280,
