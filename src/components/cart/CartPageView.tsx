@@ -176,7 +176,7 @@ export function CartPageView() {
                 autoComplete="tel"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
-                placeholder="+52 55 0000 0000"
+                placeholder="55 0000 0000"
                 className="h-11 w-full rounded-full border border-ochre/30 bg-white px-4 font-data text-sm outline-none transition focus-visible:border-royal-blue focus-visible:ring-2 focus-visible:ring-royal-blue/20"
               />
             </div>
