@@ -24,6 +24,7 @@ describe("admin middleware", () => {
   beforeEach(() => {
     clearRateLimitStore();
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   it("allows non-admin routes", async () => {
@@ -190,6 +191,32 @@ describe("admin middleware", () => {
     expect(response.headers.get("location")).toContain(
       "/admin/login?next=%2Fadmin",
     );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("allows the Playwright auth bypass outside production", async () => {
+    vi.stubEnv("PLAYWRIGHT_TEST", "true");
+    vi.stubEnv("NODE_ENV", "test");
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    const response = await middleware(
+      createRequest("/admin/pedidos") as unknown as NextRequest,
+    );
+
+    expect(response.status).toBe(200);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("never allows the Playwright auth bypass in production", async () => {
+    vi.stubEnv("PLAYWRIGHT_TEST", "true");
+    vi.stubEnv("NODE_ENV", "production");
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    const response = await middleware(
+      createRequest("/admin/pedidos") as unknown as NextRequest,
+    );
+
+    expect(response.status).toBe(307);
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
