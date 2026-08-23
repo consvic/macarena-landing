@@ -126,6 +126,8 @@ npm run dev
 - `npm test`: Run the test suite.
 - `npm run test:watch`: Run tests in watch mode.
 - `npm run test:coverage`: Run tests with coverage.
+- `npm run storybook`: Open the component workshop on port 6006.
+- `npm run build-storybook`: Build the static Storybook site.
 - `npm run admin:create -- --email <email> --password <password>`: Create an admin user in MongoDB for Basic Auth access.
 - `npm run seed:flavors -- <json-path> [--replace]`: Seed or replace flavor records from JSON.
 - `npm run backfill:flavor-existence -- <true|false>`: Update all existing flavors to the provided availability state.
