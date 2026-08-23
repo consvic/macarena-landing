@@ -14,6 +14,7 @@ import { formatMXN } from "@/lib/pricing";
 import type { CartItem, PresentationOption } from "@/lib/types";
 
 type NewCartItem = {
+  flavorId?: string;
   flavorName: string;
   presentation: PresentationOption;
   price: number;

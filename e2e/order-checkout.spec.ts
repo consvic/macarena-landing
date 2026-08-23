@@ -7,6 +7,7 @@ test.beforeEach(async ({ page }) => {
       JSON.stringify([
         {
           id: "cart-item-1",
+          flavorId: "507f1f77bcf86cd799439011",
           flavorName: "Mango Maracuya",
           presentation: "1/2 litro",
           price: 150,
@@ -46,17 +47,17 @@ test("submits checkout and shows payment instructions without creating an order"
     customerPhone: "+52 55 9876 5432",
     items: [
       {
+        flavorId: "507f1f77bcf86cd799439011",
         flavorName: "Mango Maracuya",
         presentation: "1/2 litro",
         quantity: 1,
-        unitPrice: 150,
       },
     ],
   });
 
   await expect(
     page.getByRole("heading", { name: "¡Gracias por tu pedido!" }),
-  ).toBeVisible();
+  ).toBeFocused();
   await expect(page.getByText("$150.00")).toBeVisible();
   await expect(page.getByText("123456789012345678")).toBeVisible();
   await expect(page.getByText("+52 55 1234 5678")).toBeVisible();
@@ -92,6 +93,18 @@ test("keeps the cart intact when order creation fails", async ({ page }) => {
     page.getByRole("button", { name: "Realizar pedido" }),
   ).toBeEnabled();
   await expect
-    .poll(() => page.evaluate(() => localStorage.getItem("macarena:cart:v1")))
-    .not.toBe("[]");
+    .poll(() =>
+      page.evaluate(() =>
+        JSON.parse(localStorage.getItem("macarena:cart:v1") ?? "null"),
+      ),
+    )
+    .toEqual([
+      {
+        id: "cart-item-1",
+        flavorId: "507f1f77bcf86cd799439011",
+        flavorName: "Mango Maracuya",
+        presentation: "1/2 litro",
+        price: 150,
+      },
+    ]);
 });

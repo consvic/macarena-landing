@@ -46,6 +46,7 @@ describe("CartPageView checkout validation", () => {
       items: [
         {
           id: "1",
+          flavorId: "507f1f77bcf86cd799439011",
           flavorName: "Mango Maracuya",
           presentation: "1/2 litro",
           price: 150,
@@ -82,6 +83,7 @@ describe("CartPageView checkout validation", () => {
       items: [
         {
           id: "1",
+          flavorId: "507f1f77bcf86cd799439011",
           flavorName: "Mango Maracuya",
           presentation: "1/2 litro",
           price: 150,
@@ -116,10 +118,10 @@ describe("CartPageView checkout validation", () => {
           customerPhone: "+52 55 1234 5678",
           items: [
             {
+              flavorId: "507f1f77bcf86cd799439011",
               flavorName: "Mango Maracuya",
               presentation: "1/2 litro",
               quantity: 1,
-              unitPrice: 150,
             },
           ],
         }),
@@ -140,6 +142,7 @@ describe("CartPageView checkout validation", () => {
       items: [
         {
           id: "1",
+          flavorId: "507f1f77bcf86cd799439011",
           flavorName: "Mango Maracuya",
           presentation: "1/2 litro",
           price: 150,
@@ -172,7 +175,7 @@ describe("CartPageView checkout validation", () => {
 
     expect(
       screen.getByRole("heading", { name: "¡Gracias por tu pedido!" }),
-    ).toBeInTheDocument();
+    ).toHaveFocus();
     expect(screen.getByText("$150.00")).toBeInTheDocument();
     expect(screen.getByText("123456789012345678")).toBeInTheDocument();
     expect(screen.getByText("+52 55 1234 5678")).toBeInTheDocument();

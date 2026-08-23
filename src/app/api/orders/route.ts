@@ -1,7 +1,14 @@
+import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/mongoose";
 import { sendOrderPendingEmail } from "@/lib/email/order-notifications";
-import type { IncomingOrderItem } from "@/lib/types";
+import { resolveFlavorPrice } from "@/lib/pricing";
+import {
+  type IncomingOrderItem,
+  PRESENTATION_OPTIONS,
+  type PresentationOption,
+} from "@/lib/types";
+import { FlavorModel } from "@/models/Flavor";
 import { OrderModel } from "@/models/Order";
 import { OrderItemModel } from "@/models/OrderItem";
 
@@ -36,26 +43,81 @@ export async function POST(request: Request) {
       );
     }
 
-    const orderItemsPayload = items.map((item) => {
+    const requestedItems = items.map((item) => {
       const quantity = item.quantity != null ? Number(item.quantity) : 1;
-      const unitPrice = Number(item.unitPrice);
-      if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+      const flavorId = String(item.flavorId ?? "").trim();
+      const flavorName = String(item.flavorName ?? "").trim();
+      const presentation = String(item.presentation ?? "");
+
+      if (flavorId && !isValidObjectId(flavorId)) {
         throw new InvalidInputError(
-          `Invalid unitPrice for "${item.flavorName}"`,
+          `Invalid flavorId for "${flavorName || "item"}"`,
+        );
+      }
+      if (!flavorId && !flavorName) {
+        throw new InvalidInputError("Order item requires a flavor");
+      }
+      if (!PRESENTATION_OPTIONS.includes(presentation as PresentationOption)) {
+        throw new InvalidInputError(
+          `Invalid presentation for "${flavorName || flavorId}"`,
         );
       }
       if (!Number.isFinite(quantity) || quantity < 1) {
         throw new InvalidInputError(
-          `Invalid quantity for "${item.flavorName}"`,
+          `Invalid quantity for "${flavorName || flavorId}"`,
         );
       }
+
       return {
-        flavorId: item.flavorId,
-        flavorName: item.flavorName,
-        presentation: item.presentation,
+        flavorId,
+        flavorName,
+        presentation: presentation as PresentationOption,
         quantity,
+      };
+    });
+
+    const flavorIds = requestedItems
+      .map((item) => item.flavorId)
+      .filter(Boolean);
+    const legacyFlavorNames = requestedItems
+      .filter((item) => !item.flavorId)
+      .map((item) => item.flavorName);
+    const flavorLookup = [
+      ...(flavorIds.length > 0 ? [{ _id: { $in: flavorIds } }] : []),
+      ...(legacyFlavorNames.length > 0
+        ? [{ name: { $in: legacyFlavorNames } }]
+        : []),
+    ];
+    const flavors = await FlavorModel.find({
+      exists: true,
+      isArchived: { $ne: true },
+      $or: flavorLookup,
+    }).lean();
+    const flavorsById = new Map(
+      flavors.map((flavor) => [String(flavor._id), flavor]),
+    );
+    const flavorsByName = new Map(
+      flavors.map((flavor) => [flavor.name, flavor]),
+    );
+
+    const orderItemsPayload = requestedItems.map((item) => {
+      const flavor = item.flavorId
+        ? flavorsById.get(item.flavorId)
+        : flavorsByName.get(item.flavorName);
+      if (!flavor) {
+        throw new InvalidInputError(
+          `Flavor not found for "${item.flavorName || item.flavorId}"`,
+        );
+      }
+
+      const unitPrice = resolveFlavorPrice(flavor.price, item.presentation);
+      return {
+        flavorId: flavor._id,
+        flavorName: flavor.name,
+        presentation: item.presentation,
+        quantity: item.quantity,
         unitPrice,
-        subtotal: quantity * unitPrice,
+        subtotal: item.quantity * unitPrice,
       };
     });
 

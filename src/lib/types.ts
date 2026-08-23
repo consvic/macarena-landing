@@ -28,6 +28,7 @@ export type PresentationOption = (typeof PRESENTATION_OPTIONS)[number];
 
 export type CartItem = {
   id: string;
+  flavorId?: string;
   flavorName: string;
   presentation: PresentationOption;
   price: number;
@@ -59,5 +60,4 @@ export type IncomingOrderItem = {
   flavorName: string;
   presentation: string;
   quantity: number;
-  unitPrice: number;
 };

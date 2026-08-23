@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ export function CartPageView({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [orderConfirmation, setOrderConfirmation] =
     useState<OrderConfirmation | null>(null);
+  const confirmationHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const emailIsValid = useMemo(
     () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()),
@@ -46,6 +47,12 @@ export function CartPageView({
   );
   const hasCartItems = itemsCount > 0;
   const canSubmitOrder = hasCartItems && emailIsValid && !isSubmitting;
+
+  useEffect(() => {
+    if (orderConfirmation) {
+      confirmationHeadingRef.current?.focus();
+    }
+  }, [orderConfirmation]);
 
   async function handleCreateOrder() {
     if (!canSubmitOrder) {
@@ -68,10 +75,10 @@ export function CartPageView({
           customerEmail,
           ...(customerPhone ? { customerPhone } : {}),
           items: items.map((item) => ({
+            flavorId: item.flavorId,
             flavorName: item.flavorName,
             presentation: item.presentation,
             quantity: 1,
-            unitPrice: item.price,
           })),
         }),
       });
@@ -109,7 +116,11 @@ export function CartPageView({
           <p className="text-sm uppercase tracking-[0.3em] text-ochre">
             Pedido recibido
           </p>
-          <h1 className="mt-2 text-4xl font-serif text-royal-blue">
+          <h1
+            ref={confirmationHeadingRef}
+            tabIndex={-1}
+            className="mt-2 text-4xl font-serif text-royal-blue"
+          >
             ¡Gracias por tu pedido!
           </h1>
           <p className="mt-4 text-oxford-black/70">

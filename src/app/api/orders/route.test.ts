@@ -5,6 +5,10 @@ const createMock = vi.fn();
 const findByIdAndDeleteMock = vi.fn();
 const insertManyMock = vi.fn();
 const sendOrderPendingEmailMock = vi.fn();
+const findFlavorsLeanMock = vi.fn();
+const findFlavorsMock = vi.fn((..._args: unknown[]) => ({
+  lean: findFlavorsLeanMock,
+}));
 
 vi.mock("@/lib/db/mongoose", () => ({
   connectToDatabase: () => connectToDatabaseMock(),
@@ -20,6 +24,12 @@ vi.mock("@/models/Order", () => ({
 vi.mock("@/models/OrderItem", () => ({
   OrderItemModel: {
     insertMany: (...args: unknown[]) => insertManyMock(...args),
+  },
+}));
+
+vi.mock("@/models/Flavor", () => ({
+  FlavorModel: {
+    find: (...args: unknown[]) => findFlavorsMock(...args),
   },
 }));
 
@@ -58,6 +68,19 @@ const FAKE_ITEMS = [
   },
 ];
 
+const FAKE_FLAVORS = [
+  {
+    _id: "507f1f77bcf86cd799439011",
+    name: "Mango",
+    price: { halfLiter: 150, liter: 280 },
+  },
+  {
+    _id: "507f1f77bcf86cd799439012",
+    name: "Coco",
+    price: { halfLiter: 150, liter: 280 },
+  },
+];
+
 describe("POST /api/orders", () => {
   beforeEach(() => {
     connectToDatabaseMock.mockReset();
@@ -65,6 +88,9 @@ describe("POST /api/orders", () => {
     findByIdAndDeleteMock.mockReset();
     insertManyMock.mockReset();
     sendOrderPendingEmailMock.mockReset();
+    findFlavorsMock.mockClear();
+    findFlavorsLeanMock.mockReset();
+    findFlavorsLeanMock.mockResolvedValue(FAKE_FLAVORS);
 
     createMock.mockResolvedValue({
       ...FAKE_ORDER,
@@ -109,6 +135,7 @@ describe("POST /api/orders", () => {
         currency: "USD",
         items: [
           {
+            flavorId: "507f1f77bcf86cd799439011",
             flavorName: "Mango",
             presentation: "1/2 litro",
             quantity: 1,
@@ -247,29 +274,34 @@ describe("POST /api/orders", () => {
     });
   });
 
-  it("returns 400 when unitPrice is not a valid number", async () => {
+  it("ignores a client-supplied price and uses the canonical flavor price", async () => {
     const { POST } = await import("@/app/api/orders/route");
     const response = await POST(
       makeRequest({
         customerEmail: "test@example.com",
         items: [
           {
-            flavorName: "Mango",
+            flavorId: "507f1f77bcf86cd799439011",
+            flavorName: "Forged flavor name",
             presentation: "1/2 litro",
             quantity: 1,
-            unitPrice: "abc",
+            unitPrice: 0,
           },
         ],
       }),
     );
 
-    expect(response.status).toBe(400);
-    const body = await response.json();
-    expect(body.message).toContain("Invalid unitPrice");
-    expect(createMock).not.toHaveBeenCalled();
+    expect(response.status).toBe(201);
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ totalPrice: 150 }),
+    );
+    expect(insertManyMock).toHaveBeenCalledWith([
+      expect.objectContaining({ unitPrice: 150, subtotal: 150 }),
+    ]);
   });
 
-  it("returns 400 when unitPrice is negative", async () => {
+  it("returns 400 when the flavor is unavailable", async () => {
+    findFlavorsLeanMock.mockResolvedValue([]);
     const { POST } = await import("@/app/api/orders/route");
     const response = await POST(
       makeRequest({
@@ -279,7 +311,6 @@ describe("POST /api/orders", () => {
             flavorName: "Mango",
             presentation: "1/2 litro",
             quantity: 1,
-            unitPrice: -50,
           },
         ],
       }),
@@ -287,7 +318,8 @@ describe("POST /api/orders", () => {
 
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.message).toContain("Invalid unitPrice");
+    expect(body.message).toContain("Flavor not found");
+    expect(createMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 when quantity is zero", async () => {
