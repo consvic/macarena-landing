@@ -33,7 +33,7 @@ export function AdminLayoutShell({
         </div>
       </div>
 
-      <div className="mx-auto grid w-full max-w-7xl gap-5 px-4 py-5 sm:gap-8 sm:px-6 sm:py-8 lg:grid-cols-[240px_1fr]">
+      <div className="mx-auto grid w-full max-w-7xl gap-5 px-4 pb-5 sm:gap-8 sm:px-6 sm:py-8 lg:grid-cols-[240px_1fr]">
         <aside className="-mx-4 border-y border-ochre/20 bg-white/85 px-4 py-3 sm:mx-0 sm:rounded-3xl sm:border sm:bg-white sm:p-4 lg:self-start">
           <nav className="flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-2 lg:overflow-visible lg:pb-0">
             {sections.map((section) => (
