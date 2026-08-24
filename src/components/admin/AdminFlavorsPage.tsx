@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { AdminFlavorsResultsLoading } from "@/components/admin/AdminLoadingStates";
+import { AdminLotsPanel } from "@/components/admin/AdminLotsPanel";
 import { formatMXN } from "@/lib/pricing";
 import {
   FLAVOR_BASES,
@@ -34,6 +35,8 @@ type AdminFlavor = {
   coverImage: string;
   isVisibleOnSite: boolean;
   isArchived: boolean;
+  inventoryManaged?: boolean;
+  availableQuantities?: { halfLiter: number; liter: number };
 };
 
 type ProductionDemandEntry = {
@@ -164,6 +167,30 @@ export function AdminFlavorsPage() {
     }
   }, []);
 
+  const updateSelectedInventory = useCallback(
+    (availableQuantities: { halfLiter: number; liter: number }) => {
+      if (!selectedId) return;
+      setFlavors((previous) =>
+        previous.map((flavor) =>
+          flavor._id === selectedId
+            ? {
+                ...flavor,
+                inventoryManaged: true,
+                availableQuantities,
+                availablePresentations: PRESENTATION_OPTIONS.filter(
+                  (presentation) =>
+                    presentation === "1/2 litro"
+                      ? availableQuantities.halfLiter > 0
+                      : availableQuantities.liter > 0,
+                ),
+              }
+            : flavor,
+        ),
+      );
+    },
+    [selectedId],
+  );
+
   useEffect(() => {
     loadFlavors();
     loadProductionDemand();
@@ -200,7 +227,9 @@ export function AdminFlavorsPage() {
           halfLiter: Number(form.halfLiter),
           liter: Number(form.liter),
         },
-        availablePresentations: form.availablePresentations,
+        ...(!selectedFlavor?.inventoryManaged
+          ? { availablePresentations: form.availablePresentations }
+          : {}),
         allergens: form.allergens,
         gradient: form.gradient,
         coverImage: form.coverImage,
@@ -234,7 +263,16 @@ export function AdminFlavorsPage() {
         }
 
         return previous.map((entry) =>
-          entry._id === flavor._id ? flavor : entry,
+          entry._id === flavor._id
+            ? {
+                ...flavor,
+                inventoryManaged: entry.inventoryManaged,
+                availableQuantities: entry.availableQuantities,
+                availablePresentations: entry.inventoryManaged
+                  ? entry.availablePresentations
+                  : flavor.availablePresentations,
+              }
+            : entry,
         );
       });
 
@@ -281,7 +319,18 @@ export function AdminFlavorsPage() {
 
       const updated = payload as AdminFlavor;
       setFlavors((previous) =>
-        previous.map((entry) => (entry._id === updated._id ? updated : entry)),
+        previous.map((entry) =>
+          entry._id === updated._id
+            ? {
+                ...updated,
+                inventoryManaged: entry.inventoryManaged,
+                availableQuantities: entry.availableQuantities,
+                availablePresentations: entry.inventoryManaged
+                  ? entry.availablePresentations
+                  : updated.availablePresentations,
+              }
+            : entry,
+        ),
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Error desconocido");
@@ -310,7 +359,18 @@ export function AdminFlavorsPage() {
 
       const updated = payload as AdminFlavor;
       setFlavors((previous) =>
-        previous.map((entry) => (entry._id === updated._id ? updated : entry)),
+        previous.map((entry) =>
+          entry._id === updated._id
+            ? {
+                ...updated,
+                inventoryManaged: entry.inventoryManaged,
+                availableQuantities: entry.availableQuantities,
+                availablePresentations: entry.inventoryManaged
+                  ? entry.availablePresentations
+                  : updated.availablePresentations,
+              }
+            : entry,
+        ),
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Error desconocido");
@@ -485,6 +545,12 @@ export function AdminFlavorsPage() {
                     Visible: {flavor.isVisibleOnSite ? "Sí" : "No"} · Archivado:{" "}
                     {flavor.isArchived ? "Sí" : "No"}
                   </p>
+                  {flavor.inventoryManaged ? (
+                    <p className="mt-1 font-data text-xs text-royal-blue">
+                      Inventario: {flavor.availableQuantities?.halfLiter ?? 0} ×
+                      1/2 L · {flavor.availableQuantities?.liter ?? 0} × 1 L
+                    </p>
+                  ) : null}
                 </li>
               ))}
 
@@ -577,10 +643,14 @@ export function AdminFlavorsPage() {
                 </div>
                 <div className="py-3">
                   <dt className="text-xs uppercase tracking-[0.18em] text-ochre">
-                    Presentaciones a la venta
+                    {selectedFlavor.inventoryManaged
+                      ? "Inventario disponible"
+                      : "Presentaciones a la venta"}
                   </dt>
                   <dd className="mt-1 font-data">
-                    {selectedFlavor.availablePresentations.join(" · ")}
+                    {selectedFlavor.inventoryManaged
+                      ? `${selectedFlavor.availableQuantities?.halfLiter ?? 0} × 1/2 L · ${selectedFlavor.availableQuantities?.liter ?? 0} × 1 L`
+                      : selectedFlavor.availablePresentations.join(" · ")}
                   </dd>
                 </div>
                 <div className="py-3">
@@ -754,46 +824,52 @@ export function AdminFlavorsPage() {
                   />
                 </div>
 
-                <fieldset className="rounded-2xl border border-ochre/30 px-3 py-3">
-                  <legend className="px-1 text-xs uppercase tracking-[0.18em] text-ochre">
-                    Presentaciones a la venta
-                  </legend>
-                  <div className="mt-1 grid gap-2 sm:grid-cols-2">
-                    {PRESENTATION_OPTIONS.map((presentation) => (
-                      <label
-                        key={presentation}
-                        className="flex min-h-11 items-center gap-3 rounded-xl bg-cream-white px-3 font-data text-sm"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={form.availablePresentations.includes(
-                            presentation,
-                          )}
-                          onChange={(event) =>
-                            setForm((previous) => ({
-                              ...previous,
-                              availablePresentations: event.target.checked
-                                ? [
-                                    ...previous.availablePresentations,
-                                    presentation,
-                                  ]
-                                : previous.availablePresentations.filter(
-                                    (option) => option !== presentation,
-                                  ),
-                            }))
-                          }
-                          className="size-4 accent-royal-blue"
-                        />
-                        {presentation}
-                      </label>
-                    ))}
-                  </div>
-                  {form.availablePresentations.length === 0 ? (
-                    <p className="mt-2 text-xs text-wine-red">
-                      Elige al menos una presentación.
-                    </p>
-                  ) : null}
-                </fieldset>
+                {!selectedFlavor?.inventoryManaged ? (
+                  <fieldset className="rounded-2xl border border-ochre/30 px-3 py-3">
+                    <legend className="px-1 text-xs uppercase tracking-[0.18em] text-ochre">
+                      Presentaciones a la venta
+                    </legend>
+                    <div className="mt-1 grid gap-2 sm:grid-cols-2">
+                      {PRESENTATION_OPTIONS.map((presentation) => (
+                        <label
+                          key={presentation}
+                          className="flex min-h-11 items-center gap-3 rounded-xl bg-cream-white px-3 font-data text-sm"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={form.availablePresentations.includes(
+                              presentation,
+                            )}
+                            onChange={(event) =>
+                              setForm((previous) => ({
+                                ...previous,
+                                availablePresentations: event.target.checked
+                                  ? [
+                                      ...previous.availablePresentations,
+                                      presentation,
+                                    ]
+                                  : previous.availablePresentations.filter(
+                                      (option) => option !== presentation,
+                                    ),
+                              }))
+                            }
+                            className="size-4 accent-royal-blue"
+                          />
+                          {presentation}
+                        </label>
+                      ))}
+                    </div>
+                    {form.availablePresentations.length === 0 ? (
+                      <p className="mt-2 text-xs text-wine-red">
+                        Elige al menos una presentación.
+                      </p>
+                    ) : null}
+                  </fieldset>
+                ) : (
+                  <p className="rounded-2xl bg-light-beige px-4 py-3 text-sm text-oxford-black/65">
+                    Las presentaciones disponibles se calculan desde los lotes.
+                  </p>
+                )}
 
                 <input
                   required
@@ -838,7 +914,9 @@ export function AdminFlavorsPage() {
                 <button
                   type="submit"
                   disabled={
-                    isSaving || form.availablePresentations.length === 0
+                    isSaving ||
+                    (!selectedFlavor?.inventoryManaged &&
+                      form.availablePresentations.length === 0)
                   }
                   className="min-h-11 w-full rounded-2xl bg-royal-blue px-4 py-2 text-sm text-light-beige disabled:opacity-50"
                 >
@@ -857,6 +935,14 @@ export function AdminFlavorsPage() {
           )}
         </article>
       </section>
+
+      {selectedFlavor && !selectedFlavor.isArchived ? (
+        <AdminLotsPanel
+          flavorId={selectedFlavor._id}
+          flavorName={selectedFlavor.name}
+          onInventoryChange={updateSelectedInventory}
+        />
+      ) : null}
     </div>
   );
 }

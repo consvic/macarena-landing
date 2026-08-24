@@ -89,6 +89,11 @@ describe("AdminFlavorsPage production demand", () => {
       if (String(input) === "/api/admin/flavors") {
         return Promise.resolve(jsonResponse([FLAVOR]));
       }
+      if (String(input).startsWith("/api/admin/lots?")) {
+        return Promise.resolve(
+          jsonResponse({ data: [], totals: { halfLiter: 0, liter: 0 } }),
+        );
+      }
       return Promise.resolve(jsonResponse({ date: "2026-08-22", entries: [] }));
     });
     vi.stubGlobal("fetch", fetchMock);
@@ -123,6 +128,11 @@ describe("AdminFlavorsPage production demand", () => {
     const fetchMock = vi.fn((input: RequestInfo | URL) => {
       if (String(input) === "/api/admin/flavors") {
         return Promise.resolve(jsonResponse([halfLiterOnlyFlavor]));
+      }
+      if (String(input).startsWith("/api/admin/lots?")) {
+        return Promise.resolve(
+          jsonResponse({ data: [], totals: { halfLiter: 0, liter: 0 } }),
+        );
       }
       return Promise.resolve(jsonResponse({ date: "2026-08-22", entries: [] }));
     });

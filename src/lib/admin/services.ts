@@ -20,6 +20,7 @@ import {
   type PresentationOption,
 } from "@/lib/types";
 import { FlavorModel } from "@/models/Flavor";
+import { LotModel } from "@/models/Lot";
 import { OrderModel } from "@/models/Order";
 import { OrderItemModel } from "@/models/OrderItem";
 
@@ -93,6 +94,11 @@ export type AdminFlavor = {
   exists: boolean;
   isVisibleOnSite: boolean;
   isArchived: boolean;
+  inventoryManaged: boolean;
+  availableQuantities: {
+    halfLiter: number;
+    liter: number;
+  };
   createdAt?: string;
   updatedAt?: string;
   updatedBy?: string;
@@ -225,7 +231,10 @@ function mapOrderItem(item: Record<string, unknown>): AdminOrderItem {
   };
 }
 
-function mapFlavor(flavor: Record<string, unknown>): AdminFlavor {
+function mapFlavor(
+  flavor: Record<string, unknown>,
+  availableQuantities = { halfLiter: 0, liter: 0 },
+): AdminFlavor {
   const isVisibleOnSite =
     typeof flavor.isVisibleOnSite === "boolean"
       ? flavor.isVisibleOnSite
@@ -258,6 +267,8 @@ function mapFlavor(flavor: Record<string, unknown>): AdminFlavor {
     exists: Boolean(flavor.exists ?? isVisibleOnSite),
     isVisibleOnSite,
     isArchived,
+    inventoryManaged: Boolean(flavor.inventoryManaged),
+    availableQuantities,
     createdAt: toIsoDate(flavor.createdAt as Date | string | undefined),
     updatedAt: toIsoDate(flavor.updatedAt as Date | string | undefined),
     updatedBy:
@@ -538,7 +549,7 @@ export async function updateAdminOrderStatus(
   id: string,
   status: OrderStatus,
   adminUser: string,
-) {
+): Promise<{ order: AdminOrder; previousStatus: OrderStatus }> {
   if (!isValidObjectId(id)) {
     throw new Error("Invalid order id");
   }
@@ -548,41 +559,63 @@ export async function updateAdminOrderStatus(
   }
 
   await connectToDatabase();
+  const session = await mongoose.startSession();
+  let result: { order: AdminOrder; previousStatus: OrderStatus } | null = null;
 
-  const patch: Record<string, unknown> = {
-    status,
-    updatedBy: adminUser,
-  };
+  try {
+    await session.withTransaction(async () => {
+      const previous = await OrderModel.findById(id, null, { session }).lean();
+      if (!previous) throw new Error("Order not found");
+      const previousStatus = previous.status as OrderStatus;
+      if (previousStatus === "cancelled" && status !== "cancelled") {
+        throw new Error("Cancelled order is final");
+      }
 
-  if (status === "confirmed") {
-    patch.confirmedAt = new Date();
+      const orderItems = await OrderItemModel.find({ orderId: id }, null, {
+        session,
+      })
+        .sort({ createdAt: 1 })
+        .lean();
+
+      if (status === "cancelled" && previousStatus !== "cancelled") {
+        for (const item of orderItems) {
+          const field =
+            item.presentation === "1/2 litro" ? "halfLiter" : "liter";
+          for (const allocation of item.lotAllocations ?? []) {
+            await LotModel.updateOne(
+              { _id: allocation.lotId },
+              { $inc: { [`remaining.${field}`]: allocation.quantity } },
+              { session },
+            );
+          }
+        }
+      }
+
+      const patch: Record<string, unknown> = { status, updatedBy: adminUser };
+      if (status === "confirmed") patch.confirmedAt = new Date();
+      const updated = await OrderModel.findByIdAndUpdate(id, patch, {
+        new: true,
+        runValidators: true,
+        session,
+      }).lean();
+      if (!updated) throw new Error("Order not found");
+
+      result = {
+        order: mapOrder(
+          updated as Record<string, unknown>,
+          orderItems.map((item) =>
+            mapOrderItem(item as Record<string, unknown>),
+          ),
+        ),
+        previousStatus,
+      };
+    });
+  } finally {
+    await session.endSession();
   }
 
-  const previous = await OrderModel.findByIdAndUpdate(id, patch, {
-    new: false,
-    runValidators: true,
-  }).lean();
-
-  if (!previous) {
-    throw new Error("Order not found");
-  }
-
-  const [updated, orderItems] = await Promise.all([
-    OrderModel.findById(id).lean(),
-    OrderItemModel.find({ orderId: id }).sort({ createdAt: 1 }).lean(),
-  ]);
-
-  if (!updated) {
-    throw new Error("Order not found");
-  }
-
-  return {
-    order: mapOrder(
-      updated as Record<string, unknown>,
-      orderItems.map((item) => mapOrderItem(item as Record<string, unknown>)),
-    ),
-    previousStatus: previous.status as OrderStatus,
-  };
+  if (!result) throw new Error("Order status could not be updated");
+  return result as { order: AdminOrder; previousStatus: OrderStatus };
 }
 
 export async function listAdminFlavors() {
@@ -590,7 +623,43 @@ export async function listAdminFlavors() {
 
   const flavors = await FlavorModel.find({}).sort({ createdAt: -1 }).lean();
 
-  return flavors.map((flavor) => mapFlavor(flavor as Record<string, unknown>));
+  const lots = await LotModel.find({
+    flavorId: {
+      $in: flavors
+        .filter((flavor) => flavor.inventoryManaged)
+        .map((flavor) => flavor._id),
+    },
+  }).lean();
+  const quantitiesByFlavor = new Map<
+    string,
+    { halfLiter: number; liter: number }
+  >();
+  for (const lot of lots) {
+    const flavorId = String(lot.flavorId);
+    const totals = quantitiesByFlavor.get(flavorId) ?? {
+      halfLiter: 0,
+      liter: 0,
+    };
+    totals.halfLiter += Number(lot.remaining?.halfLiter ?? 0);
+    totals.liter += Number(lot.remaining?.liter ?? 0);
+    quantitiesByFlavor.set(flavorId, totals);
+  }
+
+  return flavors.map((flavor) => {
+    const mapped = mapFlavor(
+      flavor as Record<string, unknown>,
+      quantitiesByFlavor.get(String(flavor._id)),
+    );
+    if (mapped.inventoryManaged) {
+      mapped.availablePresentations = PRESENTATION_OPTIONS.filter(
+        (presentation) =>
+          presentation === "1/2 litro"
+            ? mapped.availableQuantities.halfLiter > 0
+            : mapped.availableQuantities.liter > 0,
+      );
+    }
+    return mapped;
+  });
 }
 
 export async function createAdminFlavor(

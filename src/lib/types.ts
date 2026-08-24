@@ -15,6 +15,8 @@ export type Flavor = {
   tags: string[];
   price: PriceByPresentation;
   availablePresentations?: PresentationOption[];
+  inventoryManaged?: boolean;
+  availableQuantities?: PriceByPresentation;
   allergens: string;
   gradient: string;
   coverImage: string;
@@ -22,6 +24,12 @@ export type Flavor = {
   isVisibleOnSite?: boolean;
   isArchived?: boolean;
   updatedBy?: string;
+};
+
+export type UnavailableOrderItem = {
+  flavorId: string;
+  flavorName: string;
+  presentation: PresentationOption;
 };
 
 export const PRESENTATION_OPTIONS = ["1/2 litro", "1 litro"] as const;

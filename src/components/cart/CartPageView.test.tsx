@@ -201,4 +201,63 @@ describe("CartPageView checkout validation", () => {
       expect.stringContaining("https://wa.me/525512345678?text="),
     );
   });
+
+  it("lists every unavailable flavor returned by checkout", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 409,
+        json: () =>
+          Promise.resolve({
+            message: "Algunos sabores ya no tienen disponibilidad suficiente.",
+            unavailableItems: [
+              {
+                flavorId: "507f1f77bcf86cd799439011",
+                flavorName: "Mango",
+                presentation: "1/2 litro",
+              },
+              {
+                flavorId: "507f191e810c19729de860ea",
+                flavorName: "Coco",
+                presentation: "1 litro",
+              },
+            ],
+          }),
+      }),
+    );
+    useCartMock.mockReturnValue({
+      items: [
+        {
+          id: "1",
+          flavorId: "507f1f77bcf86cd799439011",
+          flavorName: "Mango",
+          presentation: "1/2 litro",
+          price: 150,
+        },
+      ],
+      itemsCount: 1,
+      formattedTotalPrice: "$150.00",
+      removeItem: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    render(<CartPageView />);
+    await userEvent.type(
+      screen.getByLabelText("Nombre para el pedido"),
+      "Ana López",
+    );
+    await userEvent.type(
+      screen.getByLabelText("Email para confirmar pedido"),
+      "cliente@correo.com",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Realizar pedido" }),
+    );
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "1/2 litro de Mango",
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("1 litro de Coco");
+  });
 });

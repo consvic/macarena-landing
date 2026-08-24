@@ -111,3 +111,34 @@ test("keeps the cart intact when order creation fails", async ({ page }) => {
       },
     ]);
 });
+
+test("lists every item that became unavailable at checkout", async ({
+  page,
+}) => {
+  await page.route("**/api/orders", async (route) => {
+    await route.fulfill({
+      status: 409,
+      contentType: "application/json",
+      body: JSON.stringify({
+        message: "Algunos sabores ya no tienen disponibilidad suficiente.",
+        unavailableItems: [
+          {
+            flavorId: "507f1f77bcf86cd799439011",
+            flavorName: "Mango Maracuya",
+            presentation: "1/2 litro",
+          },
+        ],
+      }),
+    });
+  });
+
+  await page.goto("/menu/cart");
+  await page.getByLabel("Nombre para el pedido").fill("Ana López");
+  await page
+    .getByLabel("Email para confirmar pedido")
+    .fill("cliente@correo.com");
+  await page.getByRole("button", { name: "Realizar pedido" }).click();
+
+  await expect(page.getByText("1/2 litro de Mango Maracuya")).toBeVisible();
+  await expect(page.getByText("Mango Maracuya").first()).toBeVisible();
+});

@@ -2,11 +2,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const connectToDatabaseMock = vi.fn();
 const createMock = vi.fn();
-const findByIdAndDeleteMock = vi.fn();
 const insertManyMock = vi.fn();
 const findFlavorsMock = vi.fn();
 const leanFlavorsMock = vi.fn();
+const findLotsMock = vi.fn();
+const sortLotsMock = vi.fn();
+const leanLotsMock = vi.fn();
+const updateLotMock = vi.fn();
 const sendOrderPendingEmailMock = vi.fn();
+const withTransactionMock = vi.fn();
+const endSessionMock = vi.fn();
+const session = {
+  withTransaction: withTransactionMock,
+  endSession: endSessionMock,
+};
 
 vi.mock("@/lib/db/mongoose", () => ({
   connectToDatabase: () => connectToDatabaseMock(),
@@ -21,7 +30,13 @@ vi.mock("@/models/Flavor", () => ({
 vi.mock("@/models/Order", () => ({
   OrderModel: {
     create: (...args: unknown[]) => createMock(...args),
-    findByIdAndDelete: (...args: unknown[]) => findByIdAndDeleteMock(...args),
+  },
+}));
+
+vi.mock("@/models/Lot", () => ({
+  LotModel: {
+    find: (...args: unknown[]) => findLotsMock(...args),
+    updateOne: (...args: unknown[]) => updateLotMock(...args),
   },
 }));
 
@@ -74,12 +89,31 @@ function item(
 describe("POST /api/orders", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    findFlavorsMock.mockReturnValue({ lean: leanFlavorsMock });
-    leanFlavorsMock.mockResolvedValue(FLAVORS);
-    createMock.mockResolvedValue({
-      _id: "order-1",
-      toObject: () => ({ _id: "order-1", status: "pending_confirmation" }),
+    connectToDatabaseMock.mockResolvedValue({
+      startSession: () => Promise.resolve(session),
     });
+    withTransactionMock.mockImplementation((callback: () => unknown) =>
+      callback(),
+    );
+    findFlavorsMock.mockReturnValue({ lean: leanFlavorsMock });
+    findLotsMock.mockReturnValue({ sort: sortLotsMock });
+    sortLotsMock.mockReturnValue({ lean: leanLotsMock });
+    leanLotsMock.mockResolvedValue([]);
+    updateLotMock.mockResolvedValue({ modifiedCount: 1 });
+    leanFlavorsMock.mockResolvedValue(FLAVORS);
+    createMock.mockResolvedValue([
+      {
+        _id: "order-1",
+        toObject: () => ({
+          _id: "order-1",
+          customerName: "Test Customer",
+          customerEmail: "test@example.com",
+          status: "pending_confirmation",
+          currency: "MXN",
+          totalPrice: 150,
+        }),
+      },
+    ]);
     insertManyMock.mockImplementation((items: unknown[]) =>
       Promise.resolve(
         items.map((savedItem) => ({
@@ -135,35 +169,45 @@ describe("POST /api/orders", () => {
     );
 
     expect(response.status).toBe(201);
-    expect(findFlavorsMock).toHaveBeenCalledWith({
-      _id: { $in: [MANGO_ID, COCO_ID] },
-      exists: true,
-      isVisibleOnSite: { $ne: false },
-      isArchived: { $ne: true },
-    });
-    expect(createMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        customerName: "Ana López",
-        status: "pending_confirmation",
-        currency: "MXN",
-        totalPrice: 600,
-        itemCount: 3,
-      }),
+    expect(findFlavorsMock).toHaveBeenCalledWith(
+      {
+        _id: { $in: [MANGO_ID, COCO_ID] },
+        exists: true,
+        isVisibleOnSite: { $ne: false },
+        isArchived: { $ne: true },
+      },
+      null,
+      { session },
     );
-    expect(insertManyMock).toHaveBeenCalledWith([
-      expect.objectContaining({
-        flavorId: MANGO_ID,
-        flavorName: "Mango",
-        unitPrice: 150,
-        subtotal: 300,
-      }),
-      expect.objectContaining({
-        flavorId: COCO_ID,
-        flavorName: "Coco",
-        unitPrice: 300,
-        subtotal: 300,
-      }),
-    ]);
+    expect(createMock).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          customerName: "Ana López",
+          status: "pending_confirmation",
+          currency: "MXN",
+          totalPrice: 600,
+          itemCount: 3,
+        }),
+      ],
+      { session },
+    );
+    expect(insertManyMock).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          flavorId: MANGO_ID,
+          flavorName: "Mango",
+          unitPrice: 150,
+          subtotal: 300,
+        }),
+        expect.objectContaining({
+          flavorId: COCO_ID,
+          flavorName: "Coco",
+          unitPrice: 300,
+          subtotal: 300,
+        }),
+      ],
+      { session },
+    );
   });
 
   it("rejects the whole order when one flavor was hidden after being added", async () => {
@@ -186,8 +230,10 @@ describe("POST /api/orders", () => {
 
     expect(response.status).toBe(409);
     await expect(response.json()).resolves.toEqual({
-      message:
-        "Coco ya no está disponible. Retíralo del carrito para continuar.",
+      message: "Algunos sabores ya no tienen disponibilidad suficiente.",
+      unavailableItems: [
+        expect.objectContaining({ flavorId: COCO_ID, flavorName: "Coco" }),
+      ],
     });
     expect(createMock).not.toHaveBeenCalled();
   });
@@ -207,8 +253,14 @@ describe("POST /api/orders", () => {
 
     expect(response.status).toBe(409);
     await expect(response.json()).resolves.toEqual({
-      message:
-        "1 litro de Mango ya no está disponible. Retíralo del carrito para continuar.",
+      message: "Algunos sabores ya no tienen disponibilidad suficiente.",
+      unavailableItems: [
+        expect.objectContaining({
+          flavorId: MANGO_ID,
+          flavorName: "Mango",
+          presentation: "1 litro",
+        }),
+      ],
     });
     expect(createMock).not.toHaveBeenCalled();
   });
@@ -236,7 +288,7 @@ describe("POST /api/orders", () => {
     expect(createMock).not.toHaveBeenCalled();
   });
 
-  it("cleans up the order when item insertion fails", async () => {
+  it("aborts the transaction when item insertion fails", async () => {
     insertManyMock.mockRejectedValue(new Error("Insert failed"));
 
     const { POST } = await import("@/app/api/orders/route");
@@ -245,7 +297,59 @@ describe("POST /api/orders", () => {
     );
 
     expect(response.status).toBe(500);
-    expect(findByIdAndDeleteMock).toHaveBeenCalledWith("order-1");
+    expect(endSessionMock).toHaveBeenCalled();
+  });
+
+  it("aggregates demand and reserves managed inventory oldest-first", async () => {
+    leanFlavorsMock.mockResolvedValue([
+      { ...FLAVORS[0], inventoryManaged: true },
+    ]);
+    leanLotsMock.mockResolvedValue([
+      {
+        _id: "lot-1",
+        flavorId: MANGO_ID,
+        remaining: { halfLiter: 1, liter: 0 },
+      },
+      {
+        _id: "lot-2",
+        flavorId: MANGO_ID,
+        remaining: { halfLiter: 3, liter: 0 },
+      },
+    ]);
+
+    const { POST } = await import("@/app/api/orders/route");
+    const response = await POST(
+      makeRequest({
+        customerEmail: "test@example.com",
+        items: [item(), item({ flavorName: "Mango", quantity: 2 })],
+      }),
+    );
+
+    expect(response.status).toBe(201);
+    expect(updateLotMock).toHaveBeenNthCalledWith(
+      1,
+      { _id: "lot-1", "remaining.halfLiter": { $gte: 1 } },
+      { $inc: { "remaining.halfLiter": -1 } },
+      { session },
+    );
+    expect(updateLotMock).toHaveBeenNthCalledWith(
+      2,
+      { _id: "lot-2", "remaining.halfLiter": { $gte: 2 } },
+      { $inc: { "remaining.halfLiter": -2 } },
+      { session },
+    );
+    expect(insertManyMock).toHaveBeenCalledWith(
+      [
+        expect.objectContaining({
+          quantity: 3,
+          lotAllocations: [
+            { lotId: "lot-1", quantity: 1 },
+            { lotId: "lot-2", quantity: 2 },
+          ],
+        }),
+      ],
+      { session },
+    );
   });
 
   it("keeps a saved order when email delivery fails", async () => {
