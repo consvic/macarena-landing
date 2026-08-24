@@ -46,6 +46,14 @@ test("handles login, navigation, and logout", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Historial y estado" }),
   ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Pedidos" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expect(page.getByRole("link", { name: "Resumen" })).not.toHaveAttribute(
+    "aria-current",
+    "page",
+  );
 
   await expect(page.getByRole("link", { name: "Resumen" })).toHaveAttribute(
     "href",

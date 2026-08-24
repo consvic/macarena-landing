@@ -65,6 +65,7 @@ MONGODB_DB_NAME=macarena
 MENU_ENABLED=true
 RESEND_API_KEY=re_xxxxxxxxxxxxx
 RESEND_FROM_EMAIL=Macarena Gelateria <orders@yourdomain.com>
+ORDER_NOTIFICATION_BCC_EMAIL=admin@yourdomain.com
 EMAIL_ASSET_BASE_URL=https://www.macarenagelateria.com
 BANK_ACCOUNT_NAME=Macarena Gelateria
 BANK_ACCOUNT_CLABE=000000000000000000
@@ -87,6 +88,7 @@ npm run dev
 - `MENU_ENABLED`: Enables the `/menu` route when set to `true`. If not enabled, `/menu` redirects to `/`.
 - `RESEND_API_KEY`: API key for Resend. If missing, email sending is skipped with a console warning.
 - `RESEND_FROM_EMAIL`: Sender address for transactional emails (e.g. `Macarena Gelateria <orders@yourdomain.com>`).
+- `ORDER_NOTIFICATION_BCC_EMAIL`: Optional BCC recipient notified when a customer creates an order.
 - `EMAIL_ASSET_BASE_URL`: Base URL used to resolve image assets inside email templates.
 - `BANK_ACCOUNT_NAME`: Bank account holder name shown in the payment instructions email.
 - `BANK_ACCOUNT_CLABE`: CLABE number included in the payment instructions email.

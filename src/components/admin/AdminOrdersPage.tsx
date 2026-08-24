@@ -381,7 +381,7 @@ export function AdminOrdersPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-ochre/20 bg-white p-4 sm:rounded-3xl sm:p-5">
+      <section className="lg:rounded-3xl lg:border lg:border-ochre/20 lg:bg-white lg:p-5">
         {errorMessage ? (
           <p className="mb-3 rounded-xl bg-wine-red/10 px-3 py-2 text-sm text-wine-red">
             {errorMessage}
@@ -405,7 +405,7 @@ export function AdminOrdersPage() {
                 <article
                   key={order._id}
                   className={cn(
-                    "rounded-2xl border border-ochre/15 px-4 pt-4 pb-0 transition-colors duration-200 md:px-5",
+                    "rounded-2xl border border-ochre/15 bg-white px-4 pt-4 pb-0 transition-colors duration-200 md:px-5",
                     order.status === "cancelled" &&
                       "border-oxford-black/10 bg-oxford-black/[0.03]",
                   )}
@@ -454,13 +454,13 @@ export function AdminOrdersPage() {
                           Estado
                         </dt>
                         <dd>
-                          <label className="relative block">
+                          <label className="relative mt-1 block lg:mt-0">
                             <span className="sr-only">
                               Cambiar estado del pedido de {order.customerName}
                             </span>
                             <select
                               aria-label={`Cambiar estado del pedido de ${order.customerName}`}
-                              className="mt-1 min-h-11 w-full appearance-none rounded-full border-0 bg-royal-blue/10 py-2 pr-10 pl-4 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:mt-0 lg:min-h-9 lg:text-xs"
+                              className="min-h-11 w-full appearance-none rounded-full border-0 bg-royal-blue/10 py-2 pr-10 pl-4 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:min-h-9 lg:text-xs"
                               disabled={
                                 Boolean(updatingOrderId) ||
                                 order.status === "cancelled"

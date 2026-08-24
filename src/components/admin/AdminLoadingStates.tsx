@@ -84,7 +84,7 @@ export function AdminOrdersResultsLoading() {
       </div>
       {ORDER_ROWS.map((row) => (
         <div
-          className="rounded-2xl border border-ochre/15 px-4 pt-4 pb-0 md:px-5"
+          className="rounded-2xl border border-ochre/15 bg-white px-4 pt-4 pb-0 md:px-5"
           key={row}
         >
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(10.5rem,1fr)_7rem_10rem_5.5rem] lg:items-center lg:gap-4">
