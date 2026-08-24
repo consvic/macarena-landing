@@ -461,7 +461,10 @@ export function AdminOrdersPage() {
                             <select
                               aria-label={`Cambiar estado del pedido de ${order.customerName}`}
                               className="min-h-11 w-full appearance-none rounded-full border-0 bg-royal-blue/10 py-2 pr-10 pl-4 text-sm text-royal-blue outline-none focus-visible:ring-2 focus-visible:ring-royal-blue/25 lg:min-h-9 lg:text-xs"
-                              disabled={Boolean(updatingOrderId)}
+                              disabled={
+                                Boolean(updatingOrderId) ||
+                                order.status === "cancelled"
+                              }
                               value={order.status}
                               onChange={(event) =>
                                 updateStatus(

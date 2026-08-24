@@ -55,9 +55,11 @@ export async function PATCH(
     const statusCode =
       message === "Order not found"
         ? 404
-        : message.includes("Invalid")
-          ? 400
-          : 500;
+        : message === "Cancelled order is final"
+          ? 409
+          : message.includes("Invalid")
+            ? 400
+            : 500;
 
     if (statusCode === 500) {
       console.error("[admin:orders:status:PATCH]", error);

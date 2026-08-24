@@ -6,6 +6,7 @@ import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
 import { formatMXN } from "@/lib/pricing";
+import type { UnavailableOrderItem } from "@/lib/types";
 
 type PaymentDetails = {
   accountName: string;
@@ -38,6 +39,9 @@ export function CartPageView({
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [unavailableItems, setUnavailableItems] = useState<
+    UnavailableOrderItem[]
+  >([]);
   const [orderConfirmation, setOrderConfirmation] =
     useState<OrderConfirmation | null>(null);
   const confirmationHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -63,6 +67,7 @@ export function CartPageView({
 
     setIsSubmitting(true);
     setErrorMessage(null);
+    setUnavailableItems([]);
 
     const customerName = name.trim();
     const customerEmail = email.trim().toLowerCase();
@@ -90,7 +95,11 @@ export function CartPageView({
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as {
           message?: string;
+          unavailableItems?: UnavailableOrderItem[];
         } | null;
+        if (response.status === 409 && payload?.unavailableItems) {
+          setUnavailableItems(payload.unavailableItems);
+        }
         throw new Error(payload?.message ?? "No fue posible crear el pedido.");
       }
 
@@ -334,7 +343,24 @@ export function CartPageView({
               {isSubmitting ? "Creando pedido" : "Realizar pedido"}
             </Button>
             {errorMessage ? (
-              <p className="text-sm text-wine-red">{errorMessage}</p>
+              <div
+                role="alert"
+                className="rounded-2xl bg-wine-red/10 px-4 py-3 text-sm text-wine-red"
+              >
+                <p>{errorMessage}</p>
+                {unavailableItems.length > 0 ? (
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    {unavailableItems.map((item) => (
+                      <li
+                        key={`${item.flavorId}:${item.presentation}`}
+                        className="font-data"
+                      >
+                        {item.presentation} de {item.flavorName}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
             ) : null}
           </div>
         </div>

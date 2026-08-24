@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Leaf } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { NumericNoteText } from "@/components/NumericNoteText";
 import { useCart } from "@/components/providers/CartProvider";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,15 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
   const addedFeedbackTimers = useRef<
     Record<string, ReturnType<typeof setTimeout>>
   >({});
-  const { addItem } = useCart();
+  const { addItem, items = [] } = useCart();
+  const cartQuantities = useMemo(() => {
+    const quantities = new Map<string, number>();
+    for (const item of items) {
+      const key = `${item.flavorId}:${item.presentation}`;
+      quantities.set(key, (quantities.get(key) ?? 0) + 1);
+    }
+    return quantities;
+  }, [items]);
 
   useEffect(() => {
     return () => {
@@ -174,6 +182,13 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
             .includes("sin lacteos");
           const addedFeedbackCount = addedFeedbackByFlavor[flavor.name];
           const isAdded = Boolean(addedFeedbackCount);
+          const quantityField =
+            selectedPresentation === "1/2 litro" ? "halfLiter" : "liter";
+          const availableQuantity = flavor.availableQuantities?.[quantityField];
+          const cartQuantity =
+            cartQuantities.get(`${flavor._id}:${selectedPresentation}`) ?? 0;
+          const isAtCartLimit =
+            availableQuantity != null && cartQuantity >= availableQuantity;
 
           return (
             <article
@@ -270,10 +285,13 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
 
                     <Button
                       type="button"
+                      disabled={isAtCartLimit}
                       aria-label={
-                        isAdded
-                          ? `${flavor.name} agregado al carrito`
-                          : `Agregar ${flavor.name} al carrito`
+                        isAtCartLimit
+                          ? `Máximo disponible de ${flavor.name} en el carrito`
+                          : isAdded
+                            ? `${flavor.name} agregado al carrito`
+                            : `Agregar ${flavor.name} al carrito`
                       }
                       className={cn(
                         "relative h-11 w-32 overflow-visible rounded-full bg-royal-blue px-4 text-light-beige transition-all duration-200 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] hover:bg-royal-blue/90 active:scale-95",
@@ -283,20 +301,25 @@ export function GelatoMenuResults({ flavors }: GelatoMenuResultsProps) {
                             ? "cart-add-feedback cart-add-feedback-even"
                             : "cart-add-feedback cart-add-feedback-odd"),
                       )}
-                      onClick={() =>
+                      onClick={() => {
+                        if (isAtCartLimit) return;
                         handleAddFlavor({
                           flavorId: flavor._id,
                           flavorName: flavor.name,
                           presentation: selectedPresentation,
                           price: itemPrice,
-                        })
-                      }
+                        });
+                      }}
                     >
                       {isAdded ? (
                         <Check className="size-4" aria-hidden="true" />
                       ) : null}
                       <span aria-live="polite">
-                        {isAdded ? "Agregado" : "Agregar"}
+                        {isAtCartLimit
+                          ? "Máximo"
+                          : isAdded
+                            ? "Agregado"
+                            : "Agregar"}
                       </span>
                     </Button>
                   </div>

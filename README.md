@@ -12,6 +12,7 @@ Macarena Landing is the marketing site and digital menu for Macarena Gelateria. 
 - Email notifications (order pending and order confirmed) built with `react-email` and sent through the Resend API.
 - API endpoints for flavors and orders.
 - Mongo-backed flavor data with an `exists` flag to control which flavors are currently available to customers.
+- Lot-based inventory by flavor and container size, with atomic checkout reservations and cancellation restocking.
 - Protected admin portal at `/admin` with sections for `Resumen`, `Pedidos`, `Sabores`, and `Análisis`.
 - Admin login page at `/admin/login` with cookie session auth for internal users.
 - Admin APIs under `/api/admin/*` protected and also accepting HTTP Basic Auth (`email:password`).
@@ -35,7 +36,7 @@ This lets the team keep historical or temporarily unavailable flavors in the dat
 2. The cart state lives in a `CartProvider` (React Context) and is synced to `localStorage` under the key `macarena:cart:v1`.
 3. A cart nav button in the menu header shows the current item count and links to `/menu/cart`.
 4. At `/menu/cart`, customers see their items, totals (formatted in MXN), and an email field. Submitting calls `POST /api/orders`.
-5. The API creates an `Order` and associated documents in the `order-items` MongoDB collection, then sends a pending-confirmation email to the customer.
+5. For inventory-managed flavors, the API reserves containers from the oldest lots and creates the `Order` and associated `order-items` in one MongoDB transaction, then sends a pending-confirmation email.
 6. On success the cart is cleared and a confirmation message is shown.
 
 ## Tech Stack
@@ -146,6 +147,8 @@ Admin user creation and operations are documented in [docs/admin-users.md](./doc
 ## Development Notes
 
 - The menu is rendered dynamically and reads flavor data from MongoDB.
+- MongoDB must run as a replica set (including Atlas) because live checkout and cancellation use multi-document transactions.
+- Existing flavors remain on legacy presentation availability until their first lot is created. That first lot permanently enables tracked inventory for the flavor.
 - Flavor availability is controlled with the `exists` field rather than deleting records.
 - Orders store flavor names and selected presentation so the checkout record remains stable even if flavor availability changes later.
 - Cart state is client-only (React Context + `localStorage`). There is no server-side cart persistence.

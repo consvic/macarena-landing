@@ -11,6 +11,7 @@
     "format": "biome format --write",
     "seed:flavors": "node --env-file=.env scripts/seed-flavors.mjs",
     "backfill:flavor-existence": "node --env-file=.env scripts/backfill-flavor-existence.mjs",
+    "backfill:lot-inventory": "node --env-file=.env scripts/backfill-lot-inventory.mjs",
     "admin:create": "node --env-file=.env scripts/create-admin-user.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",

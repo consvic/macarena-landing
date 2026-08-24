@@ -4,6 +4,7 @@ import {
   AdminSessionModel,
 } from "@/models/AdminSession";
 import { ADMIN_USER_COLLECTION_NAME, AdminUserModel } from "@/models/AdminUser";
+import { LotModel } from "@/models/Lot";
 import { ORDER_ITEM_COLLECTION_NAME, OrderItemModel } from "@/models/OrderItem";
 
 describe("MongoDB collection names", () => {
@@ -13,5 +14,6 @@ describe("MongoDB collection names", () => {
     expect(AdminSessionModel.collection.name).toBe(
       ADMIN_SESSION_COLLECTION_NAME,
     );
+    expect(LotModel.collection.name).toBe("lots");
   });
 });

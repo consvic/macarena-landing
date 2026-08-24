@@ -27,6 +27,7 @@ const flavorSchema = new Schema(
     exists: { type: Boolean, required: true, default: true },
     isVisibleOnSite: { type: Boolean, required: true, default: true },
     isArchived: { type: Boolean, required: true, default: false },
+    inventoryManaged: { type: Boolean, required: true, default: false },
     updatedBy: { type: String, trim: true },
   },
   {

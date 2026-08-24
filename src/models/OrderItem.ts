@@ -32,6 +32,17 @@ const orderItemSchema = new Schema(
     quantity: { type: Number, required: true, min: 1, default: 1 },
     unitPrice: { type: Number, required: true, min: 0 },
     subtotal: { type: Number, required: true, min: 0 },
+    lotAllocations: [
+      {
+        _id: false,
+        lotId: {
+          type: Schema.Types.ObjectId,
+          ref: "Lot",
+          required: true,
+        },
+        quantity: { type: Number, required: true, min: 1 },
+      },
+    ],
   },
   {
     timestamps: true,

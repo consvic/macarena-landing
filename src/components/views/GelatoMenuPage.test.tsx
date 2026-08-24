@@ -5,6 +5,13 @@ import GelatoMenuPage from "@/components/views/GelatoMenuPage";
 import type { Flavor } from "@/lib/types";
 
 const addItemMock = vi.fn();
+let cartItems: Array<{
+  id: string;
+  flavorId: string;
+  flavorName: string;
+  presentation: "1/2 litro" | "1 litro";
+  price: number;
+}> = [];
 
 vi.mock("next/link", () => ({
   default: ({ href, children }: { href: string; children: ReactNode }) => (
@@ -19,6 +26,7 @@ vi.mock("@/components/cart/CartNavButton", () => ({
 vi.mock("@/components/providers/CartProvider", () => ({
   useCart: () => ({
     addItem: addItemMock,
+    items: cartItems,
   }),
 }));
 
@@ -44,7 +52,39 @@ const flavors: Flavor[] = [
 describe("GelatoMenuPage", () => {
   afterEach(() => {
     addItemMock.mockReset();
+    cartItems = [];
     vi.useRealTimers();
+  });
+
+  it("stops additions at the managed inventory snapshot", () => {
+    cartItems = [
+      {
+        id: "cart-1",
+        flavorId: flavors[0]._id,
+        flavorName: flavors[0].name,
+        presentation: "1 litro",
+        price: 280,
+      },
+    ];
+
+    render(
+      <GelatoMenuPage
+        flavors={[
+          {
+            ...flavors[0],
+            inventoryManaged: true,
+            availableQuantities: { halfLiter: 0, liter: 1 },
+            availablePresentations: ["1 litro"],
+          },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", {
+        name: "Máximo disponible de Pistache en el carrito",
+      }),
+    ).toBeDisabled();
   });
 
   it("shows temporary added feedback after adding a flavor", () => {

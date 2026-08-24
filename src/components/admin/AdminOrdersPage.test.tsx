@@ -219,7 +219,7 @@ describe("AdminOrdersPage", () => {
     expect(statusSelect).toHaveValue("confirmed");
   });
 
-  it("visually mutes cancelled orders without disabling status recovery", async () => {
+  it("visually mutes cancelled orders and makes cancellation terminal", async () => {
     const cancelledOrder = {
       ...pendingOrder,
       status: "cancelled",
@@ -235,7 +235,7 @@ describe("AdminOrdersPage", () => {
     });
 
     expect(article).toHaveClass("bg-oxford-black/[0.03]");
-    expect(statusSelect).toBeEnabled();
+    expect(statusSelect).toBeDisabled();
     expect(
       screen.queryByRole("button", { name: "Cancelar pedido de Ana Gomez" }),
     ).not.toBeInTheDocument();
