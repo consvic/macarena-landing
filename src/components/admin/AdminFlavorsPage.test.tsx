@@ -149,6 +149,88 @@ describe("AdminFlavorsPage production demand", () => {
     expect(screen.getByText("No disponible")).toBeInTheDocument();
   });
 
+  it("ignores a previous flavor's lot response after switching flavors", async () => {
+    const vanilla = {
+      ...FLAVOR,
+      _id: "507f1f77bcf86cd799439012",
+      name: "Vainilla",
+    };
+    let resolveMangoLots!: (response: Response) => void;
+    const mangoLotsResponse = new Promise<Response>((resolve) => {
+      resolveMangoLots = resolve;
+    });
+    const fetchMock = vi.fn((input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url === "/api/admin/flavors") {
+        return Promise.resolve(jsonResponse([FLAVOR, vanilla]));
+      }
+      if (url === "/api/admin/production-demand") {
+        return Promise.resolve(
+          jsonResponse({ date: "2026-08-22", entries: [] }),
+        );
+      }
+      if (url === `/api/admin/lots?flavorId=${FLAVOR._id}`) {
+        return mangoLotsResponse;
+      }
+      if (url === `/api/admin/lots?flavorId=${vanilla._id}`) {
+        return Promise.resolve(
+          jsonResponse({
+            data: [
+              {
+                _id: "507f191e810c19729de860eb",
+                packed: { halfLiter: 0, liter: 5 },
+                remaining: { halfLiter: 0, liter: 5 },
+                adjustments: [],
+                createdBy: "admin@macarena.mx",
+                createdAt: "2026-08-23T12:00:00.000Z",
+              },
+            ],
+            totals: { halfLiter: 0, liter: 5 },
+          }),
+        );
+      }
+      return Promise.resolve(new Response(null, { status: 404 }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AdminFlavorsPage />);
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: /Mango Frutal/ }),
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /Vainilla Frutal/ }),
+    );
+    expect(
+      await screen.findByText("Disponibles: 0 × 1/2 L · 5 × 1 L"),
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      resolveMangoLots(
+        jsonResponse({
+          data: [
+            {
+              _id: "507f191e810c19729de860ea",
+              packed: { halfLiter: 9, liter: 0 },
+              remaining: { halfLiter: 9, liter: 0 },
+              adjustments: [],
+              createdBy: "admin@macarena.mx",
+              createdAt: "2026-08-23T12:00:00.000Z",
+            },
+          ],
+          totals: { halfLiter: 9, liter: 0 },
+        }),
+      );
+    });
+
+    expect(
+      screen.getByText("Disponibles: 0 × 1/2 L · 5 × 1 L"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Disponibles: 9 × 1/2 L · 0 × 1 L"),
+    ).not.toBeInTheDocument();
+  });
+
   it("disables both visibility controls while showing their loading state", async () => {
     let resolveVisibility!: (response: Response) => void;
     const visibilityResponse = new Promise<Response>((resolve) => {

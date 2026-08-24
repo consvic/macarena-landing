@@ -938,6 +938,7 @@ export function AdminFlavorsPage() {
 
       {selectedFlavor && !selectedFlavor.isArchived ? (
         <AdminLotsPanel
+          key={selectedFlavor._id}
           flavorId={selectedFlavor._id}
           flavorName={selectedFlavor.name}
           onInventoryChange={updateSelectedInventory}
