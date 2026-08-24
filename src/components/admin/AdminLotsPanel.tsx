@@ -158,6 +158,7 @@ export function AdminLotsPanel({
             min="0"
             step="1"
             inputMode="numeric"
+            placeholder="0"
             value={newLot.halfLiter}
             onChange={(event) =>
               setNewLot((value) => ({
@@ -175,6 +176,7 @@ export function AdminLotsPanel({
             min="0"
             step="1"
             inputMode="numeric"
+            placeholder="0"
             value={newLot.liter}
             onChange={(event) =>
               setNewLot((value) => ({ ...value, liter: event.target.value }))
