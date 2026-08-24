@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -188,9 +188,11 @@ describe("CartPageView checkout validation", () => {
       screen.getByRole("button", { name: "Realizar pedido" }),
     );
 
-    expect(
-      screen.getByRole("heading", { name: "¡Gracias por tu pedido!" }),
-    ).toHaveFocus();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: "¡Gracias por tu pedido!" }),
+      ).toHaveFocus(),
+    );
     expect(screen.getByText("$150.00")).toBeInTheDocument();
     expect(screen.getByText("123456789012345678")).toBeInTheDocument();
     expect(screen.getByText("+52 55 1234 5678")).toBeInTheDocument();
